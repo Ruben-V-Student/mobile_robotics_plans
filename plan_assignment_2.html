@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Assignment 2 Plan</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="window.renderMath && window.renderMath()"></script>
+<style>
+:root{
+  --bg:#f6f7f9; --surface:#ffffff; --ink:#1c2230; --ink2:#3d4555; --muted:#6b7280; --line:#e5e7ec;
+  --accent:#2563eb; --accent-soft:#edf3ff; --ok:#15803d; --ok-soft:#eaf7ee;
+  --own:#a16207; --own-soft:#fdf6e3; --code:#f4f5f8; --radius:10px;
+  --mono: ui-monospace, "Cascadia Code", "JetBrains Mono", Consolas, monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+a{color:var(--accent)}
+code{font-family:var(--mono);font-size:.86em;background:var(--code);padding:.1em .35em;border-radius:4px}
+pre{margin:0;overflow:auto;background:var(--code);border-radius:8px;padding:14px 16px;font-size:13px;line-height:1.5}
+pre code{background:none;padding:0;font-size:inherit}
+table{border-collapse:collapse;width:100%;font-size:14px;margin:8px 0 4px}
+th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+.table-wrap{overflow-x:auto}
+h1,h2,h3{line-height:1.3;margin:0}
+h2{font-size:22px;letter-spacing:-.01em}
+h3{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;margin:28px 0 10px}
+p{margin:8px 0}
+ul,ol{padding-left:22px;margin:8px 0}
+li{margin:3px 0}
+
+/* top bar */
+.top{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.top-in{max-width:1180px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.brand{font-weight:650;font-size:15px}
+.brand small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+.overall{flex:1;min-width:160px;display:flex;align-items:center;gap:10px}
+.bar{flex:1;height:6px;background:var(--line);border-radius:99px;overflow:hidden}
+.bar>i{display:block;height:100%;width:0;background:var(--ok);border-radius:99px;transition:width .3s}
+.overall span{font-size:12px;color:var(--muted);white-space:nowrap}
+.save{display:flex;align-items:center;gap:8px}
+.pill{font-size:12px;padding:4px 10px;border-radius:99px;background:var(--code);color:var(--muted);white-space:nowrap}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.warn{background:var(--own-soft);color:var(--own)}
+button{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:6px 12px;border-radius:8px;cursor:pointer}
+button:hover{border-color:#c9cdd6}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+button.primary:hover{filter:brightness(1.07)}
+
+/* layout */
+.wrap{max-width:1180px;margin:0 auto;padding:24px 16px 80px;display:grid;grid-template-columns:250px minmax(0,1fr);gap:28px}
+nav{position:sticky;top:76px;align-self:start;max-height:calc(100vh - 96px);overflow:auto}
+nav button{display:flex;width:100%;align-items:center;gap:10px;text-align:left;border:0;background:none;padding:8px 10px;border-radius:8px;color:var(--ink2)}
+nav button:hover{background:#eceef2}
+nav button.active{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(16,24,40,.06),0 0 0 1px var(--line)}
+nav .num{width:22px;height:22px;flex:none;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:600;background:#e9ebf0;color:var(--muted)}
+nav button.done .num{background:var(--ok);color:#fff}
+nav button.part .num{background:var(--accent-soft);color:var(--accent)}
+nav .lbl{flex:1;font-size:14px;line-height:1.3}
+nav .cnt{font-size:11px;color:var(--muted)}
+nav .sep{height:1px;background:var(--line);margin:8px 10px}
+
+main{min-width:0}
+section.tab{display:none}
+section.tab.active{display:block}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px}
+.card + .card{margin-top:16px}
+.head{display:flex;gap:14px;align-items:flex-start}
+.head .big{font-size:13px;font-weight:600;color:var(--accent);background:var(--accent-soft);border-radius:8px;padding:4px 9px;flex:none;margin-top:2px}
+.lead{color:var(--ink2);font-size:15.5px;margin-top:6px}
+.output{display:inline-block;margin-top:10px;font-size:13px;color:var(--muted)}
+.output b{color:var(--ink2);font-weight:600}
+
+/* tasks */
+.tasks{list-style:none;padding:0;margin:4px 0 0}
+.tasks li{display:flex;gap:12px;align-items:flex-start;padding:9px 4px;border-bottom:1px solid var(--line);margin:0}
+.tasks li:last-child{border-bottom:0}
+.tasks input{appearance:none;width:18px;height:18px;flex:none;margin-top:2px;border:1.5px solid #b8bdc8;border-radius:5px;cursor:pointer;display:grid;place-items:center;background:#fff}
+.tasks input:checked{background:var(--ok);border-color:var(--ok)}
+.tasks input:checked::after{content:"";width:5px;height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.tasks label{flex:1;cursor:pointer}
+.tasks li.done label{color:var(--muted);text-decoration:line-through;text-decoration-color:#c4c8d0}
+.tasks .when{font-size:12px;color:var(--ok);white-space:nowrap;margin-top:2px}
+.tprog{float:right;font-size:12px;color:var(--muted);font-weight:500;text-transform:none;letter-spacing:0}
+
+/* notes */
+.notes textarea{width:100%;min-height:90px;resize:vertical;font:inherit;font-size:14px;line-height:1.5;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:#fcfcfd}
+.notes textarea:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
+.notes .meta{font-size:12px;color:var(--muted);margin-top:4px;min-height:18px}
+
+/* callouts / collapsibles */
+details.ctx{margin-top:14px;border-color:#d9e4fb;background:#fafcff}
+details.ctx>summary{flex-wrap:wrap;color:var(--ink)}
+details.ctx .need{margin-left:auto;font-size:12px;font-weight:500;color:var(--accent);background:var(--accent-soft);border-radius:99px;padding:2px 10px}
+details.ctx h4{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600;margin:14px 0 6px}
+details.ctx h4:first-child{margin-top:4px}
+details.ctx ul{margin:4px 0}
+blockquote.nb{margin:6px 0;padding:8px 14px;border-left:3px solid var(--accent);background:var(--surface);border-radius:0 6px 6px 0;font-size:14px;color:var(--ink2)}
+blockquote.nb .where{display:block;font-size:12px;font-weight:600;color:var(--accent);margin-bottom:2px}
+.note{border-left:3px solid var(--line);padding:2px 0 2px 12px;color:var(--ink2);margin:10px 0}
+details{border:1px solid var(--line);border-radius:8px;margin:10px 0;background:var(--surface)}
+details>summary{cursor:pointer;padding:9px 14px;font-size:14px;font-weight:500;color:var(--ink2);list-style:none;display:flex;align-items:center;gap:8px}
+details>summary::-webkit-details-marker{display:none}
+details>summary::before{content:"";width:6px;height:6px;border:solid var(--muted);border-width:0 1.5px 1.5px 0;transform:rotate(-45deg);transition:transform .15s;flex:none}
+details[open]>summary::before{transform:rotate(45deg)}
+details>summary .tag{margin-left:auto;font-size:11px;font-weight:500;color:var(--muted);font-family:var(--mono)}
+details>.body{padding:0 14px 12px}
+details.code>.body{padding:0 0 0;position:relative}
+details.code pre{border-radius:0 0 8px 8px}
+details.src{background:#fbfbfc}
+details.src>summary{font-size:13px;color:var(--muted)}
+details.src ul{font-size:13px;color:var(--ink2);margin:0}
+.copy{position:absolute;top:8px;right:8px;font-size:11px;padding:3px 8px;opacity:.75}
+.copy:hover{opacity:1}
+.own{display:inline-block;font-size:11px;font-weight:600;color:var(--own);background:var(--own-soft);border-radius:4px;padding:0 6px;white-space:nowrap}
+.katex-display{overflow-x:auto;overflow-y:hidden;padding:4px 0}
+.steps-table tr{cursor:pointer}
+.steps-table tr:hover td{background:#fafbfc}
+.steps-table td:first-child{color:var(--muted);width:36px}
+.pager{display:flex;justify-content:space-between;margin-top:18px;gap:10px}
+.hint{font-size:13px;color:var(--muted)}
+.banner{display:none;max-width:1180px;margin:12px auto 0;padding:0 16px}
+.banner div{background:var(--own-soft);color:var(--own);border-radius:8px;padding:10px 14px;font-size:13px}
+
+@media (max-width:820px){
+  .wrap{grid-template-columns:1fr;gap:14px;padding-top:14px}
+  nav{position:static;max-height:none;display:flex;overflow-x:auto;gap:4px;padding-bottom:4px}
+  nav button{width:auto;flex:none}
+  nav .lbl,nav .cnt,nav .sep{display:none}
+  .card{padding:18px 16px}
+  .head .big{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ STORED PROGRESS (rewritten by the Save function, do not edit by hand) ============ -->
+<script id="plan-state" type="application/json">{}</script>
+
+<header class="top"><div class="top-in">
+  <div class="brand">Assignment 2 · Prediction model<small>Plan &amp; shared progress</small></div>
+  <div class="overall"><div class="bar"><i id="overall-bar"></i></div><span id="overall-txt">0 / 0 tasks</span></div>
+  <div class="save">
+    <span class="pill" id="save-pill">Not linked</span>
+    <button class="primary" id="link-btn" title="Pick this same .html file so progress is saved into it">Link file</button>
+    <button id="dl-btn" title="Download a copy of this page with the current progress inside">Download copy</button>
+  </div>
+</div></header>
+<div class="banner" id="banner"><div id="banner-txt"></div></div>
+
+<div class="wrap">
+<nav id="nav"></nav>
+<main>
+
+<!-- =================================== OVERVIEW =================================== -->
+<section class="tab" id="overview" data-title="Overview" data-num="★">
+<div class="card">
+  <div class="head"><div>
+    <h2>Overview</h2>
+    <p class="lead">Build the <b>prediction step</b> of a Kalman filter for two dead-reckoning scenarios, and decide which is more accurate.</p>
+  </div></div>
+  $$\bar{\mathbf x} = \mathbf F\mathbf x + \mathbf B\mathbf u,\qquad \bar{\mathbf P} = \mathbf F\mathbf P\mathbf F^\mathsf T + \mathbf Q$$
+  <ol>
+    <li><b>1D position from wheel speed</b> (encoders / motor model).</li>
+    <li><b>2D position + orientation from the IMU</b> (accelerometer + gyroscope), after an IMU position and orientation calibration.</li>
+  </ol>
+  <p>For both: deliver <b>F</b>, <b>B</b> and <b>Q</b>, and answer: <i>which dead-reckoning approach is more accurate, and why?</i></p>
+  <p class="note">Deliverable: one Jupyter notebook (Toledo), code + results explained concisely. Every code block must be understood by both of us (we can be asked to explain or tweak it), so blocks are short and start with a one-line comment on <i>what it does</i> and <i>what to tweak</i>.</p>
+  <details class="src"><summary>Sources</summary><div class="body"><ul>
+    <li>Goals → <code>A2 notebook</code>, cell 0, §3 "Assignment goals"</li>
+    <li>Prediction equations → <code>A2 notebook</code>, cell 0, §2 "Assignment context" (table) and <code>Ch 5</code> §5.2.1</li>
+    <li>Deliverable → <code>A2 notebook</code>, cell 0, §4 "Submission format"</li>
+    <li>Code style → <code>experiences/Experiences.MD</code></li>
+  </ul></div></details>
+
+  <h3>Before starting</h3>
+  <ul class="tasks" data-step="overview">
+    <li data-id="ov-1">Re-read Ch 4.4, 5.3.1 and 6.2.1</li>
+    <li data-id="ov-2">Both read this whole plan once and agree on the order</li>
+  </ul>
+
+  <h3>Steps</h3>
+  <div class="table-wrap"><table class="steps-table">
+    <thead><tr><th>#</th><th>Step</th><th>Output</th></tr></thead>
+    <tbody>
+      <tr data-go="s0"><td>0</td><td>Know your signals and constants</td><td>Table of channels, units, constants</td></tr>
+      <tr data-go="s1"><td>1</td><td>Prepare the Arduino identification sketch</td><td><code>robot.cpp</code> that logs the right channels with a useful voltage profile</td></tr>
+      <tr data-go="s2"><td>2</td><td>Design and run the experiments</td><td>A set of CSV logs, each with one clear purpose</td></tr>
+      <tr data-go="s3"><td>3</td><td>Load and preprocess the data in Python</td><td>Clean DataFrames, time vector, sanity checks</td></tr>
+      <tr data-go="s4"><td>4</td><td>Scenario 1a · Motor/wheel model</td><td>Fitted parameters \(a, b\) (and friction)</td></tr>
+      <tr data-go="s5"><td>5</td><td>Scenario 1b · 1D prediction model (F, B)</td><td>1D model + simulation vs. measurement</td></tr>
+      <tr data-go="s6"><td>6</td><td>Scenario 1c · Q for the 1D model</td><td>Q matrix with justification</td></tr>
+      <tr data-go="s7"><td>7</td><td>Scenario 2a · Calibrate the IMU</td><td>Bias, mounting rotation, lever arm</td></tr>
+      <tr data-go="s8"><td>8</td><td>Scenario 2b · 2D IMU prediction model (F, B)</td><td>2D model + dead-reckoned trajectory</td></tr>
+      <tr data-go="s9"><td>9</td><td>Scenario 2c · Q for the IMU model</td><td>Q matrix with justification</td></tr>
+      <tr data-go="s10"><td>10</td><td>Compare both approaches</td><td>Error plots + answer to the key question</td></tr>
+      <tr data-go="s11"><td>11</td><td>Write the notebook report</td><td>Submission</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Division of work</h3>
+  <ol>
+    <li>Steps 0–1 together (1 session): agree on channels and sign conventions.</li>
+    <li>Step 2: record <b>all</b> experiments in one lab session; re-record only if a check fails.</li>
+    <li>Split Steps 4–6 (Scenario 1) and Steps 7–9 (Scenario 2); both share the loading code of Step 3.</li>
+    <li>Steps 10–11 together. Each person must be able to explain the other's code.</li>
+  </ol>
+
+  <details><summary>Theory map: where to look in <code>course_text/</code></summary><div class="body"><div class="table-wrap"><table>
+    <thead><tr><th>Topic</th><th>Chapter</th><th>Step</th></tr></thead>
+    <tbody>
+      <tr><td>Bayes filter = predict + update; prediction is a convolution that <i>adds</i> uncertainty</td><td>Ch 2 (2.4 Incorporating Movement, 2.9 Discrete Bayes Algorithm)</td><td>5, 6</td></tr>
+      <tr><td>Gaussians, variance, covariance matrix</td><td>Ch 3, Ch 5.1 (5.1.3 Correlation and Covariance)</td><td>6, 9</td></tr>
+      <tr><td>1D prediction: \(\bar x = x + v\Delta t\), \(\bar\sigma^2 = \sigma^2 + \sigma_f^2\)</td><td>Ch 4.4 Predictions with Gaussians</td><td>5, 6</td></tr>
+      <tr><td>Designer's job: choose <b>x, P, F, Q, B, u</b> (dog example, \(\mathbf F = \begin{bmatrix}1&amp;\Delta t\\0&amp;1\end{bmatrix}\), "u might be a voltage controlling how fast the wheel's motor turns")</td><td>Ch 5.2.1, 5.3.1 Prediction Step (5.3.1.1.2 Process Model, 5.3.1.1.3 Process Noise \(\mathbf Q = E[\mathbf w\mathbf w^\mathsf T]\), 5.3.1.1.4 Control Function)</td><td>5, 6, 8</td></tr>
+      <tr><td>FilterPy <code>predict(x, P, F, Q, B, u)</code></td><td>Ch 5.3.1.1.4, 5.3.2</td><td>5, 8</td></tr>
+      <tr><td>Robot motion model: state \([x, y, \theta]\), odometry input \(u = [\delta, \phi]\), eq. (6.2), Jacobians F and B, <b>\(\mathbf Q = \mathbf B\mathbf G\mathbf B^\mathsf T\)</b> (noise in control space), gyro bias / wheel radius / slip as error sources</td><td>Ch 6.1 Linearizing, 6.2.1 Motion model</td><td>8, 9, 10</td></tr>
+    </tbody>
+  </table></div>
+  <p class="hint">The 2D part is essentially <b>Ch 6.2.1 with real sensors</b>: the textbook gives the structure, we measure the numbers (inputs, σ's in G).</p>
+  </div></details>
+
+  <details><summary>How to read the source references</summary><div class="body">
+    <p class="hint">Every fact has a "Sources" box. Paths are relative to the <code>mobile robotics/</code> folder.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Short name</th><th>Full path</th></tr></thead>
+      <tbody>
+        <tr><td><code>A2</code></td><td><code>assignments/Assignment2_prediction_model/</code></td></tr>
+        <tr><td><code>A2 notebook</code></td><td><code>assignments/Assignment2_prediction_model/Assignment2_prediction_model.ipynb</code> (cell 0 = assignment text, cell 1 = APPENDIX, cells 2–3 = linear regression example)</td></tr>
+        <tr><td><code>A1 notebook</code></td><td><code>assignments/Assignment1_software_setup/Assignment_software-setup.ipynb</code></td></tr>
+        <tr><td><code>mecotron.h</code></td><td><code>assignments/Assignment2_prediction_model/libraries/control-theory/mecotron.h</code></td></tr>
+        <tr><td><code>robot.cpp</code></td><td><code>assignments/Assignment2_prediction_model/INTERNAL-Identification/robot.cpp</code></td></tr>
+        <tr><td><code>FAQ gear</code></td><td><code>assignments/faq-details/FAQ_gear_ratio.md</code></td></tr>
+        <tr><td><code>FAQ velocity</code></td><td><code>assignments/faq-details/FAQ_kalman_velocity_input.md</code></td></tr>
+        <tr><td><code>Ch N</code></td><td><code>experiences/course_text/N. &lt;title&gt; — Mobile Robotics.pdf</code> (section numbers as printed)</td></tr>
+        <tr><td><span class="own">own derivation</span></td><td>Not in the course material: our own calculation or standard physics. Double-check these and explain them in the report.</td></tr>
+      </tbody>
+    </table></div>
+  </div></details>
+</div>
+<div class="card notes" data-step="overview"><h3 style="margin-top:0">General notes</h3></div>
+</section>
+
+<!-- =================================== STEP 0 =================================== -->
+<section class="tab" id="s0" data-title="Signals &amp; constants" data-num="0">
+<div class="card">
+  <div class="head"><span class="big">Step 0</span><div>
+    <h2>Know your signals and constants</h2>
+    <p class="lead">Collect the facts we reuse in every step.</p>
+    <span class="output">Output: <b>table of channels, units, constants</b></span>
+  </div></div>
+
+  <details class="ctx"><summary>Why &amp; where in Assignment 2 <span class="need">Appendix · DC motor model · §1</span></summary><div class="body">
+    <h4>In the assignment notebook</h4>
+    <blockquote class="nb"><span class="where">Appendix · What is a good DC motor model</span>"where the following variables are measured: \(I_a\) the motor current; \(V_a\) the motor voltage; \(\omega\) the motor rotation speed; […] n is the gear ratio between motor to wheel \(= \frac{n_m}{n_w}\)"</blockquote><blockquote class="nb"><span class="where">§1 Required prior knowledge</span>"Arduino and QRoboticsCenter software setup"</blockquote>
+    <h4>Role in the process</h4>
+    <p>Foundation for everything after. Steps 1 and 3–9 use these function names, units and constants. Indirect link to the notebook: the motor model in the Appendix is written in measured variables (\(I_a, V_a, \omega\)) and a gear ratio \(n\), so we must know which signal the robot gives us and whether it is at the motor or at the wheel.</p>
+    <h4>Why this step</h4>
+    <p>Every later formula uses these numbers. Mixing up motor-level vs. wheel-level units (factor 28) or the sign of one wheel is the most common source of nonsense results. Speed resolution matters for Q: one encoder count per sample is \(\frac{2\pi/1792}{0.01} \approx 0.35\) rad/s, so the speed signal has noticeable quantization noise.</p>
+  </div></details>
+
+  <h3>Tasks <span class="tprog"></span></h3>
+  <ul class="tasks" data-step="s0">
+    <li data-id="s0-1">Go through the table below and find each item in the source file</li>
+    <li data-id="s0-2">Agree: positions/speeds are <b>at the wheel</b> (gear ratio already applied)</li>
+    <li data-id="s0-3">Verify with one log that both wheels read positive when driving forward (motor A sign)</li>
+  </ul>
+
+  <h3>Constants &amp; functions</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Quantity</th><th>In code</th><th>Value / unit</th></tr></thead>
+    <tbody>
+      <tr><td>Sample time</td><td><code>TSAMPLE</code></td><td>\(\Delta t = 0.01\) s (100 Hz)</td></tr>
+      <tr><td>Wheel radius</td><td><code>R_WHEEL</code></td><td>\(r = 0.0325\) m</td></tr>
+      <tr><td>Wheelbase</td><td><code>WHEELBASE</code></td><td>\(L = 0.166\) m</td></tr>
+      <tr><td>Wheel position</td><td><code>getPositionMotorA/B()</code></td><td>rad <b>at the wheel</b></td></tr>
+      <tr><td>Wheel speed</td><td><code>getSpeedMotorA/B()</code></td><td>rad/s <b>at the wheel</b></td></tr>
+      <tr><td>Encoder resolution</td><td><code>ENC_TO_RAD</code></td><td>1792 counts / wheel revolution</td></tr>
+      <tr><td>Motor voltage (measured)</td><td><code>getVoltageMotorA/B()</code></td><td>V</td></tr>
+      <tr><td>Motor voltage (command)</td><td><code>setVoltageMotorA(MV[0])</code>, <code>setVoltageMotorB(MV[1])</code></td><td>V</td></tr>
+      <tr><td>Motor current</td><td><code>getCurrentMotorA/B()</code></td><td>A</td></tr>
+      <tr><td>IR distance</td><td><code>getFrontDistance()</code>, <code>getSideDistance()</code></td><td>m</td></tr>
+      <tr><td>IMU accelerometer</td><td><code>getIMUAccelX/Y/Z()</code></td><td>m/s²</td></tr>
+      <tr><td>IMU gyroscope</td><td><code>getIMUGyroX/Y/Z()</code></td><td>rad/s</td></tr>
+      <tr><td>IMU chip</td><td>MPU6050</td><td>–</td></tr>
+      <tr><td>Send value to log</td><td><code>writeValue(k, out[k])</code> → column <code>ValueIn k</code></td><td>–</td></tr>
+      <tr><td>Motor datasheet</td><td>Python constants</td><td>\(R_a=8.77\,\Omega\), \(L=203\,\mu\)H, \(K_e=0.0145\) V/(rad/s), \(K_t=0.0145\) Nm/A, \(J_m = 2.7\) gcm², \(n=256/9\)</td></tr>
+    </tbody>
+  </table></div>
+
+  <p class="note">Motor A's encoder scale is negated (<code>-ENC_TO_RAD</code>), presumably so both wheels read positive when driving forward. Verify once with a log.</p>
+
+  <details class="src"><summary>Sources</summary><div class="body"><ul>
+    <li>Sample time → <code>mecotron.h:45</code>; also <code>A2/INTERNAL-Identification/INTERNAL-Identification.ino</code> (<code>addThread(..., 10000, ...)</code> = 10000 µs)</li>
+    <li>Wheel radius → <code>mecotron.h:41</code>; wheelbase → <code>mecotron.h:42</code>; encoder resolution → <code>mecotron.h:49</code> ("1792 enc per 2*pi")</li>
+    <li>Position / speed functions → <code>mecotron.h:216-219</code>; units + "gear ratio already applied" → <code>FAQ gear</code> §"Do I need to apply the gear ratio in Python?"</li>
+    <li>Voltage / current functions → <code>mecotron.h:214-215, 220-221</code>; units → <code>A1 notebook</code> §7.1 "Test the motor states"</li>
+    <li>Voltage command → <code>robot.cpp</code> (end of <code>Robot::control()</code>)</li>
+    <li>IR → <code>mecotron.h:222-223</code>; units → <code>A1 notebook</code> §7.1 states 4–5</li>
+    <li>IMU accel / gyro → <code>mecotron.h:227-232</code>; units → <code>A1 notebook</code> §7.1 state "6. IMU"</li>
+    <li>IMU chip → <code>robot.cpp:6</code> (<code>#include &lt;Adafruit_MPU6050.h&gt;</code>); datasheet link → <code>A2 notebook</code>, cell 1, "IMU Datasheet"</li>
+    <li><code>writeValue</code> → <code>robot.cpp</code> (end of <code>Robot::control()</code>); <code>ValueIn k</code> naming → <code>FAQ gear</code> table</li>
+    <li>Motor datasheet → <code>A2 notebook</code>, cell 1, "What is a good DC motor model"</li>
+    <li>Encoder sign → <code>mecotron.h:141-144</code> (<code>setScale(-ENC_TO_RAD)</code> for A, <code>setScale(ENC_TO_RAD)</code> for B); "both positive forward" reason <span class="own">own interpretation</span></li>
+    <li>Factor 28 warning → <code>FAQ gear</code>, note at the top + §"How do I verify my data is correct?"; 0.35 rad/s <span class="own">own derivation</span></li>
+  </ul></div></details>
+</div>
+<div class="card notes" data-step="s0"><h3 style="margin-top:0">Notes</h3></div>
+</section>
+
+<!-- =================================== STEP 1 =================================== -->
+<section class="tab" id="s1" data-title="Arduino sketch" data-num="1">
+<div class="card">
+  <div class="head"><span class="big">Step 1</span><div>
+    <h2>Prepare the Arduino identification sketch</h2>
+    <p class="lead">Change the Assignment 2 Arduino program so (a) the motors get the voltages <i>we</i> want and (b) the robot sends the signals <i>we</i> need to the PC, where QRoboticsCenter saves them to CSV.</p>
+    <span class="output">Output: <b><code>robot.cpp</code> that logs the right channels with a useful voltage profile</b></span>
+  </div></div>
+
+  <details class="ctx"><summary>Why &amp; where in Assignment 2 <span class="need">Appendix · adapt motor control + displayed values</span></summary><div class="body">
+    <h4>In the assignment notebook</h4>
+    <blockquote class="nb"><span class="where">Appendix · How to collect mobile robot sensor data</span>"Read the Jupyter Notebook from the Software setup assignment folder."</blockquote><blockquote class="nb"><span class="where">Appendix · How to adapt motor control values</span>"Change the code in robot.cpp after the following line: <code>if (controlEnabled())</code>"</blockquote><blockquote class="nb"><span class="where">Appendix · How to change the values displayed in QRoboticsCenter</span>"Change the code in robot.cpp that writes values from <code>out[0]</code> to <code>out[11]</code>."</blockquote>
+    <h4>Role in the process</h4>
+    <p>First practical step: without a modified sketch there is no data. Change A (voltage profile) produces the excitation that Step 4 needs to fit the motor model. Change B (channels) decides which signals exist in the CSV files of Step 2: motor signals for goal 1, IMU signals for goal 2.</p>
+    <h4>Why this step</h4>
+    <ul style="margin-bottom:0">
+      <li><b>The sketch is a template.</b> Both blocks are marked <code>[TO BE ADJUSTED!]</code> in <code>robot.cpp</code> (lines 24 and 42).</li>
+      <li><b>Several voltage levels.</b> Step 4 fits <code>ω[k+1] = a·ω[k] + b·V[k]</code>. With one voltage the regression cannot separate "speed depends on previous speed" (a) from "speed depends on voltage" (b). Steps up and down give the transients that contain this information. <span class="own">own derivation</span></li>
+      <li><b>A run that ends by itself.</b> Every run is identical, so we can repeat and compare, and the robot doesn't drive into a wall.</li>
+      <li><b>The right channels.</b> Without GyroZ (or whichever axis is vertical) and both horizontal accelerations, Scenario 2 is impossible. Signals can't be added after recording.</li>
+    </ul>
+  </div></details>
+
+  <h3>Tasks <span class="tprog"></span></h3>
+  <ul class="tasks" data-step="s1">
+    <li data-id="s1-1">Read 1.1 and 1.2: understand how <code>Robot::control()</code> runs</li>
+    <li data-id="s1-2">Change A: voltage staircase in <code>robot.cpp</code></li>
+    <li data-id="s1-3">Change B: channel set (SET 1 / SET 2) in <code>robot.cpp</code></li>
+    <li data-id="s1-4">Upload sketch (QRoboticsCenter closed first)</li>
+    <li data-id="s1-5">Test with wheels in the air: 3 → 6 → 9 V, motors stop by themselves</li>
+    <li data-id="s1-6">Test run on the floor, CSV found and renamed</li>
+  </ul>
+
+  <h3>1.1 What is this program and how does it run?</h3>
+  <p>The program is the folder <code>A2/INTERNAL-Identification/</code>:</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>File</th><th>What it does</th><th>Change?</th></tr></thead>
+    <tbody>
+      <tr><td><code>INTERNAL-Identification.ino</code></td><td>Starts the robot and creates a thread that calls <code>update()</code> every 10000 µs = <b>every 10 ms</b>. <code>update()</code> reads all sensors (<code>robot.io()</code>) then runs <code>robot.control()</code>.</td><td>No</td></tr>
+      <tr><td><code>robot.h</code></td><td>Declares the robot's variables: counter <code>i</code>, array <code>out[12]</code> (values sent to PC), array <code>MV[2]</code> (motor voltages).</td><td>Only for extra variables</td></tr>
+      <tr><td><code>robot.cpp</code></td><td><code>Robot::control()</code>: <b>our code</b>, runs every 10 ms. <code>button0callback()</code>: toggles control on/off with Button 0 in QRoboticsCenter.</td><td><b>Yes</b></td></tr>
+    </tbody>
+  </table></div>
+  <p><code>Robot::control()</code> is a loop body repeated 100× per second. Each call does 4 things, in order (<code>robot.cpp:17-65</code>):</p>
+  <ol>
+    <li>Reset: <code>out[0..11] = 0</code> and <code>MV[0..1] = 0</code> (lines 19-21).</li>
+    <li><b>Decide the motor voltages</b> <code>MV[0]</code> (A) and <code>MV[1]</code> (B) (lines 24-39). ← <i>Change A</i></li>
+    <li><b>Choose what to send to the PC</b> by filling <code>out[0]</code> … <code>out[11]</code> (lines 42-56). ← <i>Change B</i></li>
+    <li>Send: <code>writeValue(k, out[k])</code> to the PC, <code>setVoltageMotorA(MV[0])</code> / <code>setVoltageMotorB(MV[1])</code> to the motors (lines 59-63).</li>
+  </ol>
+  <p>Counter <code>i</code> counts calls since Button 0 was pressed. One call = 10 ms, so <b><code>i = 100</code> means 1 second</b>. That is how we build a voltage <i>profile in time</i>.</p>
+
+  <h3>1.2 What the program does now</h3>
+  <details class="code"><summary>Current voltage block <span class="tag">C++</span></summary><div class="body"><pre><code>if (controlEnabled()) {            // Button 0 is ON
+  if (i &lt; 200)                { MV[0] =  8.0; MV[1] =  8.0; i++; }  // first 2 s: +8 V (forward)
+  else if (i &gt;= 200 &amp;&amp; i &lt; 400) { MV[0] = -8.0; MV[1] = -8.0; i++; }  // next 2 s: -8 V (backward)
+  else                         { i = 0; }                            // start over -&gt; repeats forever
+} else {                           // Button 0 is OFF
+  MV[0] = 0.0; MV[1] = 0.0; i = 0; // motors off, counter reset
+}</code></pre></div></details>
+  <p>It sends: <code>out[0..1]</code> voltages, <code>out[2..3]</code> currents, <code>out[4..5]</code> positions, <code>out[6..7]</code> speeds, <code>out[8..9]</code> IR distances, <code>out[10]</code> AccelX, <code>out[11]</code> GyroX.</p>
+  <p><b>Problems for our assignment:</b></p>
+  <ul>
+    <li>Always ±8 V → one voltage level only, not enough to fit a motor model (Step 4).</li>
+    <li>Forward 2 s / backward 2 s forever → drives back and forth, never ends by itself.</li>
+    <li>Only AccelX and GyroX → for 2D we need forward/sideways acceleration and the gyro around the <b>vertical</b> axis (probably Z, check in Step 7).</li>
+  </ul>
+
+  <h3>1.3 Change A · voltage profile</h3>
+  <p>Replace <b>only</b> the block <code>if (controlEnabled()) { ... } else { ... }</code> in <code>robot.cpp</code> (lines 25-39):</p>
+  <details class="code"><summary>Voltage staircase 3 → 6 → 9 V <span class="tag">C++</span></summary><div class="body"><pre><code>// Voltage staircase: 3 V -&gt; 6 V -&gt; 9 V, each 1.5 s, then motors off (run ends by itself).
+// TWEAK: levels in V[], number of levels N, duration STEP (100 = 1 s).
+//        Rotate in place: put  MV[1] = -v;  instead of  MV[1] = v;
+const float V[] = {3.0, 6.0, 9.0};
+const int   N    = 3;                        // number of levels in V[]
+const int   STEP = 150;                      // samples per level (150 x 10 ms = 1.5 s)
+
+if (controlEnabled()) {                      // Button 0 is ON
+  int s = i / STEP;                          // which level are we in? 0, 1, 2, ... (integer division)
+  float v = (s &lt; N) ? V[s] : 0.0;            // after the last level: 0 V
+  MV[0] = v;                                 // motor A
+  MV[1] = v;                                 // motor B (same -&gt; drive straight)
+  if (i &lt; (N + 1) * STEP) i++;               // stop counting 1 STEP after the last level
+} else {                                     // Button 0 is OFF
+  MV[0] = 0.0; MV[1] = 0.0;
+  i = 0;                                     // reset -&gt; next press starts the profile again
+}</code></pre></div></details>
+  <p><code>i</code> goes up by 1 every 10 ms. <code>i / STEP</code> (integer division) is 0 for the first 150 samples, 1 for the next 150, … so the voltage jumps 3 → 6 → 9 V. After the last level <code>v = 0</code>, the robot stops and <code>i</code> stops counting. Toggle Button 0 off/on to run the same profile again.</p>
+
+  <h3>1.4 Change B · which signals to send</h3>
+  <p>Replace the lines <code>out[0] = ...</code> to <code>out[11] = ...</code> (lines 43-56) with <b>one</b> of the two sets. Max 12 channels. <code>out[k]</code> becomes column <code>ValueIn k</code> in the CSV.</p>
+  <details class="code"><summary>SET 1 · motor experiments (E2, E3) <span class="tag">C++</span></summary><div class="body"><pre><code>// SET 1 - motor experiments (E2, E3): voltages, currents, wheel angles, wheel speeds, front IR.
+// TWEAK: free channels 9-11 can hold anything else you want to see.
+out[0] = getVoltageMotorA();    // V
+out[1] = getVoltageMotorB();    // V
+out[2] = getCurrentMotorA();    // A
+out[3] = getCurrentMotorB();    // A
+out[4] = getPositionMotorA();   // rad (wheel)
+out[5] = getPositionMotorB();   // rad (wheel)
+out[6] = getSpeedMotorA();      // rad/s (wheel)
+out[7] = getSpeedMotorB();      // rad/s (wheel)
+out[8] = getFrontDistance();    // m  (ground truth when driving towards a wall)</code></pre></div></details>
+  <details class="code"><summary>SET 2 · IMU experiments (E1, E4, E5) <span class="tag">C++</span></summary><div class="body"><pre><code>// SET 2 - IMU experiments (E1, E4, E5): wheels + all 6 IMU signals = exactly 12 channels.
+// TWEAK: once you know the vertical axis (Step 7) you can drop the unused IMU axes.
+out[0]  = getVoltageMotorA();   // V
+out[1]  = getVoltageMotorB();   // V
+out[2]  = getSpeedMotorA();     // rad/s
+out[3]  = getSpeedMotorB();     // rad/s
+out[4]  = getPositionMotorA();  // rad
+out[5]  = getPositionMotorB();  // rad
+out[6]  = getIMUAccelX();       // m/s^2
+out[7]  = getIMUAccelY();       // m/s^2
+out[8]  = getIMUAccelZ();       // m/s^2
+out[9]  = getIMUGyroX();        // rad/s
+out[10] = getIMUGyroY();        // rad/s
+out[11] = getIMUGyroZ();        // rad/s</code></pre></div></details>
+  <p class="note"><b>Write down which set you used for each CSV file.</b> The CSV only says <code>ValueIn 0</code>, <code>ValueIn 1</code>, … not what is in it. (Use the notes box below.)</p>
+
+  <h3>1.5 Upload and record</h3>
+  <ol>
+    <li>Libraries already installed from Assignment 1 (<code>libraries/</code> copied to <code>Documents/Arduino/libraries</code>).</li>
+    <li><b>Close QRoboticsCenter</b>, otherwise the upload fails (USB port busy).</li>
+    <li>Arduino IDE → File &gt; Open → <code>A2/INTERNAL-Identification/INTERNAL-Identification.ino</code> → Upload. Robot powered + USB connected.</li>
+    <li>Open QRoboticsCenter → <b>Recorders</b> tab → tick <b>GPIO</b>.</li>
+    <li><b>First test with wheels in the air</b> (robot on a box): press Button 0, check voltages step 3 → 6 → 9 V and motors stop by themselves. Press Button 0 again (off).</li>
+    <li>Robot on the floor at a marked start position. Press Button 0 → drives the profile and stops.</li>
+    <li>Button 0 off, stop the recorder. Measure travelled distance with a tape measure.</li>
+    <li>CSV is in <code>QRCrecords</code> as <code>log_gpio_&lt;date&gt;.csv</code>. <b>Rename right away</b>, e.g. <code>E2_run1_set1.csv</code>, copy to our <code>data/</code> folder.</li>
+  </ol>
+
+  <details class="src"><summary>Sources</summary><div class="body"><ul>
+    <li>Program structure → <code>INTERNAL-Identification.ino</code> (<code>System.addThread(ABOVENORMAL, 10000, &amp;update, false)</code>); <code>robot.h</code> (<code>i</code>, <code>out[12]</code>, <code>MV[2]</code>); <code>robot.cpp:71-79</code> (<code>button0callback</code>)</li>
+    <li>Current profile / channels → <code>robot.cpp:24-39</code>, <code>robot.cpp:43-56</code>, <code>A2/INTERNAL-Identification/README.md</code></li>
+    <li>Where to put motor code → <code>A2 notebook</code>, cell 1, "How to adapt motor control values"; staircase itself <span class="own">own code</span></li>
+    <li>Where to put channels → <code>A2 notebook</code>, cell 1, "How to change the values displayed in QRoboticsCenter"; <code>ValueIn k</code> → <code>FAQ gear</code> table</li>
+    <li>Libraries → <code>A1 notebook</code> §4; close QRC → <code>A1 notebook</code> §6 "Be aware"; recorder → <code>A1 notebook</code> §7.2 steps 1 and 3</li>
+    <li>Run steps → <code>A2/INTERNAL-Identification/README.md</code> ("Run the software"); test in air, measure, rename <span class="own">own suggestion</span></li>
+  </ul></div></details>
+</div>
+<div class="card notes" data-step="s1"><h3 style="margin-top:0">Notes</h3></div>
+</section>
+
+<!-- =================================== STEP 2 =================================== -->
+<section class="tab" id="s2" data-title="Experiments" data-num="2">
+<div class="card">
+  <div class="head"><span class="big">Step 2</span><div>
+    <h2>Design and run the experiments</h2>
+    <p class="lead">Separate, short experiments, each with one purpose. For each: date, file name, voltage profile, floor surface, and the <b>ground truth</b> measured by hand.</p>
+    <span class="output">Output: <b>a set of CSV logs, each with one clear purpose</b></span>
+  </div></div>
+
+  <details class="ctx"><summary>Why &amp; where in Assignment 2 <span class="need">§3 Goals 1 + 2 (indirect: the data)</span></summary><div class="body">
+    <h4>In the assignment notebook</h4>
+    <blockquote class="nb"><span class="where">§3 Assignment goals · goal 1</span>"The position based on the speed. Assume 1D motion of the robot platform."</blockquote><blockquote class="nb"><span class="where">§3 Assignment goals · goal 2</span>"The position (2D + orientation!) based on the IMU measurements. For this you will need to calibrate the IMU position and orientation."</blockquote><blockquote class="nb"><span class="where">§3 Assignment goals</span>"Which of these dead reckoning approaches is more accurate? Why?"</blockquote>
+    <h4>Role in the process</h4>
+    <p>Indirect: the notebook does not prescribe experiments, but every goal needs measured data. E2/E3 feed goal 1 (Steps 4–6), E1/E4 feed the IMU calibration of goal 2 (Step 7), E5 plus the hand-measured ground truth answers the key question (Step 10).</p>
+    <h4>Why this step</h4>
+    <p>System identification is only as good as its data. Separating fitting data (E2) from validation data (E3) shows the model <i>predicts</i> and not just <i>fits</i>. The stationary run (E1) is the cleanest way to get sensor biases and noise variances, needed for calibration and Q. Without hand-measured ground truth we cannot answer "which approach is more accurate", because each sensor only measures itself.</p>
+  </div></details>
+
+  <h3>Tasks <span class="tprog"></span></h3>
+  <ul class="tasks" data-step="s2">
+    <li data-id="s2-1">E1 · stationary, motors off, 30–60 s (SET 2)</li>
+    <li data-id="s2-2">E2 · straight line, voltage staircase (SET 1)</li>
+    <li data-id="s2-3">E3 · straight line, different profile, for validation (SET 1)</li>
+    <li data-id="s2-4">E4 · rotate in place, a few speeds (SET 2)</li>
+    <li data-id="s2-5">E5 · trajectory with turns (SET 2)</li>
+    <li data-id="s2-6">Each experiment repeated 2–3×</li>
+    <li data-id="s2-7">Ground truth for every run written in the notes</li>
+  </ul>
+
+  <h3>Experiments</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>ID</th><th>Experiment</th><th>Purpose</th><th>Ground truth</th></tr></thead>
+    <tbody>
+      <tr><td><b>E1</b></td><td>Robot stationary, motors off, 30–60 s</td><td>IMU bias + noise; encoder noise at rest</td><td>Robot did not move</td></tr>
+      <tr><td><b>E2</b></td><td>Straight line, voltage staircase, forward only, both motors equal</td><td>Identify motor/wheel model; find accelerometer forward axis</td><td>Total distance (tape); optional IR distance to a wall</td></tr>
+      <tr><td><b>E3</b></td><td>Same as E2, different profile (ramp / other amplitudes)</td><td><b>Validation</b>: test the model on data it was not fitted on</td><td>Tape measure</td></tr>
+      <tr><td><b>E4</b></td><td>Rotate in place (+V / −V), a few speeds</td><td>IMU lever arm (position) + gyro check against encoders</td><td>Count turns / mark heading on floor</td></tr>
+      <tr><td><b>E5</b></td><td>Trajectory with turns, e.g. 1 m straight, 90° turn, 0.5 m straight</td><td>Final comparison of both dead-reckoning approaches</td><td>Measured final x, y and heading</td></tr>
+    </tbody>
+  </table></div>
+  <ul>
+    <li>Repeat each experiment 2–3 times.</li>
+    <li>Drive on the floor (the real load), not with wheels in the air: friction and inertia differ a lot.</li>
+    <li>Start every run from rest so the initial state is known (\(\mathbf x_0 = 0\), \(\mathbf P_0 \approx 0\)).</li>
+  </ul>
+
+  <details class="src"><summary>Sources</summary><div class="body"><ul>
+    <li>Experiment design <span class="own">own derivation</span> (based on what Steps 4–10 need)</li>
+    <li>Floor vs. wheels in the air <span class="own">own derivation</span></li>
+    <li>P initialisation → <code>Ch 5</code> §5.3.1.1.1 "Design State Covariance"</li>
+  </ul></div></details>
+</div>
+<div class="card notes" data-step="s2"><h3 style="margin-top:0">Run log (file · set · profile · ground truth)</h3></div>
+</section>
+
+<!-- =================================== STEP 3 =================================== -->
+<section class="tab" id="s3" data-title="Load &amp; preprocess" data-num="3">
+<div class="card">
+  <div class="head"><span class="big">Step 3</span><div>
+    <h2>Load and preprocess data in Python</h2>
+    <p class="lead">Load the logs, build a time vector, compute derived signals, and check everything before fitting.</p>
+    <span class="output">Output: <b>clean DataFrames, time vector, sanity checks</b></span>
+  </div></div>
+
+  <details class="ctx"><summary>Why &amp; where in Assignment 2 <span class="need">Appendix · How to read a csv file</span></summary><div class="body">
+    <h4>In the assignment notebook</h4>
+    <blockquote class="nb"><span class="where">Appendix · How to read a csv file with Python</span><code>df = read_csv('filename.csv', header=1)</code></blockquote>
+    <h4>Role in the process</h4>
+    <p>Bridge between the robot and the analysis. Turns the raw QRoboticsCenter logs from Step 2 into clean, named signals that Steps 4–10 all reuse. The derived forward speed and yaw rate are the encoder reference for goal 1 and for the comparison in Step 10.</p>
+    <h4>Why this step</h4>
+    <p>Logs contain idle periods, sign conventions and column names we must check before fitting anything. Plotting first catches swapped channels, wrong units and saturation before they silently ruin a regression.</p>
+  </div></details>
+
+  <h3>Tasks <span class="tprog"></span></h3>
+  <ul class="tasks" data-step="s3">
+    <li data-id="s3-1">Load a CSV, check <code>df.columns</code>, rename to readable names</li>
+    <li data-id="s3-2">Compute forward speed and yaw rate from the encoders</li>
+    <li data-id="s3-3">Cut idle parts before Button 0 / after stop</li>
+    <li data-id="s3-4">Plot every signal vs. time</li>
+    <li data-id="s3-5">Sanity checks passed (units, signs, speed ~10–20 rad/s at 8 V, v ≈ 0.3–0.7 m/s)</li>
+  </ul>
+
+  <h3>Code</h3>
+  <details class="code"><summary>Load one GPIO log and build a time vector <span class="tag">Python</span></summary><div class="body"><pre><code># Load one GPIO log and build a time vector.
+# TWEAK: file name; column names after checking print(df.columns).
+import numpy as np
+import pandas as pd
+
+dt = 0.01                                    # TSAMPLE from mecotron.h
+df = pd.read_csv('data/E2_run1.csv', header=1)
+print(df.columns)                            # check names before renaming
+t = np.arange(len(df)) * dt                  # or use the log's time column</code></pre></div></details>
+  <details class="code"><summary>Derived signals: robot speed and yaw rate <span class="tag">Python</span></summary><div class="body"><pre><code># Derived signals: robot speed and yaw rate from the encoders.
+# TWEAK: if the yaw rate has the wrong sign in E4, swap wA and wB.
+r, L = 0.0325, 0.166
+v_enc   = r * (df['wA'] + df['wB']) / 2      # forward speed [m/s]
+yaw_enc = r * (df['wB'] - df['wA']) / L      # yaw rate [rad/s]</code></pre></div></details>
+  $$v = r\,\frac{\omega_A + \omega_B}{2},\qquad \dot\theta = r\,\frac{\omega_B - \omega_A}{L}$$
+  <p>Then cut the idle part, plot every signal vs. time, and do the FAQ sanity checks (speed ~10–20 rad/s at 8 V, \(v \approx 0.3\)–\(0.7\) m/s).</p>
+
+  <details class="src"><summary>Sources</summary><div class="body"><ul>
+    <li><code>read_csv(..., header=1)</code> → <code>A2 notebook</code>, cell 1, "How to read a csv file with Python"</li>
+    <li>Sanity values → <code>FAQ gear</code> §"How do I verify my data is correct?"</li>
+    <li>Speed / yaw-rate formulas <span class="own">own derivation</span> (standard differential-drive kinematics, also drawn in <code>assignments/Assignment3_linear_KF/images/Differential_Drive_Kinematics_of_a_Wheeled_Mobile_Robot.svg</code>)</li>
+  </ul></div></details>
+</div>
+<div class="card notes" data-step="s3"><h3 style="margin-top:0">Notes</h3></div>
+</section>
+
+<!-- =================================== STEP 4 =================================== -->
+<section class="tab" id="s4" data-title="Motor model" data-num="4">
+<div class="card">
+  <div class="head"><span class="big">Step 4</span><div>
+    <h2>Scenario 1a · Identify the motor/wheel speed model</h2>
+    <p class="lead">Derive a discrete-time model for wheel speed driven by voltage, then fit it with linear regression.</p>
+    <span class="output">Output: <b>fitted parameters \(a, b\) (and friction)</b></span>
+  </div></div>
+
+  <details class="ctx"><summary>Why &amp; where in Assignment 2 <span class="need">§3 Goal 1 · Appendix DC motor model + linear regression</span></summary><div class="body">
+    <h4>In the assignment notebook</h4>
+    <blockquote class="nb"><span class="where">§3 Assignment goals · goal 1</span>"The position based on the speed. Assume 1D motion of the robot platform."</blockquote><blockquote class="nb"><span class="where">Appendix · What is a good DC motor model</span>"1. The electrical part: \(V_a = L \frac{dI_a}{dt} + R_a I_a + K_e\omega\) &nbsp; 2. The mechanical part: \(K_T I_a = J\frac{d\omega}{dt} + c\omega\)"</blockquote><blockquote class="nb"><span class="where">Cells 2–3 · How to do linear regression</span>"Linear regression can be done in Python using for example the statsmodel toolbox or sci-kit Learn. Example code is provided below."</blockquote>
+    <h4>Role in the process</h4>
+    <p>Goal 1 asks for position <i>based on the speed</i>. This step gives the link voltage → speed. The fitted \(a, b\) go directly into F and B of Step 5 (Option A); the residuals of this fit are reused for Q in Step 6.</p>
+    <h4>Why this step</h4>
+    <p>If the prediction model uses the <b>commanded voltage</b> as input \(u\) (Ch 5 §5.3.1.1.4: "u might be a voltage controlling how fast the wheel's motor turns"), we must know how voltage turns into speed. Physics gives the <i>structure</i> (first order, linear), data gives the <i>numbers</i> (the datasheet doesn't know gearbox friction or robot mass). Simulating on separate validation data proves the model is usable for prediction.</p>
+  </div></details>
+
+  <h3>Tasks <span class="tprog"></span></h3>
+  <ul class="tasks" data-step="s4">
+    <li data-id="s4-1">Understand the derivation (neglect L, first-order model)</li>
+    <li data-id="s4-2">Fit \(a, b\) on E2 for wheel A</li>
+    <li data-id="s4-3">Fit \(a, b\) on E2 for wheel B</li>
+    <li data-id="s4-4">Check the time constant τ is physically plausible</li>
+    <li data-id="s4-5">Validate: simulate on E3 from voltage only, plot vs. measured</li>
+    <li data-id="s4-6">(Optional) add Coulomb friction / dead zone term</li>
+  </ul>
+
+  <h3>Model</h3>
+  <p>From the appendix DC motor model: the electrical time constant \(L/R_a \approx 23\,\mu\)s is far below \(\Delta t = 10\) ms, so neglect \(L\):</p>
+  $$I_a = \frac{V_a - K_e\omega}{R_a}\;\Rightarrow\; J\dot\omega = \frac{K_t}{R_a}V_a - \left(c + \frac{K_tK_e}{R_a}\right)\omega$$
+  <p>First order. Discretized:</p>
+  $$\omega[k+1] = a\,\omega[k] + b\,V[k]$$
+
+  <h3>Code</h3>
+  <details class="code"><summary>Fit a, b with linear regression <span class="tag">Python</span></summary><div class="body"><pre><code># Fit w[k+1] = a*w[k] + b*V[k] for one wheel (same tool as the notebook example).
+# TWEAK: change 'wA'/'VA' for the other wheel; add np.sign(w[:-1]) as a 3rd
+#        column in X to model Coulomb friction / dead zone.
+from sklearn.linear_model import LinearRegression
+
+w, V = df['wA'].to_numpy(), df['VA'].to_numpy()
+X = np.column_stack((w[:-1], V[:-1]))        # regressors at time k
+y = w[1:]                                    # target at time k+1
+a, b = LinearRegression(fit_intercept=False).fit(X, y).coef_
+tau = -dt / np.log(a)                        # time constant [s], physics check
+print(f'a={a:.4f}  b={b:.4f}  tau={tau*1000:.0f} ms')</code></pre></div></details>
+  <details class="code"><summary>Validate on E3: simulate from voltage only <span class="tag">Python</span></summary><div class="body"><pre><code># Validate: simulate speed from voltage ONLY (no measurements fed back) on E3.
+# TWEAK: nothing; if the curves diverge, the model structure is too simple.
+w_sim = np.zeros(len(V))
+for k in range(len(V) - 1):
+    w_sim[k+1] = a * w_sim[k] + b * V[k]</code></pre></div></details>
+
+  <details class="src"><summary>Sources</summary><div class="body"><ul>
+    <li>Motor equations + parameters → <code>A2 notebook</code>, cell 1, "What is a good DC motor model"</li>
+    <li>Neglecting L, combining and discretizing <span class="own">own derivation</span></li>
+    <li>Regression code → adapted from <code>A2 notebook</code>, cells 2–3, "How to do linear regression"</li>
+    <li>Coulomb friction / dead zone, simulation-based validation, τ = −Δt / ln a <span class="own">own derivation</span></li>
+    <li>Voltage as input → <code>Ch 5</code> §5.3.1.1.4 "Design the Control Function"</li>
+  </ul></div></details>
+</div>
+<div class="card notes" data-step="s4"><h3 style="margin-top:0">Notes (fitted values, τ, …)</h3></div>
+</section>
+
+<!-- =================================== STEP 5 =================================== -->
+<section class="tab" id="s5" data-title="1D model · F, B" data-num="5">
+<div class="card">
+  <div class="head"><span class="big">Step 5</span><div>
+    <h2>Scenario 1b · Build the 1D prediction model (F, B)</h2>
+    <p class="lead">Follow the textbook recipe (Ch 5.3.1): choose <b>x</b>, <b>P</b>, <b>F</b>, <b>B</b>, <b>u</b>, then <b>Q</b> (Step 6). Two valid options.</p>
+    <span class="output">Output: <b>1D model + simulation vs. measurement</b></span>
+  </div></div>
+
+  <details class="ctx"><summary>Why &amp; where in Assignment 2 <span class="need">§3 Goal 1 · F, B (§2 table)</span></summary><div class="body">
+    <h4>In the assignment notebook</h4>
+    <blockquote class="nb"><span class="where">§3 Assignment goals · goal 1</span>"The position based on the speed. Assume 1D motion of the robot platform."</blockquote><blockquote class="nb"><span class="where">§2 Assignment context · Linear Kalman filter prediction step</span>"Process model equation: \(\bar{\mathbf x} = \mathbf{Fx} + \mathbf{Bu}\)" &nbsp;… "\(\mathbf F\) is the <b>state transition function</b>. When multiplied by \(\mathbf x\) it computes the prior." … "\(\mathbf B\) and \(\mathbf u\) are the <b>input transition matrix</b> and the vector of input values."</blockquote><blockquote class="nb"><span class="where">§3 Assignment goals</span>"Both process models will consist of: the <b>process model</b> matrixes (\(\mathbf F, \mathbf B\)) and, corresponding uncertainty (\(\mathbf Q\))."</blockquote>
+    <h4>Role in the process</h4>
+    <p>First deliverable of goal 1: the matrices F and B. Uses \(a, b\) from Step 4. Q is added in Step 6; this model is also reused in Step 10 (encoder baseline) and in Assignment 3 (linear KF).</p>
+    <h4>Why this step</h4>
+    <p>The assignment asks explicitly for F and B. The choice of state determines what the Kalman filter can estimate later (Assignment 3 builds on it). Option B is simple and accurate while wheels don't slip; Option A predicts motion from <i>commands</i>, so it still works when encoder data is not trusted, but depends on how well the motor model fits. Showing and comparing both is a strong answer.</p>
+  </div></details>
+
+  <h3>Tasks <span class="tprog"></span></h3>
+  <ul class="tasks" data-step="s5">
+    <li data-id="s5-1">Option A: F, B with voltage input (uses a, b from Step 4)</li>
+    <li data-id="s5-2">Option B: F, B with measured wheel speed as input</li>
+    <li data-id="s5-3">Run the FilterPy prediction over a whole log</li>
+    <li data-id="s5-4">Compare both options on E3 against the tape-measured distance</li>
+  </ul>
+
+  <h3>Option A · voltage as input, state = [position, wheel speed]</h3>
+  <p class="hint">Same structure as the dog example (Ch 5.3.1.1.2), but with \(a \neq 1\) and a control input.</p>
+  $$\mathbf x = \begin{bmatrix} p \\ \omega\end{bmatrix},\quad
+    \mathbf F = \begin{bmatrix} 1 & r\,\Delta t \\ 0 & a\end{bmatrix},\quad
+    \mathbf B = \begin{bmatrix} 0 \\ b\end{bmatrix},\quad u = V$$
+
+  <h3>Option B · measured wheel speed as input, state = position</h3>
+  <p class="hint">The 1D model of Ch 4.4, \(\bar x = x + v\Delta t\).</p>
+  $$x = p,\quad F = 1,\quad \mathbf B = \begin{bmatrix}\frac{r\Delta t}{2} & \frac{r\Delta t}{2}\end{bmatrix},\quad \mathbf u = \begin{bmatrix}\omega_A \\ \omega_B\end{bmatrix}$$
+
+  <details class="code"><summary>Run the prediction step with FilterPy <span class="tag">Python</span></summary><div class="body"><pre><code># Run the prediction step over a whole log with FilterPy (Ch 5.3.1.1.4).
+# TWEAK: swap F, B, u for Option B; Q comes from Step 6.
+from filterpy.kalman import predict
+
+F = np.array([[1, r*dt], [0, a]])
+B = np.array([[0], [b]])
+x, P = np.zeros((2, 1)), np.zeros((2, 2))
+xs, Ps = [], []
+for k in range(len(V)):
+    x, P = predict(x, P, F, Q, B, np.array([[V[k]]]))
+    xs.append(x.copy()); Ps.append(P.copy())</code></pre></div></details>
+
+  <p class="note"><b>Recommendation:</b> present Option A as the main model (uses the identification, is what the appendix points to) and Option B as the simple encoder-odometry baseline. Compare both on E3 against the tape-measured distance.</p>
+
+  <details class="src"><summary>Sources</summary><div class="body"><ul>
+    <li>Design recipe → <code>Ch 5</code> §5.3.1.2 "Prediction: Summary"</li>
+    <li>Dog F-matrix → <code>Ch 5</code> §5.3.1.1.2 "Design the Process Model"</li>
+    <li>1D model → <code>Ch 4</code> §4.4 "Predictions with Gaussians"</li>
+    <li>Option A/B → <code>FAQ velocity</code> §"Approach 1" (motor command as input, <code>F = [[1, dt],[0, alpha]]</code>) and §"Approach 3" (measured velocity as input)</li>
+    <li><code>predict(x, P, F, Q, B, u)</code> → <code>Ch 5</code> §5.3.1.1.4</li>
+    <li>Option A's \(r\Delta t\) term (state is wheel speed, not linear speed) <span class="own">own derivation</span></li>
+  </ul></div></details>
+</div>
+<div class="card notes" data-step="s5"><h3 style="margin-top:0">Notes</h3></div>
+</section>
+
+<!-- =================================== STEP 6 =================================== -->
+<section class="tab" id="s6" data-title="1D model · Q" data-num="6">
+<div class="card">
+  <div class="head"><span class="big">Step 6</span><div>
+    <h2>Scenario 1c · Determine Q for the 1D model</h2>
+    <p class="lead">Textbook definition (Ch 5.3.1.1.3): \(\mathbf Q = E[\mathbf w\mathbf w^\mathsf T]\), the covariance of what the model does <i>not</i> explain.</p>
+    <span class="output">Output: <b>Q matrix with justification</b></span>
+  </div></div>
+
+  <details class="ctx"><summary>Why &amp; where in Assignment 2 <span class="need">§3 Goal 1 · Q (§2 table)</span></summary><div class="body">
+    <h4>In the assignment notebook</h4>
+    <blockquote class="nb"><span class="where">§3 Assignment goals</span>"Both process models will consist of: the <b>process model</b> matrixes (\(\mathbf F, \mathbf B\)) and, corresponding uncertainty (\(\mathbf Q\))."</blockquote><blockquote class="nb"><span class="where">§2 Assignment context · General prediction step</span>"2. Adjust belief to account for the uncertainty in prediction"</blockquote><blockquote class="nb"><span class="where">§2 Assignment context · Linear Kalman filter prediction step</span>"Prediction uncertainty evolution: \(\bar{\mathbf P} = \mathbf{FPF}^\mathsf T + \mathbf Q\)" … "\(\mathbf Q\) is the process covariance."</blockquote>
+    <h4>Role in the process</h4>
+    <p>Second deliverable of goal 1: the uncertainty Q. Completes the 1D process model (F, B, Q). The propagated P is reused in Step 10 to compare predicted uncertainty with the real error.</p>
+    <h4>Why this step</h4>
+    <p>F and B give the mean prediction; Q tells the filter how much to trust it (every prediction <i>adds</i> uncertainty, Ch 2.4 / Ch 4.4). Too small Q → filter ignores measurements and drifts; too large → prediction is useless. Deriving Q from data instead of guessing is what we must justify. The P vs. real-error check shows our Q is realistic.</p>
+  </div></details>
+
+  <h3>Tasks <span class="tprog"></span></h3>
+  <ul class="tasks" data-step="s6">
+    <li data-id="s6-1">Method 1: Q from one-step residuals</li>
+    <li data-id="s6-2">Method 2: \(\mathbf Q = \mathbf B\mathbf G\mathbf B^\mathsf T\) from encoder speed noise</li>
+    <li data-id="s6-3">Propagate P over a whole run</li>
+    <li data-id="s6-4">Check: real end error within \(\pm 2\sqrt{P_{11}}\)</li>
+  </ul>
+
+  <h3>Method 1 · from residuals (data-driven)</h3>
+  <p>Literally \(E[\mathbf w\mathbf w^\mathsf T]\): the covariance of the one-step prediction error.</p>
+  <details class="code"><summary>Q from one-step prediction error <span class="tag">Python</span></summary><div class="body"><pre><code># One-step prediction error on measured states -&gt; its covariance is Q.
+# TWEAK: x_meas = column_stack of encoder position and speed; u = voltage.
+e = x_meas[1:] - (x_meas[:-1] @ F.T + u[:-1, None] @ B.T)
+Q = np.cov(e.T)</code></pre></div></details>
+
+  <h3>Method 2 · from input noise (noise in control space, Ch 6.2.1.3)</h3>
+  <p>For Option B the noise enters through \(\mathbf u\). With encoder speed noise \(\sigma_\omega^2\) (from steady-state parts of E2):</p>
+  $$\mathbf Q = \mathbf B\,\mathbf G\,\mathbf B^\mathsf T,\qquad \mathbf G = \mathrm{diag}(\sigma_\omega^2, \sigma_\omega^2)$$
+  <p>Add a term for wheel slip / radius error if the final position deviates from the tape measure.</p>
+
+  <h3>Check</h3>
+  <p>Propagate \(\bar{\mathbf P} = \mathbf F\mathbf P\mathbf F^\mathsf T + \mathbf Q\) over the whole run; the real end-position error (vs. tape) should fall roughly within \(\pm 2\sqrt{P_{11}}\).</p>
+
+  <details class="src"><summary>Sources</summary><div class="body"><ul>
+    <li>\(\mathbf Q = E[\mathbf w\mathbf w^\mathsf T]\) → <code>Ch 5</code> §5.3.1.1.3 "Design Process Noise"</li>
+    <li>\(\mathbf Q = \mathbf B\mathbf G\mathbf B^\mathsf T\) → <code>Ch 6</code> §6.2.1.3 "Design the process model" (and the EKF table in §6.1)</li>
+    <li>Covariance prediction → <code>Ch 5</code> §5.2.1</li>
+    <li>Residual method and ±2σ check <span class="own">own derivation</span> (±2σ ≈ 95 % of a Gaussian; Gaussians → <code>Ch 3</code>)</li>
+    <li>"Estimate Q from model" tip → <code>assignments/FAQ.md</code> (Assignment 3 table, "How do I tune Q, R, and K parameters?"), details in <code>assignments/faq-details/FAQ_kalman_tuning.md</code></li>
+    <li>Prediction adds uncertainty → <code>Ch 2</code> §2.4 "Incorporating Movement", <code>Ch 4</code> §4.4</li>
+  </ul></div></details>
+</div>
+<div class="card notes" data-step="s6"><h3 style="margin-top:0">Notes</h3></div>
+</section>
+
+<!-- =================================== STEP 7 =================================== -->
+<section class="tab" id="s7" data-title="IMU calibration" data-num="7">
+<div class="card">
+  <div class="head"><span class="big">Step 7</span><div>
+    <h2>Scenario 2a · Calibrate the IMU</h2>
+    <p class="lead">Find axes, bias, noise, mounting orientation and mounting position, in this order.</p>
+    <span class="output">Output: <b>bias, mounting rotation, lever arm</b></span>
+  </div></div>
+
+  <details class="ctx"><summary>Why &amp; where in Assignment 2 <span class="need">§3 Goal 2 · IMU calibration</span></summary><div class="body">
+    <h4>In the assignment notebook</h4>
+    <blockquote class="nb"><span class="where">§3 Assignment goals · goal 2</span>"The position (2D + orientation!) based on the IMU measurements. For this you will need to calibrate the IMU position and orientation."</blockquote><blockquote class="nb"><span class="where">Appendix · IMU Datasheet</span>"Check the accelerometer datasheet for its specifications."</blockquote>
+    <h4>Role in the process</h4>
+    <p>Explicitly required by goal 2 ("calibrate the IMU position and orientation"). The bias, mounting angle ψ and lever arm \((r_x, r_y)\) correct the raw IMU signals that become the inputs \(\mathbf u\) of Step 8; the noise σ values become G for Q in Step 9.</p>
+    <h4>Why this step</h4>
+    <p>The assignment explicitly requires IMU position and orientation calibration. Ch 6.2.1.2 names <i>gyroscope bias</i> as a systematic odometry error. Accelerometers measure in <i>their own</i> frame at <i>their own</i> location: a small mounting angle leaks forward acceleration into the lateral axis; an offset from the rotation center adds centripetal acceleration during turns that is not translation. A gyro bias of 0.01 rad/s gives ≈34° heading error per minute; an accelerometer bias is integrated <b>twice</b>, so position error grows with \(t^2\).</p>
+  </div></details>
+
+  <h3>Tasks <span class="tprog"></span></h3>
+  <ul class="tasks" data-step="s7">
+    <li data-id="s7-1">Identify vertical axis (E1) and forward axis (E2)</li>
+    <li data-id="s7-2">Bias and noise per channel from E1</li>
+    <li data-id="s7-3">Mounting angle ψ from E2</li>
+    <li data-id="s7-4">Lever arm \((r_x, r_y)\) from E4</li>
+    <li data-id="s7-5">Gyro scale check vs. encoders and real turns (E4)</li>
+  </ul>
+
+  <h3>1 · Which axis is which</h3>
+  <p>In E1 one accelerometer axis reads about ±9.81 m/s² → vertical axis; the gyro around that axis is the yaw rate. In E2 the axis that responds to acceleration is forward.</p>
+
+  <h3>2 · Bias and noise (E1)</h3>
+  <details class="code"><summary>IMU bias = mean at rest, noise = std at rest <span class="tag">Python</span></summary><div class="body"><pre><code># IMU bias = mean at rest, noise = std at rest (one value per channel).
+# TWEAK: column names; remove 9.81 from the vertical accel axis.
+imu = ['ax', 'ay', 'az', 'gx', 'gy', 'gz']
+bias  = df_E1[imu].mean()
+sigma = df_E1[imu].std()</code></pre></div></details>
+
+  <h3>3 · Mounting orientation (E2)</h3>
+  <p>If the IMU is rotated by \(\psi\) around the vertical axis: during pure forward acceleration the lateral robot acceleration must be 0, so \(\psi = \mathrm{atan2}(\overline{a_y}, \overline{a_x})\) over the accelerating samples. Rotate all accel data by \(-\psi\). (A tilted IMU also shows as gravity leaking into \(a_x, a_y\) in E1.)</p>
+
+  <h3>4 · Mounting position (E4)</h3>
+  <p>IMU at offset \((r_x, r_y)\) from the rotation center (middle of the wheel axle). Turning in place produces centripetal and tangential acceleration:</p>
+  $$\begin{bmatrix} a_x \\ a_y\end{bmatrix} = \begin{bmatrix} -\dot\theta^2 & -\ddot\theta \\ \ddot\theta & -\dot\theta^2\end{bmatrix}\begin{bmatrix} r_x \\ r_y\end{bmatrix}$$
+  <details class="code"><summary>Lever arm by least squares <span class="tag">Python</span></summary><div class="body"><pre><code># Lever arm (rx, ry) by least squares over all samples of E4.
+# TWEAK: smoothing window of the derivative if alpha is too noisy.
+wz = df_E4['gz'] - bias['gz']
+alpha = np.gradient(wz.rolling(5, center=True).mean().bfill().ffill(), dt)
+A = np.vstack([np.column_stack((-wz**2, -alpha)),
+               np.column_stack(( alpha, -wz**2))])
+z = np.concatenate([ax_cal, ay_cal])       # bias- and rotation-corrected accel
+(rx, ry), *_ = np.linalg.lstsq(A, z, rcond=None)</code></pre></div></details>
+
+  <h3>5 · Gyro scale check (E4)</h3>
+  <p>Compare \(\int\dot\theta_{gyro}\,dt\) with the encoder heading and the real number of turns.</p>
+
+  <details class="src"><summary>Sources</summary><div class="body"><ul>
+    <li>"Calibrate the IMU position and orientation" → <code>A2 notebook</code>, cell 0, §3 "Assignment goals"</li>
+    <li>Sensor specs → <code>A2 notebook</code>, cell 1, "IMU Datasheet" (link)</li>
+    <li>Gyro bias as odometry error → <code>Ch 6</code> §6.2.1.2 "Design the Input Variables"</li>
+    <li>Calibration methods (bias from rest, atan2 mounting angle, lever-arm formula from rigid-body kinematics, least squares) <span class="own">own derivation</span></li>
+    <li>0.01 rad/s × 60 s = 0.6 rad ≈ 34°, and \(t^2\) growth <span class="own">own derivation</span></li>
+  </ul></div></details>
+</div>
+<div class="card notes" data-step="s7"><h3 style="margin-top:0">Notes (bias, σ, ψ, r<sub>x</sub>, r<sub>y</sub>)</h3></div>
+</section>
+
+<!-- =================================== STEP 8 =================================== -->
+<section class="tab" id="s8" data-title="2D model · F, B" data-num="8">
+<div class="card">
+  <div class="head"><span class="big">Step 8</span><div>
+    <h2>Scenario 2b · Build the 2D IMU prediction model (F, B)</h2>
+    <p class="lead">Start from the textbook robot motion model (Ch 6.2.1, eq. 6.2) and feed it IMU signals.</p>
+    <span class="output">Output: <b>2D model + dead-reckoned trajectory</b></span>
+  </div></div>
+
+  <details class="ctx"><summary>Why &amp; where in Assignment 2 <span class="need">§3 Goal 2 · F, B (§2 \(\bar{\mathbf x} = f(\mathbf x, \mathbf u)\))</span></summary><div class="body">
+    <h4>In the assignment notebook</h4>
+    <blockquote class="nb"><span class="where">§3 Assignment goals · goal 2</span>"The position (2D + orientation!) based on the IMU measurements. For this you will need to calibrate the IMU position and orientation."</blockquote><blockquote class="nb"><span class="where">§2 Assignment context · General prediction step</span>"1. Use process model to predict state at the next time step: \(\bar{\mathbf x} = f(\mathbf{x},\mathbf{u})\)"</blockquote><blockquote class="nb"><span class="where">§3 Assignment goals</span>"Both process models will consist of: the <b>process model</b> matrixes (\(\mathbf F, \mathbf B\)) and, corresponding uncertainty (\(\mathbf Q\))."</blockquote>
+    <h4>Role in the process</h4>
+    <p>First deliverable of goal 2: F and B for 2D position + orientation. The model is nonlinear, so we use the general form \(f(\mathbf x, \mathbf u)\) from §2 and linearise it (Jacobians) to get F and B. Uses calibrated signals from Step 7; its B is reused for Q in Step 9; the trajectories feed Step 10.</p>
+    <h4>Why this step</h4>
+    <p>This is the second process model the assignment asks for: position <b>and</b> orientation from the IMU. Reusing the textbook structure means we only justify our inputs and noise, and it plugs straight into the EKF of Assignment 4 (Ch 6). Building the encoder version with the same model makes the comparison in Step 10 fair: same equations, only the input source differs.</p>
+  </div></details>
+
+  <h3>Tasks <span class="tprog"></span></h3>
+  <ul class="tasks" data-step="s8">
+    <li data-id="s8-1">Write the IMU motion model \(f(\mathbf x, \mathbf u)\)</li>
+    <li data-id="s8-2">Jacobians F and B with SymPy</li>
+    <li data-id="s8-3">IMU dead reckoning over a log</li>
+    <li data-id="s8-4">Encoder version of the same model</li>
+    <li data-id="s8-5">Trajectory plots on E2/E3 and E5 with measured end point</li>
+  </ul>
+
+  <h3>Textbook model</h3>
+  $$\bar x = x + \delta\cos(\theta + \phi),\quad \bar y = y + \delta\sin(\theta + \phi),\quad \bar\theta = \theta + \phi,\qquad \mathbf u = \begin{bmatrix}\delta\\ \phi\end{bmatrix}$$
+  <p>\(\delta\) = distance travelled, \(\phi\) = heading change in one time step. For the <b>IMU</b>:</p>
+  <ul>
+    <li>\(\phi = \dot\theta_{gyro}\,\Delta t\) (calibrated gyro).</li>
+    <li>\(\delta = v\,\Delta t\), but the IMU gives no speed, only acceleration → add speed to the state.</li>
+  </ul>
+
+  <h3>IMU model</h3>
+  <p>\(\mathbf x = [x,\ y,\ \theta,\ v]^\mathsf T\), \(\mathbf u = [a_{fwd},\ \dot\theta_{gyro}]^\mathsf T\):</p>
+  $$\bar x = x + v\Delta t\cos\theta,\quad \bar y = y + v\Delta t\sin\theta,\quad \bar\theta = \theta + \dot\theta_{gyro}\Delta t,\quad \bar v = v + a_{fwd}\Delta t$$
+  <p>Nonlinear in \(\theta\), so as in Ch 6.1, F and B are the Jacobians evaluated at the current estimate:</p>
+  $$\mathbf F = \frac{\partial f}{\partial \mathbf x} = \begin{bmatrix}
+    1&0&-v\Delta t\sin\theta&\Delta t\cos\theta\\
+    0&1&v\Delta t\cos\theta&\Delta t\sin\theta\\
+    0&0&1&0\\
+    0&0&0&1\end{bmatrix},\qquad
+    \mathbf B = \frac{\partial f}{\partial \mathbf u} = \begin{bmatrix}
+    0&0\\0&0\\0&\Delta t\\ \Delta t&0\end{bmatrix}$$
+
+  <details class="code"><summary>Jacobians F and B with SymPy <span class="tag">Python</span></summary><div class="body"><pre><code># Jacobians F and B of the IMU motion model (same SymPy approach as Ch 6.2.1.3).
+# TWEAK: edit fxu if you change the state or input.
+import sympy as sp
+x_, y_, th, v, a_f, w_g, T = sp.symbols('x y theta v a_f omega_g Delta_t')
+fxu = sp.Matrix([x_ + v*T*sp.cos(th),
+                 y_ + v*T*sp.sin(th),
+                 th + w_g*T,
+                 v  + a_f*T])
+F_sym = fxu.jacobian([x_, y_, th, v])
+B_sym = fxu.jacobian([a_f, w_g])</code></pre></div></details>
+  <details class="code"><summary>Dead reckoning with the IMU model <span class="tag">Python</span></summary><div class="body"><pre><code># Dead reckoning with the IMU model: propagate the mean with f(x, u) itself.
+# TWEAK: a_fwd / w_gyro are the calibrated signals from Step 7.
+X = np.zeros((len(a_fwd), 4))                # columns: x, y, theta, v
+for k in range(len(a_fwd) - 1):
+    x, y, th_k, v_k = X[k]
+    X[k+1] = [x + v_k*dt*np.cos(th_k),
+              y + v_k*dt*np.sin(th_k),
+              th_k + w_gyro[k]*dt,
+              v_k + a_fwd[k]*dt]</code></pre></div></details>
+
+  <h3>Encoder version (for Step 10)</h3>
+  <p>Same textbook model, state \([x, y, \theta]\) exactly as in Ch 6.2.1, with</p>
+  $$\delta = r\,\frac{\Delta q_A + \Delta q_B}{2},\qquad \phi = r\,\frac{\Delta q_B - \Delta q_A}{L}$$
+  <p>Run both on E2/E3 (straight) and E5 (turns) and plot the trajectories with the measured end point.</p>
+
+  <details class="src"><summary>Sources</summary><div class="body"><ul>
+    <li>Robot model, eq. (6.2), state \([x, y, \theta]\), input \([\delta, \phi]\) → <code>Ch 6</code> §6.2.1.1–6.2.1.3</li>
+    <li>Jacobians F and B + SymPy approach → <code>Ch 6</code> §6.1 (EKF table) and §6.2.1.3</li>
+    <li>"Compute the prior with f(x, u), not Fx" → <code>Ch 6</code> §6.1 (text under the EKF table)</li>
+    <li>Adding \(v\) to the state with \(a_{fwd}\), \(\dot\theta_{gyro}\) as inputs <span class="own">own derivation</span></li>
+    <li>Encoder δ, φ formulas <span class="own">own derivation</span> (differential-drive kinematics); <code>Ch 6</code> §6.2.1.2 mentions odometry from wheel rotation and heading from "differential odometry" or a gyroscope</li>
+  </ul></div></details>
+</div>
+<div class="card notes" data-step="s8"><h3 style="margin-top:0">Notes</h3></div>
+</section>
+
+<!-- =================================== STEP 9 =================================== -->
+<section class="tab" id="s9" data-title="2D model · Q" data-num="9">
+<div class="card">
+  <div class="head"><span class="big">Step 9</span><div>
+    <h2>Scenario 2c · Determine Q for the IMU model</h2>
+    <p class="lead">Exactly the textbook construction (Ch 6.2.1.3): noise is in <b>control space</b>, converted to state space with B.</p>
+    <span class="output">Output: <b>Q matrix with justification</b></span>
+  </div></div>
+
+  <details class="ctx"><summary>Why &amp; where in Assignment 2 <span class="need">§3 Goal 2 · Q (§2 table)</span></summary><div class="body">
+    <h4>In the assignment notebook</h4>
+    <blockquote class="nb"><span class="where">§3 Assignment goals</span>"Both process models will consist of: the <b>process model</b> matrixes (\(\mathbf F, \mathbf B\)) and, corresponding uncertainty (\(\mathbf Q\))."</blockquote><blockquote class="nb"><span class="where">§2 Assignment context · Linear Kalman filter prediction step</span>"Prediction uncertainty evolution: \(\bar{\mathbf P} = \mathbf{FPF}^\mathsf T + \mathbf Q\)"</blockquote>
+    <h4>Role in the process</h4>
+    <p>Second deliverable of goal 2: the uncertainty Q of the IMU model. Completes the 2D process model (F, B, Q). Its growth of P over time is the theoretical side of the answer in Step 10.</p>
+    <h4>Why this step</h4>
+    <p>Same reason as Step 6: the filter needs a realistic uncertainty. Writing Q as \(\mathbf B\mathbf G\mathbf B^\mathsf T\) also explains <i>why</i> IMU dead reckoning drifts fast: acceleration noise enters \(v\), and \(\mathbf F\) couples \(v\) into position each step → double integration.</p>
+  </div></details>
+
+  <h3>Tasks <span class="tprog"></span></h3>
+  <ul class="tasks" data-step="s9">
+    <li data-id="s9-1">Compute \(\mathbf Q = \mathbf B\mathbf G\mathbf B^\mathsf T\)</li>
+    <li data-id="s9-2">Compare σ at rest vs. at constant driving speed (vibrations)</li>
+    <li data-id="s9-3">Consistency check: does P grow as fast as the real drift?</li>
+    <li data-id="s9-4">Write down what this Q does not cover</li>
+  </ul>
+
+  $$\mathbf Q = \mathbf B\,\mathbf G\,\mathbf B^\mathsf T,\qquad \mathbf G = \begin{bmatrix}\sigma_{a}^2 & 0\\ 0 & \sigma_{g}^2\end{bmatrix}$$
+  <details class="code"><summary>Process noise from IMU input noise <span class="tag">Python</span></summary><div class="body"><pre><code># Process noise from IMU input noise (Ch 6: Q = B G B^T).
+# TWEAK: use sigma measured while driving (vibrations!) instead of at rest.
+G = np.diag([sigma['ax']**2, sigma['gz']**2])
+B = np.array([[0, 0], [0, 0], [0, dt], [dt, 0]])
+Q = B @ G @ B.T</code></pre></div></details>
+  <p>Discuss what this Q does <b>not</b> cover: residual bias after calibration, vibrations while driving, mounting errors. Optionally inflate G with the residual bias. Check consistency like Step 6.</p>
+
+  <details class="src"><summary>Sources</summary><div class="body"><ul>
+    <li>\(\mathbf Q = \mathbf B\mathbf G\mathbf B^\mathsf T\) and diagonal G → <code>Ch 6</code> §6.2.1.3 "Design the process model"</li>
+    <li>σ values → our E1 data (Step 7)</li>
+    <li>Vibration / residual-bias remarks <span class="own">own derivation</span></li>
+  </ul></div></details>
+</div>
+<div class="card notes" data-step="s9"><h3 style="margin-top:0">Notes</h3></div>
+</section>
+
+<!-- =================================== STEP 10 =================================== -->
+<section class="tab" id="s10" data-title="Compare approaches" data-num="10">
+<div class="card">
+  <div class="head"><span class="big">Step 10</span><div>
+    <h2>Compare both approaches · the key question</h2>
+    <p class="lead"><i>"Which of these dead reckoning approaches is more accurate? Why?"</i> Answer with measured numbers, explained via the model structure.</p>
+    <span class="output">Output: <b>error plots + answer to the key question</b></span>
+  </div></div>
+
+  <details class="ctx"><summary>Why &amp; where in Assignment 2 <span class="need">§3 · key question</span></summary><div class="body">
+    <h4>In the assignment notebook</h4>
+    <blockquote class="nb"><span class="where">§3 Assignment goals</span>"Which of these dead reckoning approaches is more accurate? Why?"</blockquote>
+    <h4>Role in the process</h4>
+    <p>Direct answer to the final question of §3. Combines everything: the 1D/encoder model (Steps 4–6) and the IMU model (Steps 7–9), measured against the ground truth from Step 2.</p>
+    <h4>Why this step</h4>
+    <p>This is the explicit question of the assignment. The answer must be backed by measured numbers and explained via the model structure (single vs. double integration, bias, slip).</p>
+  </div></details>
+
+  <h3>Tasks <span class="tprog"></span></h3>
+  <ul class="tasks" data-step="s10">
+    <li data-id="s10-1">End-position error vs. tape (and heading error for E5), both approaches</li>
+    <li data-id="s10-2">Error over time plot</li>
+    <li data-id="s10-3">Predicted uncertainty \(\sqrt{\mathbf P}\) over time, both approaches</li>
+    <li data-id="s10-4">Written answer to the key question, backed by our numbers</li>
+  </ul>
+
+  <h3>What to compute (on E3, E5)</h3>
+  <ul>
+    <li>End-position error vs. tape measure (and heading error for E5).</li>
+    <li>Error over time: \(|p_{model} - p_{ref}|\) vs. \(t\); reference = encoder odometry for the shape, tape measure for the end point.</li>
+    <li>Predicted uncertainty \(\sqrt{\mathbf P}\) over time for both.</li>
+  </ul>
+
+  <h3>Expected outcome <span class="tprog" style="float:none;margin-left:6px">verify with our data, don't copy</span></h3>
+  <ul>
+    <li><b>Encoder model:</b> error grows roughly linearly with distance (one integration; errors from wheel radius, slip, quantization, Ch 6.2.1.2). Usually clearly better for position.</li>
+    <li><b>IMU model:</b> position error grows ~quadratically in time (double integration of bias + noise). The <b>gyro</b> can give heading as good as or better than encoders when wheels slip during turns.</li>
+    <li><b>Likely conclusion:</b> encoders more accurate for position; IMU mainly useful for orientation / as complementary source → motivation for sensor fusion with Kalman filters in Assignments 3–4.</li>
+  </ul>
+
+  <details class="src"><summary>Sources</summary><div class="body"><ul>
+    <li>Key question → <code>A2 notebook</code>, cell 0, §3</li>
+    <li>Error sources (wheel radius, slip, gyro bias) → <code>Ch 6</code> §6.2.1.2</li>
+    <li>Linear vs. quadratic growth <span class="own">own derivation</span>, must be confirmed by our data</li>
+    <li>Encoder speed as reliable input → <code>FAQ velocity</code> §"Why does the textbook show velocity as a state?"</li>
+  </ul></div></details>
+</div>
+<div class="card notes" data-step="s10"><h3 style="margin-top:0">Notes (results, draft answer)</h3></div>
+</section>
+
+<!-- =================================== STEP 11 =================================== -->
+<section class="tab" id="s11" data-title="Notebook report" data-num="11">
+<div class="card">
+  <div class="head"><span class="big">Step 11</span><div>
+    <h2>Write the notebook report</h2>
+    <p class="lead">Must "clearly explain the applied code and results in a condensed way"; we may be asked to explain or change any cell.</p>
+    <span class="output">Output: <b>submission</b></span>
+  </div></div>
+
+  <details class="ctx"><summary>Why &amp; where in Assignment 2 <span class="need">§4 Submission format</span></summary><div class="body">
+    <h4>In the assignment notebook</h4>
+    <blockquote class="nb"><span class="where">§4 Submission format</span>"You need to communicate your result using an jupyter-notebook file and submit it in using a Toledo assignment. The applied code and results should be clearly explained in a condense way."</blockquote>
+    <h4>Role in the process</h4>
+    <p>Final deliverable. Collects the results of Steps 0–10 in the order of the §3 goals, so the grader can tick off goal 1 (F, B, Q), goal 2 (calibration, F, B, Q) and the key question.</p>
+    <h4>Why this step</h4>
+    <p>A structure that follows the assignment goals is easy to grade, and a notebook that runs top to bottom shows the results are reproducible.</p>
+  </div></details>
+
+  <h3>Tasks <span class="tprog"></span></h3>
+  <ul class="tasks" data-step="s11">
+    <li data-id="s11-1">1 · Introduction, constants, theory recap</li>
+    <li data-id="s11-2">2 · Experiments table (runs, profiles, ground truth)</li>
+    <li data-id="s11-3">3 · Scenario 1 section</li>
+    <li data-id="s11-4">4 · Scenario 2 section</li>
+    <li data-id="s11-5">5 · Comparison + answer to key question</li>
+    <li data-id="s11-6">6 · Conclusion (limitations, improvements)</li>
+    <li data-id="s11-7">Modified <code>robot.cpp</code> part as appendix</li>
+    <li data-id="s11-8">CSVs in <code>data/</code>; notebook runs top to bottom</li>
+    <li data-id="s11-9">Each of us can explain every cell</li>
+    <li data-id="s11-10">Submitted on Toledo</li>
+  </ul>
+
+  <h3>Suggested structure</h3>
+  <ol>
+    <li>Introduction + constants (Step 0) + short theory recap (prediction step, Ch 5.2.1 / 6.1).</li>
+    <li>Experiments: table of runs, voltage profiles, ground truth (Steps 1–2).</li>
+    <li>Scenario 1: motor model derivation → regression → F, B → Q → validation plot.</li>
+    <li>Scenario 2: IMU calibration (bias, orientation, position) → F, B (Jacobians) → Q = BGBᵀ → trajectory plot.</li>
+    <li>Comparison + answer to the key question.</li>
+    <li>Short conclusion (limitations, what we'd do better).</li>
+  </ol>
+  <p>Keep code cells short and commented as in <code>Experiences.MD</code> (what it does + what to tweak), put reusable functions at the top, and keep CSV files in a <code>data/</code> folder next to the notebook so it runs top to bottom.</p>
+
+  <details class="src"><summary>Sources</summary><div class="body"><ul>
+    <li>Submission format → <code>A2 notebook</code>, cell 0, §4 "Submission format"</li>
+    <li>Code-cell style → <code>experiences/Experiences.MD</code></li>
+    <li>Report structure and <code>data/</code> folder <span class="own">own suggestion</span></li>
+  </ul></div></details>
+</div>
+<div class="card notes" data-step="s11"><h3 style="margin-top:0">Notes</h3></div>
+</section>
+
+<div class="pager"><button id="prev">← Previous</button><button id="next">Next →</button></div>
+<p class="hint" style="margin-top:28px">Saving: open this file in <b>Chrome or Edge</b>, click <b>Link file</b> and pick this same .html file. After that every change is saved into the file automatically, and OneDrive syncs it. Your teammate's saved changes are merged in automatically (every 15 s while linked). In other browsers use <b>Download copy</b> and replace the file.</p>
+</main>
+</div>
+
+<script>
+/* ---------- capture pristine source BEFORE anything changes the DOM ---------- */
+const SRC = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+const STATE_RE = /(<script id="plan-state" type="application\/json">)([\s\S]*?)(<\/script>)/;
+
+/* ---------- state: {tasks:{id:{done,t}}, notes:{step:{text,t}}, savedAt} ---------- */
+function parseState(txt){ try{ const s = JSON.parse(txt || '{}'); return {tasks:s.tasks||{}, notes:s.notes||{}, savedAt:s.savedAt||null}; }catch(e){ return {tasks:{},notes:{},savedAt:null}; } }
+function mergeInto(a, b){ // last-write-wins per item, returns true if a changed
+  let changed = false;
+  for (const kind of ['tasks','notes']) for (const [k,v] of Object.entries(b[kind]||{}))
+    if (!a[kind][k] || (v.t||'') > (a[kind][k].t||'')) { a[kind][k] = v; changed = true; }
+  if ((b.savedAt||'') > (a.savedAt||'')) a.savedAt = b.savedAt;
+  return changed;
+}
+let state = parseState(document.getElementById('plan-state').textContent);
+const LS_KEY = 'plan-a2:' + location.pathname;
+try { const d = localStorage.getItem(LS_KEY); if (d) mergeInto(state, parseState(d)); } catch(e){}
+
+function serialize(){ return SRC.replace(STATE_RE, (m,a,b,c) => a + JSON.stringify(state).replace(/</g,'\\u003c') + c); }
+const now = () => new Date().toISOString();
+function fmt(iso){ const d = new Date(iso); return d.toLocaleDateString(undefined,{day:'numeric',month:'short'}) + ' ' + d.toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'}); }
+
+/* ---------- navigation ---------- */
+const tabs = [...document.querySelectorAll('section.tab')];
+const nav = document.getElementById('nav');
+tabs.forEach((s,i) => {
+  if (i === 1) nav.insertAdjacentHTML('beforeend','<div class="sep"></div>');
+  const b = document.createElement('button');
+  b.dataset.tab = s.id;
+  b.innerHTML = `<span class="num">${s.dataset.num}</span><span class="lbl">${s.dataset.title}</span><span class="cnt"></span>`;
+  b.onclick = () => show(s.id);
+  nav.appendChild(b);
+});
+function show(id){
+  if (!document.getElementById(id)) id = 'overview';
+  tabs.forEach(s => s.classList.toggle('active', s.id === id));
+  nav.querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.tab === id));
+  const i = tabs.findIndex(s => s.id === id);
+  document.getElementById('prev').style.visibility = i > 0 ? 'visible' : 'hidden';
+  document.getElementById('next').style.visibility = i < tabs.length-1 ? 'visible' : 'hidden';
+  if (location.hash !== '#'+id) history.replaceState(null,'','#'+id);
+  window.scrollTo({top:0});
+}
+document.getElementById('prev').onclick = () => { const i = tabs.findIndex(s=>s.classList.contains('active')); show(tabs[Math.max(0,i-1)].id); };
+document.getElementById('next').onclick = () => { const i = tabs.findIndex(s=>s.classList.contains('active')); show(tabs[Math.min(tabs.length-1,i+1)].id); };
+document.querySelectorAll('[data-go]').forEach(r => r.onclick = () => show(r.dataset.go));
+window.addEventListener('hashchange', () => show(location.hash.slice(1)));
+
+/* ---------- tasks ---------- */
+document.querySelectorAll('.tasks li').forEach(li => {
+  const id = li.dataset.id;
+  const label = document.createElement('label'); label.innerHTML = li.innerHTML; label.htmlFor = 'cb-'+id;
+  const cb = document.createElement('input'); cb.type = 'checkbox'; cb.id = 'cb-'+id;
+  const when = document.createElement('span'); when.className = 'when';
+  li.textContent = ''; li.append(cb, label, when);
+  cb.onchange = () => { state.tasks[id] = {done: cb.checked, t: now()}; changed(); };
+});
+
+/* ---------- notes ---------- */
+document.querySelectorAll('.notes').forEach(box => {
+  const step = box.dataset.step;
+  const ta = document.createElement('textarea');
+  ta.placeholder = 'Type anything: file names, measured values, questions, decisions…';
+  const meta = document.createElement('div'); meta.className = 'meta';
+  box.append(ta, meta);
+  let timer;
+  ta.oninput = () => { clearTimeout(timer); timer = setTimeout(() => { state.notes[step] = {text: ta.value, t: now()}; changed(); }, 600); };
+});
+
+/* ---------- render state into the page ---------- */
+function render(){
+  let total = 0, done = 0;
+  document.querySelectorAll('.tasks li').forEach(li => {
+    const s = state.tasks[li.dataset.id], on = !!(s && s.done);
+    li.querySelector('input').checked = on;
+    li.classList.toggle('done', on);
+    li.querySelector('.when').textContent = on ? fmt(s.t) : '';
+  });
+  tabs.forEach(sec => {
+    const lis = sec.querySelectorAll('.tasks li'), n = lis.length;
+    const d = [...lis].filter(li => li.classList.contains('done')).length;
+    total += n; done += d;
+    const btn = nav.querySelector(`[data-tab="${sec.id}"]`);
+    btn.querySelector('.cnt').textContent = n ? `${d}/${n}` : '';
+    btn.classList.toggle('done', n > 0 && d === n);
+    btn.classList.toggle('part', d > 0 && d < n);
+    sec.querySelectorAll('.tprog').forEach(p => { if (!p.style.float) p.textContent = `${d} / ${n}`; });
+  });
+  document.getElementById('overall-bar').style.width = (total ? 100*done/total : 0) + '%';
+  document.getElementById('overall-txt').textContent = `${done} / ${total} tasks`;
+  document.querySelectorAll('.notes').forEach(box => {
+    const n = state.notes[box.dataset.step], ta = box.querySelector('textarea');
+    if (document.activeElement !== ta) ta.value = n ? n.text : '';
+    box.querySelector('.meta').textContent = n && n.text ? 'Last edited ' + fmt(n.t) : '';
+  });
+}
+
+/* ---------- saving into the file itself (File System Access API, Chrome/Edge) ---------- */
+const pill = document.getElementById('save-pill'), linkBtn = document.getElementById('link-btn');
+const hasFS = 'showOpenFilePicker' in window;
+let handle = null, dirty = false, saveTimer = null, saving = false;
+function setPill(txt, cls){ pill.textContent = txt; pill.className = 'pill' + (cls ? ' '+cls : ''); }
+function banner(txt){ const b = document.getElementById('banner'); b.style.display = txt ? 'block' : 'none'; document.getElementById('banner-txt').textContent = txt || ''; }
+
+function changed(){
+  dirty = true; render();
+  try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch(e){}
+  if (handle) { setPill('Unsaved…','warn'); clearTimeout(saveTimer); saveTimer = setTimeout(save, 800); }
+  else setPill('Not saved to file','warn');
+}
+
+async function readDisk(){
+  const txt = await (await handle.getFile()).text();
+  const m = txt.match(STATE_RE);
+  if (!m) throw new Error('The linked file is not this plan.');
+  return parseState(m[2]);
+}
+async function save(){
+  if (!handle || saving) return;
+  saving = true; setPill('Saving…');
+  try {
+    mergeInto(state, await readDisk());            // keep teammate's changes
+    state.savedAt = now();
+    const w = await handle.createWritable();
+    await w.write(serialize()); await w.close();
+    dirty = false; render(); setPill('Saved ' + fmt(state.savedAt).split(' ').pop(), 'ok'); banner('');
+  } catch(e) { setPill('Save failed','warn'); banner('Could not save: ' + e.message + ' Click "Link file" again.'); }
+  saving = false;
+}
+async function syncFromDisk(){
+  if (!handle || saving || document.hidden) return;
+  try { const disk = await readDisk(); if (mergeInto(state, disk)) { render(); try{localStorage.setItem(LS_KEY, JSON.stringify(state));}catch(e){} } } catch(e){}
+}
+
+/* remember the file handle between sessions (IndexedDB) */
+function idb(){ return new Promise((res,rej) => { const r = indexedDB.open('plan-a2',1); r.onupgradeneeded = () => r.result.createObjectStore('h'); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); }
+async function idbSet(v){ try{ const db = await idb(); db.transaction('h','readwrite').objectStore('h').put(v, location.pathname); }catch(e){} }
+async function idbGet(){ try{ const db = await idb(); return await new Promise(r => { const q = db.transaction('h').objectStore('h').get(location.pathname); q.onsuccess = () => r(q.result); q.onerror = () => r(null); }); }catch(e){ return null; } }
+
+async function activate(h){
+  handle = h; await idbSet(h);
+  linkBtn.textContent = 'Linked'; linkBtn.classList.remove('primary');
+  await syncFromDisk();
+  if (dirty) await save(); else setPill('Linked · up to date','ok');
+}
+let stored = null;
+linkBtn.onclick = async () => {
+  if (!hasFS) { alert('Saving into the file needs Chrome or Edge. Use "Download copy" instead.'); return; }
+  try {
+    if (stored && await stored.requestPermission({mode:'readwrite'}) === 'granted') return activate(stored);
+    const [h] = await window.showOpenFilePicker({types:[{description:'Plan',accept:{'text/html':['.html']}}]});
+    if (await h.requestPermission({mode:'readwrite'}) !== 'granted') return;
+    const txt = await (await h.getFile()).text();
+    if (!STATE_RE.test(txt) || !txt.includes('Assignment 2 · Prediction model')) { alert('That file is not this plan. Pick plan_assignment_2.html.'); return; }
+    await activate(h);
+  } catch(e) { if (e.name !== 'AbortError') banner('Link failed: ' + e.message); }
+};
+document.getElementById('dl-btn').onclick = () => {
+  state.savedAt = now();
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([serialize()], {type:'text/html'}));
+  a.download = 'plan_assignment_2.html'; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+};
+window.addEventListener('beforeunload', e => { if (dirty && handle) { save(); e.preventDefault(); e.returnValue=''; } });
+setInterval(syncFromDisk, 15000);
+document.addEventListener('visibilitychange', syncFromDisk);
+
+(async () => {
+  if (!hasFS) { setPill('View only · use Download copy'); linkBtn.disabled = true; return; }
+  stored = await idbGet();
+  if (stored) {
+    try { if (await stored.queryPermission({mode:'readwrite'}) === 'granted') return activate(stored); } catch(e){}
+    linkBtn.textContent = 'Reconnect file'; setPill('Click Reconnect to save','warn');
+  }
+})();
+
+/* ---------- copy buttons + math ---------- */
+document.querySelectorAll('details.code pre').forEach(pre => {
+  const b = document.createElement('button'); b.className = 'copy'; b.textContent = 'Copy';
+  b.onclick = e => { e.preventDefault(); navigator.clipboard.writeText(pre.innerText).then(() => { b.textContent = 'Copied'; setTimeout(() => b.textContent = 'Copy', 1200); }); };
+  pre.parentElement.appendChild(b);
+});
+window.renderMath = () => renderMathInElement(document.body, {
+  delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}],
+  ignoredTags:['script','noscript','style','textarea','pre','code'], throwOnError:false });
+if (window.renderMathInElement) window.renderMath();
+
+render();
+show(location.hash.slice(1) || 'overview');
+if (Object.keys(state.tasks).length || Object.keys(state.notes).length) setPill(state.savedAt ? 'Saved ' + fmt(state.savedAt) : 'Not linked', state.savedAt ? 'ok' : '');
+</script>
+</body>
+</html>

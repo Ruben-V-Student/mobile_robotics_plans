@@ -145,6 +145,7 @@ details.src ul{font-size:13px;color:var(--ink2);margin:0}
   <div class="overall"><div class="bar"><i id="overall-bar"></i></div><span id="overall-txt">0 / 0 tasks</span></div>
   <div class="save">
     <span class="pill" id="save-pill">Not linked</span>
+    <button id="gh-btn" title="Save progress to the private GitHub repo (needs your token)">Connect GitHub</button>
     <button class="primary" id="link-btn" title="Pick this same .html file so progress is saved into it">Link file</button>
     <button id="dl-btn" title="Download a copy of this page with the current progress inside">Download copy</button>
   </div>
@@ -1035,7 +1036,7 @@ Q = B @ G @ B.T</code></pre></div></details>
 </section>
 
 <div class="pager"><button id="prev">← Previous</button><button id="next">Next →</button></div>
-<p class="hint" style="margin-top:28px">Saving: open this file in <b>Chrome or Edge</b>, click <b>Link file</b> and pick this same .html file. After that every change is saved into the file automatically, and OneDrive syncs it. Your teammate's saved changes are merged in automatically (every 15 s while linked). In other browsers use <b>Download copy</b> and replace the file.</p>
+<p class="hint" style="margin-top:28px">Saving: open this file in <b>Chrome or Edge</b>, click <b>Link file</b> and pick this same .html file. After that every change is saved into the file automatically, and OneDrive syncs it. Your teammate's saved changes are merged in automatically (every 15 s while linked). In other browsers use <b>Download copy</b> and replace the file.<br>Online (GitHub Pages): click <b>Connect GitHub</b> and paste your own fine-grained token (repo <code>mobile_robotics_experience</code>, Contents: Read and write). Progress is then saved in the private repo and shared with your teammate; without a token the page is view-only.</p>
 </main>
 </div>
 
@@ -1146,8 +1147,9 @@ function banner(txt){ const b = document.getElementById('banner'); b.style.displ
 function changed(){
   dirty = true; render();
   try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch(e){}
+  if (ghToken) { ghPending = true; setPill('Unsaved…','warn'); clearTimeout(ghTimer); ghTimer = setTimeout(ghSave, 2000); }
   if (handle) { setPill('Unsaved…','warn'); clearTimeout(saveTimer); saveTimer = setTimeout(save, 800); }
-  else setPill('Not saved to file','warn');
+  else if (!ghToken) setPill('Not saved','warn');
 }
 
 async function readDisk(){
@@ -1207,7 +1209,77 @@ window.addEventListener('beforeunload', e => { if (dirty && handle) { save(); e.
 setInterval(syncFromDisk, 15000);
 document.addEventListener('visibilitychange', syncFromDisk);
 
+/* ---------- saving to GitHub (private repo, works on the online page) ----------
+   Token: GitHub → Settings → Developer settings → Fine-grained tokens.
+   Repository access: only mobile_robotics_experience · Permission: Contents = Read and write.
+   The token is kept in this browser only (localStorage). Without a token the page is view-only. */
+const GH_REPO = 'Ruben-V-Student/mobile_robotics_experience';
+const GH_PATH = 'experiences/' + (location.pathname.split('/').pop() || 'plan_assignment_2.html').replace(/\.html$/, '') + '.state.json';
+const ghBtn = document.getElementById('gh-btn');
+const onPages = location.hostname.endsWith('github.io');
+let ghToken = null, ghSha = null, ghTimer = null, ghBusy = false, ghPending = false;
+try { ghToken = localStorage.getItem('gh-token'); } catch(e){}
+
+function b64dec(b){ return new TextDecoder().decode(Uint8Array.from(atob(b.replace(/\s/g,'')), c => c.charCodeAt(0))); }
+function b64enc(s){ let bin = ''; new TextEncoder().encode(s).forEach(x => bin += String.fromCharCode(x)); return btoa(bin); }
+async function gh(method, body){
+  const r = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${GH_PATH}`, {
+    method, cache: 'no-store', body: body && JSON.stringify(body),
+    headers: {Authorization: 'Bearer ' + ghToken, Accept: 'application/vnd.github+json'} });
+  if (r.status === 401 || r.status === 403) throw new Error('token rejected (expired or no access to the repo)');
+  return r;
+}
+async function ghRead(){ // remote state; remembers its sha for the next write
+  const r = await gh('GET');
+  if (r.status === 404) { ghSha = null; return parseState('{}'); }
+  if (!r.ok) throw new Error('GitHub ' + r.status);
+  const j = await r.json(); ghSha = j.sha; return parseState(b64dec(j.content));
+}
+async function ghSave(){
+  if (!ghToken) return;
+  if (ghBusy) { clearTimeout(ghTimer); ghTimer = setTimeout(ghSave, 1000); return; }
+  ghTimer = null; ghBusy = true; ghPending = false; setPill('Saving to GitHub…');
+  try {
+    for (let i = 0; ; i++) {                       // retry when teammate saved in between
+      mergeInto(state, await ghRead());
+      state.savedAt = now();
+      const r = await gh('PUT', {message: 'Update plan progress', content: b64enc(JSON.stringify(state, null, 1)), sha: ghSha || undefined});
+      if (r.ok) { ghSha = (await r.json()).content.sha; break; }
+      if ((r.status !== 409 && r.status !== 422) || i >= 2) throw new Error('GitHub ' + r.status);
+    }
+    render(); setPill('Saved to GitHub ' + fmt(state.savedAt).split(' ').pop(), 'ok'); banner('');
+  } catch(e) { ghPending = true; setPill('GitHub save failed','warn'); banner('Could not save to GitHub: ' + e.message); }
+  ghBusy = false;
+  if (ghPending && !ghTimer) ghTimer = setTimeout(ghSave, 2000);
+}
+async function ghSync(){
+  if (!ghToken || ghBusy || ghPending || document.hidden) return;
+  try { if (mergeInto(state, await ghRead())) { render(); try{localStorage.setItem(LS_KEY, JSON.stringify(state));}catch(e){} } }
+  catch(e) { setPill('GitHub: ' + e.message, 'warn'); }
+}
+async function ghConnect(){
+  ghBtn.textContent = 'GitHub ✓';
+  try {
+    const remote = await ghRead();
+    mergeInto(state, remote); render();
+    if (mergeInto(remote, state)) ghSave();        // this browser had newer changes → push them
+    else setPill('GitHub · up to date', 'ok');
+  } catch(e) { setPill('GitHub: ' + e.message, 'warn'); }
+}
+ghBtn.onclick = () => {
+  const t = prompt('Paste your GitHub token (fine-grained, repo ' + GH_REPO + ', Contents: Read and write).\nLeave empty to disconnect.', '');
+  if (t === null) return;
+  ghToken = t.trim() || null;
+  try { ghToken ? localStorage.setItem('gh-token', ghToken) : localStorage.removeItem('gh-token'); } catch(e){}
+  if (ghToken) ghConnect(); else { ghBtn.textContent = 'Connect GitHub'; setPill('View only'); }
+};
+setInterval(ghSync, 15000);
+document.addEventListener('visibilitychange', ghSync);
+window.addEventListener('beforeunload', e => { if (ghPending) { ghSave(); e.preventDefault(); e.returnValue=''; } });
+
 (async () => {
+  if (ghToken) ghConnect();
+  if (onPages) { linkBtn.style.display = 'none'; if (!ghToken) setPill('View only · Connect GitHub to edit'); return; }
   if (!hasFS) { setPill('View only · use Download copy'); linkBtn.disabled = true; return; }
   stored = await idbGet();
   if (stored) {
@@ -1229,7 +1301,7 @@ if (window.renderMathInElement) window.renderMath();
 
 render();
 show(location.hash.slice(1) || 'overview');
-if (Object.keys(state.tasks).length || Object.keys(state.notes).length) setPill(state.savedAt ? 'Saved ' + fmt(state.savedAt) : 'Not linked', state.savedAt ? 'ok' : '');
+if (!onPages && (Object.keys(state.tasks).length || Object.keys(state.notes).length)) setPill(state.savedAt ? 'Saved ' + fmt(state.savedAt) : 'Not linked', state.savedAt ? 'ok' : '');
 </script>
 </body>
 </html>

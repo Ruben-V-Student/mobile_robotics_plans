@@ -174,7 +174,7 @@ details.src ul{font-size:13px;color:var(--ink2);margin:0}
     <li>Goals → <code>A2 notebook</code>, cell 0, §3 "Assignment goals"</li>
     <li>Prediction equations → <code>A2 notebook</code>, cell 0, §2 "Assignment context" (table) and <code>Ch 5</code> §5.2.1</li>
     <li>Deliverable → <code>A2 notebook</code>, cell 0, §4 "Submission format"</li>
-    <li>Code style → <code>experiences/Experiences.MD</code></li>
+    <li>Code style → <code>experiences/ours_assignment_2/ExperiencesRulesForAI.MD</code></li>
   </ul></div></details>
 
   <h3>Before starting</h3>
@@ -1028,7 +1028,7 @@ Q = B @ G @ B.T</code></pre></div></details>
 
   <details class="src"><summary>Sources</summary><div class="body"><ul>
     <li>Submission format → <code>A2 notebook</code>, cell 0, §4 "Submission format"</li>
-    <li>Code-cell style → <code>experiences/Experiences.MD</code></li>
+    <li>Code-cell style → <code>experiences/ours_assignment_2/ExperiencesRulesForAI.MD</code></li>
     <li>Report structure and <code>data/</code> folder <span class="own">own suggestion</span></li>
   </ul></div></details>
 </div>
@@ -1214,7 +1214,7 @@ document.addEventListener('visibilitychange', syncFromDisk);
    Repository access: only mobile_robotics_experience · Permission: Contents = Read and write.
    The token is kept in this browser only (localStorage). Without a token the page is view-only. */
 const GH_REPO = 'Ruben-V-Student/mobile_robotics_experience';
-const GH_PATH = 'experiences/' + (location.pathname.split('/').pop() || 'plan_assignment_2.html').replace(/\.html$/, '') + '.state.json';
+const GH_PATH = 'plans/' + (location.pathname.split('/').pop() || 'plan_assignment_2.html').replace(/\.html$/, '') + '.state.json';
 const ghBtn = document.getElementById('gh-btn');
 const onPages = location.hostname.endsWith('github.io');
 let ghToken = null, ghSha = null, ghTimer = null, ghBusy = false, ghPending = false;

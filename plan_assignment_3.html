@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Assignment 3 Plan</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="window.renderMath && window.renderMath()"></script>
+<style>
+:root{
+  --bg:#f6f7f9; --surface:#ffffff; --ink:#1c2230; --ink2:#3d4555; --muted:#6b7280; --line:#e5e7ec;
+  --accent:#2563eb; --accent-soft:#edf3ff; --ok:#15803d; --ok-soft:#eaf7ee;
+  --own:#a16207; --own-soft:#fdf6e3; --code:#f4f5f8; --radius:10px;
+  --mono: ui-monospace, "Cascadia Code", "JetBrains Mono", Consolas, monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+a{color:var(--accent)}
+code{font-family:var(--mono);font-size:.86em;background:var(--code);padding:.1em .35em;border-radius:4px}
+pre{margin:0;overflow:auto;background:var(--code);border-radius:8px;padding:14px 16px;font-size:13px;line-height:1.5}
+pre code{background:none;padding:0;font-size:inherit}
+table{border-collapse:collapse;width:100%;font-size:14px;margin:8px 0 4px}
+th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+.table-wrap{overflow-x:auto}
+h1,h2,h3{line-height:1.3;margin:0}
+h2{font-size:22px;letter-spacing:-.01em}
+h3{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;margin:28px 0 10px}
+p{margin:8px 0}
+ul,ol{padding-left:22px;margin:8px 0}
+li{margin:3px 0}
+
+/* top bar */
+.top{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.top-in{max-width:1180px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.brand{font-weight:650;font-size:15px}
+.brand small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+.overall{flex:1;min-width:160px;display:flex;align-items:center;gap:10px}
+.bar{flex:1;height:6px;background:var(--line);border-radius:99px;overflow:hidden}
+.bar>i{display:block;height:100%;width:0;background:var(--ok);border-radius:99px;transition:width .3s}
+.overall span{font-size:12px;color:var(--muted);white-space:nowrap}
+.save{display:flex;align-items:center;gap:8px}
+.pill{font-size:12px;padding:4px 10px;border-radius:99px;background:var(--code);color:var(--muted);white-space:nowrap}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.warn{background:var(--own-soft);color:var(--own)}
+button{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:6px 12px;border-radius:8px;cursor:pointer}
+button:hover{border-color:#c9cdd6}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+button.primary:hover{filter:brightness(1.07)}
+
+/* layout */
+.wrap{max-width:1180px;margin:0 auto;padding:24px 16px 80px;display:grid;grid-template-columns:250px minmax(0,1fr);gap:28px}
+nav{position:sticky;top:76px;align-self:start;max-height:calc(100vh - 96px);overflow:auto}
+nav button{display:flex;width:100%;align-items:center;gap:10px;text-align:left;border:0;background:none;padding:8px 10px;border-radius:8px;color:var(--ink2)}
+nav button:hover{background:#eceef2}
+nav button.active{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(16,24,40,.06),0 0 0 1px var(--line)}
+nav .num{width:22px;height:22px;flex:none;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:600;background:#e9ebf0;color:var(--muted)}
+nav button.done .num{background:var(--ok);color:#fff}
+nav button.part .num{background:var(--accent-soft);color:var(--accent)}
+nav .lbl{flex:1;font-size:14px;line-height:1.3}
+nav .cnt{font-size:11px;color:var(--muted)}
+nav .sep{height:1px;background:var(--line);margin:8px 10px}
+
+main{min-width:0}
+section.tab{display:none}
+section.tab.active{display:block}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px}
+.card + .card{margin-top:16px}
+.head{display:flex;gap:14px;align-items:flex-start}
+.head .big{font-size:13px;font-weight:600;color:var(--accent);background:var(--accent-soft);border-radius:8px;padding:4px 9px;flex:none;margin-top:2px}
+.lead{color:var(--ink2);font-size:15.5px;margin-top:6px}
+.output{display:inline-block;margin-top:10px;font-size:13px;color:var(--muted)}
+.output b{color:var(--ink2);font-weight:600}
+
+/* tasks */
+.tasks{list-style:none;padding:0;margin:4px 0 0}
+.tasks li{display:flex;gap:12px;align-items:flex-start;padding:9px 4px;border-bottom:1px solid var(--line);margin:0}
+.tasks li:last-child{border-bottom:0}
+.tasks input{appearance:none;width:18px;height:18px;flex:none;margin-top:2px;border:1.5px solid #b8bdc8;border-radius:5px;cursor:pointer;display:grid;place-items:center;background:#fff}
+.tasks input:checked{background:var(--ok);border-color:var(--ok)}
+.tasks input:checked::after{content:"";width:5px;height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.tasks label{flex:1;cursor:pointer}
+.tasks li.done label{color:var(--muted);text-decoration:line-through;text-decoration-color:#c4c8d0}
+.tasks .when{font-size:12px;color:var(--ok);white-space:nowrap;margin-top:2px}
+.tprog{float:right;font-size:12px;color:var(--muted);font-weight:500;text-transform:none;letter-spacing:0}
+
+/* notes */
+.notes textarea{width:100%;min-height:90px;resize:vertical;font:inherit;font-size:14px;line-height:1.5;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:#fcfcfd}
+.notes textarea:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
+.notes .meta{font-size:12px;color:var(--muted);margin-top:4px;min-height:18px}
+
+/* callouts / collapsibles */
+details.ctx{margin-top:14px;border-color:#d9e4fb;background:#fafcff}
+details.ctx>summary{flex-wrap:wrap;color:var(--ink)}
+details.ctx .need{margin-left:auto;font-size:12px;font-weight:500;color:var(--accent);background:var(--accent-soft);border-radius:99px;padding:2px 10px}
+details.ctx h4{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600;margin:14px 0 6px}
+details.ctx h4:first-child{margin-top:4px}
+details.ctx ul{margin:4px 0}
+blockquote.nb{margin:6px 0;padding:8px 14px;border-left:3px solid var(--accent);background:var(--surface);border-radius:0 6px 6px 0;font-size:14px;color:var(--ink2)}
+blockquote.nb .where{display:block;font-size:12px;font-weight:600;color:var(--accent);margin-bottom:2px}
+.note{border-left:3px solid var(--line);padding:2px 0 2px 12px;color:var(--ink2);margin:10px 0}
+details{border:1px solid var(--line);border-radius:8px;margin:10px 0;background:var(--surface)}
+details>summary{cursor:pointer;padding:9px 14px;font-size:14px;font-weight:500;color:var(--ink2);list-style:none;display:flex;align-items:center;gap:8px}
+details>summary::-webkit-details-marker{display:none}
+details>summary::before{content:"";width:6px;height:6px;border:solid var(--muted);border-width:0 1.5px 1.5px 0;transform:rotate(-45deg);transition:transform .15s;flex:none}
+details[open]>summary::before{transform:rotate(45deg)}
+details>summary .tag{margin-left:auto;font-size:11px;font-weight:500;color:var(--muted);font-family:var(--mono)}
+details>.body{padding:0 14px 12px}
+details.code>.body{padding:0 0 0;position:relative}
+details.code pre{border-radius:0 0 8px 8px}
+details.src{background:#fbfbfc}
+details.src>summary{font-size:13px;color:var(--muted)}
+details.src ul{font-size:13px;color:var(--ink2);margin:0}
+.copy{position:absolute;top:8px;right:8px;font-size:11px;padding:3px 8px;opacity:.75}
+.copy:hover{opacity:1}
+.own{display:inline-block;font-size:11px;font-weight:600;color:var(--own);background:var(--own-soft);border-radius:4px;padding:0 6px;white-space:nowrap}
+.katex-display{overflow-x:auto;overflow-y:hidden;padding:4px 0}
+.steps-table tr{cursor:pointer}
+.steps-table tr:hover td{background:#fafbfc}
+.steps-table td:first-child{color:var(--muted);width:36px}
+.pager{display:flex;justify-content:space-between;margin-top:18px;gap:10px}
+.hint{font-size:13px;color:var(--muted)}
+.banner{display:none;max-width:1180px;margin:12px auto 0;padding:0 16px}
+.banner div{background:var(--own-soft);color:var(--own);border-radius:8px;padding:10px 14px;font-size:13px}
+
+@media (max-width:820px){
+  .wrap{grid-template-columns:1fr;gap:14px;padding-top:14px}
+  nav{position:static;max-height:none;display:flex;overflow-x:auto;gap:4px;padding-bottom:4px}
+  nav button{width:auto;flex:none}
+  nav .lbl,nav .cnt,nav .sep{display:none}
+  .card{padding:18px 16px}
+  .head .big{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ STORED PROGRESS (rewritten by the Save function, do not edit by hand) ============ -->
+<script id="plan-state" type="application/json">{}</script>
+
+<header class="top"><div class="top-in">
+  <div class="brand">Assignment 3 · 1D Linear Kalman filter<small>Plan &amp; shared progress</small></div>
+  <div class="overall"><div class="bar"><i id="overall-bar"></i></div><span id="overall-txt">0 / 0 tasks</span></div>
+  <div class="save">
+    <span class="pill" id="save-pill">Not linked</span>
+    <button id="gh-btn" title="Save progress to the private GitHub repo (needs your token)">Connect GitHub</button>
+    <button class="primary" id="link-btn" title="Pick this same .html file so progress is saved into it">Link file</button>
+    <button id="dl-btn" title="Download a copy of this page with the current progress inside">Download copy</button>
+  </div>
+</div></header>
+<div class="banner" id="banner"><div id="banner-txt"></div></div>
+
+<div class="wrap">
+<nav id="nav"></nav>
+<main>
+
+<!-- =================================== OVERVIEW =================================== -->
+<section class="tab" id="overview" data-title="Overview" data-num="★">
+<div class="card">
+  <div class="head"><div>
+    <h2>Overview</h2>
+    <p class="lead">Design a <b>1D linear Kalman filter</b> that estimates the distance to the wall in front, test it offline on logged data, then run it <b>on the robot</b> inside a control loop that keeps the robot at a fixed distance from the wall.</p>
+  </div></div>
+  $$\bar{\mathbf x} = \mathbf F\mathbf x + \mathbf B\mathbf u,\quad \bar{\mathbf P} = \mathbf F\mathbf P\mathbf F^\mathsf T + \mathbf Q \qquad \mathbf y = \mathbf z - \mathbf H\bar{\mathbf x},\quad \mathbf K = \bar{\mathbf P}\mathbf H^\mathsf T(\mathbf H\bar{\mathbf P}\mathbf H^\mathsf T + \mathbf R)^{-1}$$
+  <p>The three parts of the assignment:</p>
+  <ol>
+    <li><b>Specify the matrices</b>: process model F, B, its uncertainty Q, and measurement model H, R.</li>
+    <li><b>Simulate the filter</b> in Python on data (inputs + measurements) logged on the robot.</li>
+    <li><b>Run the filter on the robot</b> by filling in <code>state_estimator.cpp</code>.</li>
+  </ol>
+  <p class="note">Deliverable: the Arduino script + the relevant Jupyter notebook(s), uploaded to Toledo <b>at least 24 h before the defense</b>, then a <b>defense</b> in a timeslot you register for on Toledo. Every code block must be understood by both of us (we can be asked to explain or tweak it), so blocks are short and start with a one-line comment on <i>what it does</i> and <i>what to tweak</i>.</p>
+  <details class="src"><summary>Sources</summary><div class="body"><ul>
+    <li>Goal + context → <code>A3 notebook</code> §2 "Assignment context", §3 "Assignment goals"</li>
+    <li>Equations → <code>A3 notebook</code> §2 (prediction and update tables); <code>Ch 5</code> §5.2.1</li>
+    <li>Deliverable + defense → <code>A3 notebook</code> §4 "Submission format"</li>
+    <li>Code style → <code>experiences/ours_assignment_2/ExperiencesRulesForAI.MD</code></li>
+  </ul></div></details>
+
+  <h3>Before starting</h3>
+  <ul class="tasks" data-step="overview">
+    <li data-id="ov-1">Re-read Ch 4.6–4.8 (Kalman gain, 1D algorithm) and Ch 5.3 (designing x, P, F, Q, B, H, R)</li>
+    <li data-id="ov-2">Read all five A3 FAQs (velocity input, number of states, loops, state feedback, tuning)</li>
+    <li data-id="ov-3">Both read this whole plan once and agree on the order</li>
+    <li data-id="ov-4">Register for a defense timeslot on Toledo and write the upload deadline (slot − 24 h) in the notes</li>
+  </ul>
+
+  <h3>Steps</h3>
+  <div class="table-wrap"><table class="steps-table">
+    <thead><tr><th>#</th><th>Step</th><th>Output</th></tr></thead>
+    <tbody>
+      <tr data-go="s0"><td>0</td><td>Know the A3 program, signals and constants</td><td>Table of buttons, channels, units; list of template gaps</td></tr>
+      <tr data-go="s1"><td>1</td><td>Design the filter on paper (x, F, B, H)</td><td>Model with units, matching the template</td></tr>
+      <tr data-go="s2"><td>2</td><td>Record the data</td><td>CSV logs: static (for R) and moving (for simulation)</td></tr>
+      <tr data-go="s3"><td>3</td><td>Measurement noise R</td><td>R value + sensor check</td></tr>
+      <tr data-go="s4"><td>4</td><td>Process noise Q (from Assignment 2)</td><td>Q value with derivation</td></tr>
+      <tr data-go="s5"><td>5</td><td>Simulate the filter in Python</td><td>Plots: estimate vs. measurement, P, innovation; tuned Q/R</td></tr>
+      <tr data-go="s6"><td>6</td><td>Implement on the robot</td><td><code>state_estimator.cpp</code> filled in, estimator tested alone</td></tr>
+      <tr data-go="s7"><td>7</td><td>Close the loop: wall-distance control</td><td>Tuned gain K, logged reference steps</td></tr>
+      <tr data-go="s8"><td>8</td><td>Evaluate</td><td>Robot vs. simulation, effect of Q/R, conclusions</td></tr>
+      <tr data-go="s9"><td>9</td><td>Notebook, upload and defense prep</td><td>Submission + answers to likely questions</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Division of work</h3>
+  <ol>
+    <li>Steps 0–1 together: agree on state units and signs (this is where most bugs come from).</li>
+    <li>Step 2: record all logs in one lab session.</li>
+    <li>Split: one person Steps 3–5 (Python), the other Step 6 (C++). Meet at Step 6's test: the C++ filter must give the same numbers as the Python one on the same data.</li>
+    <li>Steps 7–9 together. Each person must be able to explain the other's code (defense).</li>
+  </ol>
+
+  <h3>What Assignment 2 gives us</h3>
+  <ul>
+    <li><b>The 1D prediction model</b> (A2 plan Steps 5–6) is exactly the prediction step here, with the measured wheel speed as input.</li>
+    <li><b>The wheel-speed noise σ<sub>ω</sub></b> (A2 plan Step 6, method 2) gives Q directly (Step 4 here).</li>
+    <li><b>Our A2 sketch</b> (<code>experiences/Identification_ours/</code>) logs wheel speeds + front distance (SET 1), so it can record the data for Step 2.</li>
+  </ul>
+
+  <details><summary>Theory map: where to look in <code>course_text/</code></summary><div class="body"><div class="table-wrap"><table>
+    <thead><tr><th>Topic</th><th>Chapter</th><th>Step</th></tr></thead>
+    <tbody>
+      <tr><td>Predict–update cycle; same algorithm for every Bayes filter</td><td>Ch 2.9 Discrete Bayes Algorithm, Ch 4.7</td><td>1, 5</td></tr>
+      <tr><td>Variance, 68-95-99.7 rule (±2σ bands on plots)</td><td>Ch 3.2.3, 3.5</td><td>3, 5, 8</td></tr>
+      <tr><td>1D predict \(\bar P = P + Q\), update \(K = \bar P/(\bar P + R)\), \(P = (1-K)\bar P\)</td><td>Ch 4.4, 4.5, 4.6 Kalman Gain, 4.7</td><td>1, 5</td></tr>
+      <tr><td>"Smug filter": Q too small ⇒ filter ignores measurements</td><td>Ch 4.9 Example: Thermometer</td><td>4, 5</td></tr>
+      <tr><td>Designer's job: x, P, F, Q, B, u, H, z, R; H converts state to measurement units (thermometer volts example)</td><td>Ch 5.3.1 (5.3.1.1.2 Process Model, 5.3.1.1.4 Control Function, 5.3.1.3.1 Measurement Function, 5.3.1.3.2 Measurement)</td><td>1, 3, 4</td></tr>
+      <tr><td>FilterPy <code>KalmanFilter</code> template ("EDIT THIS PART" / "DO NOT EDIT BELOW")</td><td>Ch 5.3.2</td><td>5</td></tr>
+    </tbody>
+  </table></div></div></details>
+
+  <details><summary>How to read the source references</summary><div class="body">
+    <p class="hint">Every fact has a "Sources" box. Paths are relative to the <code>mobile robotics/</code> folder.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Short name</th><th>Full path</th></tr></thead>
+      <tbody>
+        <tr><td><code>A3</code></td><td><code>Assignments_Toledo_git/Assignment3_linear_KF/</code></td></tr>
+        <tr><td><code>A3 notebook</code></td><td><code>A3/Assignment_1D_LKF.ipynb</code> (one cell: §1 prior knowledge, §2 context, §3 goals, §4 submission)</td></tr>
+        <tr><td><code>robot.cpp</code>, <code>robot.h</code>, <code>state_estimator.cpp</code></td><td><code>A3/INTERNAL-StateEstimation_StateFeedback/…</code></td></tr>
+        <tr><td><code>mecotron.h</code></td><td><code>A3/libraries/control-theory/mecotron.h</code></td></tr>
+        <tr><td><code>sharp41S.cpp</code></td><td><code>A3/libraries/components/sharp41S.cpp</code> (distance sensor calibration)</td></tr>
+        <tr><td><code>FAQ velocity</code>, <code>FAQ states</code>, <code>FAQ loops</code>, <code>FAQ feedback</code>, <code>FAQ tuning</code>, <code>FAQ direction</code></td><td><code>Assignments_Toledo_git/faq-details/FAQ_kalman_velocity_input.md</code>, <code>FAQ_kalman_state_dimension.md</code> (+ <code>FAQ_kalman_number_of_states.md</code>), <code>FAQ_estimation_vs_control_loop.md</code>, <code>FAQ_simple_state_feedback.md</code>, <code>FAQ_kalman_tuning.md</code>, <code>FAQ_robot_runs_same_direction.md</code></td></tr>
+        <tr><td><code>A2 plan</code></td><td><code>plans/plan_assignment_2.html</code></td></tr>
+        <tr><td><code>Ch N</code></td><td><code>experiences/course_text/N. &lt;title&gt; — Mobile Robotics.pdf</code> (section numbers as printed)</td></tr>
+        <tr><td><span class="own">own derivation</span></td><td>Not in the course material: our own calculation or reading of the code. Double-check these and explain them in the report.</td></tr>
+      </tbody>
+    </table></div>
+  </div></details>
+</div>
+<div class="card notes" data-step="overview"><h3 style="margin-top:0">General notes</h3></div>
+</section>
+
+<!-- =================================== STEP 0 =================================== -->
+<section class="tab" id="s0" data-title="Program &amp; signals" data-num="0">
+<div class="card">
+  <div class="head"><span class="big">Step 0</span><div>
+    <h2>Know the A3 program, signals and constants</h2>
+    <p class="lead">Understand the provided Arduino template before changing anything: what runs when, which button does what, and what the robot sends to QRoboticsCenter.</p>
+    <span class="output">Output: <b>table of buttons, channels, units; list of template gaps</b></span>
+  </div></div>
+
+  <details class="ctx"><summary>Why &amp; where in Assignment 3 <span class="need">§2 sensors · §3 goal 3</span></summary><div class="body">
+    <h4>In the assignment notebook</h4>
+    <blockquote class="nb"><span class="where">§2 Assignment context</span>"The mobile robot measures following values: an ultrasonic sensor measures the distance between the robot and an object in front (\(d\)); the encoders position and velocity for both wheels (\(\omega_r, \theta_r\)) and (\(\omega_l, \theta_l\)); the desired motor voltages (\(u_r\),\(u_l\)); the measured motor shunt current (\(i_r\), \(i_l\))"</blockquote>
+    <blockquote class="nb"><span class="where">§3 goal 3</span>"Run the designed Kalman filter on the provided control software of the mobile robot by editing the state_estimator.cpp file."</blockquote>
+    <h4>Role in the process</h4>
+    <p>Goal 3 says we work <i>inside</i> the provided software. Its choices (state units, which channel holds what, button order) fix how F, B, H must look in Step 1.</p>
+    <h4>Why this step</h4>
+    <p>The template is not finished: it contains <code>??</code> placeholders and a syntax error, so it doesn't compile as given. Knowing the gaps up front avoids debugging on the robot.</p>
+  </div></details>
+
+  <h3>Tasks <span class="tprog"></span></h3>
+  <ul class="tasks" data-step="s0">
+    <li data-id="s0-1">Open the A3 folder in the Arduino IDE and read <code>robot.cpp</code> top to bottom with table 0.1 next to it</li>
+    <li data-id="s0-2">Find every <code>??</code> in <code>state_estimator.cpp</code> (list in 0.3)</li>
+    <li data-id="s0-3">Check the distance sensor on our robot: Sharp IR (code) or ultrasonic (notebook text)? Note the type</li>
+    <li data-id="s0-4">Agree on the state units (0.4) before Step 1</li>
+  </ul>
+
+  <h3>0.1 How the program runs</h3>
+  <p>Same structure as A2: <code>Robot::control()</code> runs <b>every 10 ms</b>. In each call, in this order (<code>robot.cpp:23-102</code>):</p>
+  <ol>
+    <li><b>Correction</b> (if estimator on): read front distance, <code>CorrectionUpdate(...)</code> → updates <code>_xhat</code>, <code>_Phat</code>, <code>_nu</code>.</li>
+    <li><b>Control</b> (if control on): reference from QRC channel 0, <code>desired_velocity = K * (xref - _xhat)</code>, then the provided velocity PI controller sets the motor voltages.</li>
+    <li><b>Prediction</b> (if estimator on): <code>PredictionUpdate(speedMotor, ...)</code> with the measured wheel speeds → prior for the next 10 ms.</li>
+    <li><b>Send</b> 11 values to QRoboticsCenter.</li>
+  </ol>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Button</th><th>Does</th><th>Code</th></tr></thead>
+    <tbody>
+      <tr><td>Button 0</td><td>Control on/off (resets the velocity controller memory)</td><td><code>robot.cpp:123-125, 131-139</code></td></tr>
+      <tr><td>Button 1</td><td>Estimator on/off; <b>on = reset</b>: \(P_0 = 10^{-2}\), \(\hat x_0\) from QRC channel 1</td><td><code>robot.cpp:114-121, 127-129, 141-150</code></td></tr>
+      <tr><td>Button 2</td><td>Reinitialize everything, both off</td><td><code>robot.cpp:152-158</code></td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Order matters: <b>first Button 1 (estimator), then Button 0 (control)</b>. Control without the estimator uses an uninitialized <code>_xhat</code> and the robot drives off. The FAQs number the buttons differently ("Button 1 AND Button 2" in <code>FAQ direction</code>, "Button 0 + Button 1" in <code>FAQ loops</code>); the code is what counts.</p>
+
+  <h3>0.2 What the robot sends (template)</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Channel</th><th>Value</th><th>Unit</th></tr></thead>
+    <tbody>
+      <tr><td>0, 1</td><td><code>uA</code>, <code>uB</code> motor voltages (controller output)</td><td>V</td></tr>
+      <tr><td>2, 3</td><td><code>spA</code>, <code>spB</code> wheel speeds</td><td>rad/s</td></tr>
+      <tr><td>4 and 7</td><td><code>_xhat(0)</code> state estimate (sent twice)</td><td>state units (0.4)</td></tr>
+      <tr><td>5</td><td><code>getFrontDistance()</code> raw measurement</td><td>m</td></tr>
+      <tr><td>6</td><td><code>_nu(0)</code> innovation \(z - H\hat x\)</td><td>m</td></tr>
+      <tr><td>8, 9</td><td>wheel positions A, B</td><td>rad</td></tr>
+      <tr><td>10</td><td><code>xref(0)</code> reference</td><td>state units</td></tr>
+    </tbody>
+  </table></div>
+  <p class="hint">Lines 45-46 also write channels 8 and 9 (estimate, innovation), but lines 99-100 overwrite them with the wheel positions in the same call, so only the table above reaches the CSV. Channel 11 is free. <span class="own">own reading of the code</span></p>
+  <p><b>Inputs from QRC</b> (type the value in QRoboticsCenter before pressing the button): channel 0 = reference distance in <b>m</b>, channel 1 = initial distance in <b>m</b>.</p>
+
+  <h3>0.3 Template gaps (must fix before it compiles)</h3>
+  <ul>
+    <li><code>state_estimator.cpp:7-11</code>: <code>F</code>, <code>B</code>, <code>Q</code>, <code>v</code> are <code>??</code>.</li>
+    <li><code>state_estimator.cpp:15</code>: <code>_Phat = F*_Phat*F+Q</code> misses the <code>;</code> (and the transpose <code>~F</code>, harmless for 1×1).</li>
+    <li><code>state_estimator.cpp:20, 23, 34</code>: <code>R</code>, <code>H</code>, <code>I</code> are <code>??</code>.</li>
+    <li><code>robot.cpp:52</code>: <code>K(0) = 1.0</code> is the controller gain, "to design" (Step 7).</li>
+  </ul>
+
+  <h3>0.4 State units: the template uses wheel radians</h3>
+  <p><code>robot.h:50</code>: <code>Meas2State = -1.0/R_WHEEL</code>. The template converts metres to state with it (<code>xref</code>, <code>_xhat</code> at reset). So the state is not the distance in m but</p>
+  $$x = -\frac{d}{r}\quad[\text{rad}],\qquad r = 0.0325\ \text{m}$$
+  <p>Why this is handy: driving forward at wheel speed \(\omega\) makes \(d\) shrink by \(r\omega\Delta t\), so \(x\) grows by exactly \(\omega\Delta t\). The controller output <code>K * (xref - _xhat)</code> is then directly a wheel speed in rad/s for the velocity controller. Check the sign: too far from the wall ⇒ \(\hat x &lt; x_{ref}\) ⇒ positive speed ⇒ drives towards the wall. ✓ <span class="own">own derivation</span></p>
+  <p class="note"><b>Decision:</b> keep the template's units (recommended, nothing else in <code>robot.cpp</code> has to change). The FAQs use the state in metres (\(F=1, B=-\Delta t, H=1\)); that's the same filter in other units. If you choose metres, you must also change <code>Meas2State</code> and include \(1/r\) in K.</p>
+
+  <h3>0.5 Constants</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Quantity</th><th>In code</th><th>Value</th></tr></thead>
+    <tbody>
+      <tr><td>Sample time</td><td><code>TSAMPLE</code></td><td>\(\Delta t = 0.01\) s</td></tr>
+      <tr><td>Wheel radius</td><td><code>R_WHEEL</code></td><td>\(r = 0.0325\) m</td></tr>
+      <tr><td>Front distance sensor</td><td><code>getFrontDistance()</code> → <code>Sharp41S</code></td><td>m; calibration \(d = 24.7694/\text{raw} + 0.0109\)</td></tr>
+      <tr><td>Sensor range</td><td>Sharp GP2Y0A41SK0F (the "41S")</td><td>about 4–30 cm (check datasheet)</td></tr>
+      <tr><td>Velocity controller</td><td><code>Kp = 0.4</code>, <code>Ki = 20</code></td><td>given, don't change</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">The notebook says "ultrasonic", but the code and <code>FAQ states</code> / <code>FAQ tuning</code> use a Sharp <b>IR</b> sensor. Check the sensor on our robot (task 3). Its range matters for every experiment: stay roughly between 5 and 30 cm.</p>
+
+  <details class="src"><summary>Sources</summary><div class="body"><ul>
+    <li>Run order → <code>robot.cpp:37-101</code>; 10 ms thread → <code>A3/INTERNAL-StateEstimation_StateFeedback/INTERNAL-StateEstimation_StateFeedback.ino</code> (<code>addThread(..., 10000, ...)</code>) and <code>mecotron.h:45</code></li>
+    <li>Buttons → <code>robot.cpp:114-158</code>; order estimator → control → <code>FAQ loops</code> §"You Can Enable Them Independently!"</li>
+    <li>Channels → <code>robot.cpp:45-46, 91-101</code>; overwrite of 8/9 <span class="own">own reading</span></li>
+    <li>QRC inputs → <code>robot.cpp:51</code> (<code>readValue(0)</code>), <code>robot.cpp:120</code> (<code>readValue(1)</code>)</li>
+    <li>Template gaps → <code>state_estimator.cpp:7-35</code>, <code>robot.cpp:52</code></li>
+    <li>State units → <code>robot.h:50</code>, <code>robot.cpp:51, 120</code>; interpretation <span class="own">own derivation</span>; FAQ metres version → <code>FAQ velocity</code> §"Approach 3"</li>
+    <li>Constants → <code>mecotron.h:41, 45</code>; sensor → <code>mecotron.h:108</code>, <code>sharp41S.cpp:12-14</code>; controller → <code>robot.h:41-47</code>, <code>FAQ feedback</code> ("Don't touch it")</li>
+    <li>Sensor range <span class="own">from the part number, verify in the datasheet</span></li>
+  </ul></div></details>
+</div>
+<div class="card notes" data-step="s0"><h3 style="margin-top:0">Notes</h3></div>
+</section>
+
+<!-- =================================== STEP 1 =================================== -->
+<section class="tab" id="s1" data-title="Filter design" data-num="1">
+<div class="card">
+  <div class="head"><span class="big">Step 1</span><div>
+    <h2>Design the filter on paper</h2>
+    <p class="lead">Choose the state, the input and the measurement, and write F, B and H with units. Q and R get numbers in Steps 3–4.</p>
+    <span class="output">Output: <b>model with units, matching the template</b></span>
+  </div></div>
+
+  <details class="ctx"><summary>Why &amp; where in Assignment 3 <span class="need">§3 goal 1</span></summary><div class="body">
+    <h4>In the assignment notebook</h4>
+    <blockquote class="nb"><span class="where">§3 goal 1</span>"Specify the required relevant matrices for the linear Kalman filter: the process model matrices (\(\mathbf F,\mathbf B\)) and, corresponding uncertainty (\(\mathbf Q\)), the update model matrices (\(\mathbf H,\mathbf R\))."</blockquote>
+    <blockquote class="nb"><span class="where">§2 Assignment context</span>"We want to design a linear Kalman filter that estimates the distance from the mobile robot to a wall in front."</blockquote>
+    <h4>Role in the process</h4>
+    <p>The structure (dimensions, which signal is input and which is measurement) decides what we log in Step 2 and what we type into <code>state_estimator.cpp</code> in Step 6.</p>
+    <h4>Why this step</h4>
+    <p>The FAQs answer the main design question: one state is enough, and the measured wheel speed is the input ("the practical engineering choice").</p>
+  </div></details>
+
+  <h3>Tasks <span class="tprog"></span></h3>
+  <ul class="tasks" data-step="s1">
+    <li data-id="s1-1">Read <code>FAQ velocity</code> (three approaches) and <code>FAQ states</code></li>
+    <li data-id="s1-2">Write down x, u, z, F, B, H with units (1.1) and check the signs with a sketch</li>
+    <li data-id="s1-3">Decide what to say in the report about the other two approaches (1.3)</li>
+  </ul>
+
+  <h3>1.1 The model (template units)</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Item</th><th>Choice</th><th>Unit</th></tr></thead>
+    <tbody>
+      <tr><td>State \(x\)</td><td>\(-d/r\): distance to the wall, in wheel radians, negative</td><td>rad</td></tr>
+      <tr><td>Input \(u\)</td><td>measured wheel speeds \([\omega_A, \omega_B]\) (<code>speedMotor</code>); the filter uses their mean \(v = (\omega_A+\omega_B)/2\)</td><td>rad/s</td></tr>
+      <tr><td>Measurement \(z\)</td><td>front distance <code>getFrontDistance()</code></td><td>m</td></tr>
+    </tbody>
+  </table></div>
+  $$x_{k+1} = \underbrace{1}_{F}\cdot x_k + \underbrace{\Delta t}_{B}\cdot v_k,\qquad z_k = \underbrace{-r}_{H}\cdot x_k$$
+  <p>Check with numbers: at \(d = 0.20\) m, \(x = -0.20/0.0325 = -6.15\) rad. Drive forward 0.5 s at \(\omega = 6\) rad/s: \(x = -6.15 + 0.5\cdot 6 = -3.15\) rad, so \(d = 0.0325\cdot 3.15 = 0.102\) m. The robot moved \(r\omega t = 0.0975\) m closer. ✓ <span class="own">own derivation</span></p>
+  <p class="note">Same filter in metres (as in the FAQ): \(d_{k+1} = d_k - \Delta t\, r\, v_k\), so \(F=1\), \(B=-r\Delta t\) (with \(v\) in rad/s) and \(H=1\). Use this form in the report if it reads easier, but the robot code uses the template units.</p>
+
+  <h3>1.2 Where Assignment 2 comes in</h3>
+  <p>A2's 1D model predicts position from wheel speed: exactly \(F=1\), \(B=\Delta t\) (per wheel or with the mean). Point to it in the report: "the prediction step is our A2 scenario 1 model, rewritten as distance to the wall". If A2 used the <i>voltage</i> as input (motor model), that's the FAQ's "Option: motor commands as input" with a velocity state; not needed here because the encoders measure the speed.</p>
+
+  <h3>1.3 The alternatives (for the report and defense)</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Approach (<code>FAQ velocity</code>)</th><th>State</th><th>Why not chosen</th></tr></thead>
+    <tbody>
+      <tr><td>1. Estimate velocity</td><td>[d, v], constant-velocity model, no input</td><td>Ignores the encoders that measure v directly</td></tr>
+      <tr><td>2. Velocity state + encoder as measurement</td><td>[d, v], H 2×2</td><td>More to tune (2×2 P, Q, R), same or worse result</td></tr>
+      <tr><td><b>3. Measured velocity as input</b></td><td>[d]</td><td><b>Chosen</b>: one state, uses all information</td></tr>
+    </tbody>
+  </table></div>
+
+  <details class="src"><summary>Sources</summary><div class="body"><ul>
+    <li>Goal 1 → <code>A3 notebook</code> §3</li>
+    <li>One state + speed as input → <code>FAQ states</code> §"TL;DR", <code>FAQ velocity</code> §"Approach 3" ("this approach feels most natural"), §"Understanding 'input' in Kalman filters"</li>
+    <li>u can be any known quantity → <code>FAQ velocity</code> §"What can u be?"; <code>Ch 5</code> §5.3.1.1.4</li>
+    <li>H converts state to measurement units → <code>Ch 5</code> §5.3.1.3.1 (thermometer volts example)</li>
+    <li>Template units → <code>robot.h:50</code>; F, B, H in those units <span class="own">own derivation</span></li>
+    <li>Approaches table → <code>FAQ velocity</code> §"Three valid approaches", <code>FAQ states</code> §"What about more states?"</li>
+  </ul></div></details>
+</div>
+<div class="card notes" data-step="s1"><h3 style="margin-top:0">Notes</h3></div>
+</section>
+
+<!-- =================================== STEP 2 =================================== -->
+<section class="tab" id="s2" data-title="Record data" data-num="2">
+<div class="card">
+  <div class="head"><span class="big">Step 2</span><div>
+    <h2>Record the data</h2>
+    <p class="lead">Log the input (wheel speeds) and the measurement (front distance) for two purposes: R from standing still, and a moving run to simulate the filter on.</p>
+    <span class="output">Output: <b>CSV logs, each with one clear purpose</b></span>
+  </div></div>
+
+  <details class="ctx"><summary>Why &amp; where in Assignment 3 <span class="need">§3 goal 2</span></summary><div class="body">
+    <h4>In the assignment notebook</h4>
+    <blockquote class="nb"><span class="where">§3 goal 2</span>"Simulate the behavior of the Kalman filter by collecting data (input signals and measurement signals) of the mobile platform."</blockquote>
+    <h4>Role in the process</h4>
+    <p>Feeds Step 3 (R), Step 5 (simulation) and Step 8 (comparison). A log only needs wheel speeds + front distance; everything else is computed in Python.</p>
+    <h4>Why this step</h4>
+    <p>Tuning offline is much faster than re-uploading C++ for every Q/R try. One good moving run can be filtered with any Q/R afterwards.</p>
+  </div></details>
+
+  <h3>Tasks <span class="tprog"></span></h3>
+  <ul class="tasks" data-step="s2">
+    <li data-id="s2-1">Add experiments F1 and F2 (2.2) to our A2 sketch and upload it</li>
+    <li data-id="s2-2">F0: static logs at 3 distances (2.1), tape-measured distance in the file name</li>
+    <li data-id="s2-3">F1: drive away from the wall, 5 runs, tape-measure start and end distance</li>
+    <li data-id="s2-4">F2: towards the wall and back, 3 runs</li>
+    <li data-id="s2-5">Copy all CSVs to our data folder, list them in the notes</li>
+  </ul>
+
+  <h3>2.1 The experiments</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Log</th><th>What</th><th>Used for</th></tr></thead>
+    <tbody>
+      <tr><td><b>F0</b> static</td><td>Robot still in front of a flat wall at ~0.10, 0.20, 0.28 m, motors off, 30 s each</td><td>R (Step 3), sensor bias vs. tape</td></tr>
+      <tr><td><b>F1</b> away</td><td>Start ~6 cm from the wall, drive <b>backwards</b> slowly to ~30 cm</td><td>Simulation (Step 5): whole sensor range, no crash risk</td></tr>
+      <tr><td><b>F2</b> there and back</td><td>Start ~28 cm, forward towards the wall, stop, backwards</td><td>Validation of the tuned filter on new data</td></tr>
+      <tr><td><b>F3</b> closed loop</td><td>Later, with our filter running on the robot (Step 7)</td><td>Evaluation (Step 8)</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Why drive <i>away</i> from the wall: a wrong guess of speed or duration can't crash into it, and the start is close where the sensor is most precise. Use a flat, matte wall (a box works). Mark the start position with tape. <span class="own">own suggestion</span></p>
+
+  <h3>2.2 Add the profiles to our A2 sketch</h3>
+  <p>Our A2 sketch (<code>experiences/Identification_ours/robot.cpp</code>) already plays voltage profiles and logs SET 1 = voltages, currents, wheel angles, <b>wheel speeds</b>, <b>front distance</b>. Add two tables and two lines in <code>EXPS[]</code>:</p>
+  <details class="code"><summary>F1 / F2 profiles <span class="tag">C++</span></summary><div class="body"><pre><code>// F1 - A3: drive backwards away from the wall (start ~6 cm), 2 s, then stop.
+// TWEAK: voltage/duration so the robot ends near 30 cm (sensor range). Negative = backwards.
+const Segment F1[] = { {100, 0.0, 0.0}, {200, -3.0, -3.0}, {100, 0.0, 0.0} };
+
+// F2 - A3: forward towards the wall, pause, back (start ~28 cm).
+// TWEAK: first segment short enough to stop well before the wall!
+const Segment F2[] = { {100, 0.0, 0.0}, {120, 3.0, 3.0}, {100, 0.0, 0.0},
+                       {120, -3.0, -3.0}, {100, 0.0, 0.0} };
+
+// in EXPS[]:
+//   {"F1 away (A3)",        F1, LEN(F1)},
+//   {"F2 there+back (A3)",  F2, LEN(F2)},</code></pre></div></details>
+  <p>The 1 s pauses at start and end give still segments: they show the measurement noise while moving is zero, and give a clean start value. Use F0 = existing experiment <b>E1</b> (stationary 60 s) with SET 1. Check with the A2 data how fast 3 V is before trusting the durations.</p>
+
+  <h3>2.3 Recording checklist</h3>
+  <ol>
+    <li>QRoboticsCenter → Recorders → GPIO on. Select experiment (Button 1) and SET 1 (Buttons 2/3) while stopped.</li>
+    <li>Tape-measure the start distance (sensor front to wall) and write it in the file name, e.g. <code>F1_run2_start062mm.csv</code>.</li>
+    <li>Button 0 → run plays and stops by itself. Measure the end distance.</li>
+  </ol>
+
+  <details class="src"><summary>Sources</summary><div class="body"><ul>
+    <li>Goal 2 → <code>A3 notebook</code> §3</li>
+    <li>Our A2 sketch: profiles, buttons, SET 1 with front distance → <code>experiences/Identification_ours/robot.cpp</code> (Segment tables at the top, <code>sendChannels()</code> case 1)</li>
+    <li>Static measurement for R → <code>FAQ tuning</code> §"How to determine R" ("Place robot at fixed distance… Record N measurements while stationary")</li>
+    <li>Experiment design (away from wall, 3 distances, F2 validation) <span class="own">own suggestion</span></li>
+  </ul></div></details>
+</div>
+<div class="card notes" data-step="s2"><h3 style="margin-top:0">Notes</h3></div>
+</section>
+
+<!-- =================================== STEP 3 =================================== -->
+<section class="tab" id="s3" data-title="Noise R" data-num="3">
+<div class="card">
+  <div class="head"><span class="big">Step 3</span><div>
+    <h2>Measurement noise R</h2>
+    <p class="lead">R is the variance of the distance sensor. Measure it, don't guess.</p>
+    <span class="output">Output: <b>R value (m²) + sensor check</b></span>
+  </div></div>
+
+  <details class="ctx"><summary>Why &amp; where in Assignment 3 <span class="need">§2 update table · §3 goal 1</span></summary><div class="body">
+    <h4>In the assignment notebook</h4>
+    <blockquote class="nb"><span class="where">§2 Assignment context</span>"\(\mathbf z,\, \mathbf R\) are the measurement mean and noise covariance."</blockquote>
+    <h4>Role in the process</h4>
+    <p>First of the two tuning numbers. <code>FAQ tuning</code> says tune in the order R → Q → K, because R can be measured independently.</p>
+    <h4>Why this step</h4>
+    <p>Only the ratio Q/R decides how much the filter trusts the sensor. With a measured R, only Q is left to reason about.</p>
+  </div></details>
+
+  <h3>Tasks <span class="tprog"></span></h3>
+  <ul class="tasks" data-step="s3">
+    <li data-id="s3-1">Load the F0 logs (reuse the A2 loading code)</li>
+    <li data-id="s3-2">Compute mean and variance per distance (3.1)</li>
+    <li data-id="s3-3">Compare the mean with the tape-measured distance (bias)</li>
+    <li data-id="s3-4">Choose one R and justify it (3.2)</li>
+  </ul>
+
+  <h3>3.1 Compute R</h3>
+  <details class="code"><summary>Variance of the front distance per static log <span class="tag">Python</span></summary><div class="body"><pre><code># R from static logs: variance of the front distance, one log per distance.
+# TWEAK: file names and tape distances; channel = where getFrontDistance() is (SET 1: ValueIn8).
+import pandas as pd, numpy as np
+files = {0.10: 'data/F0_100mm.csv', 0.20: 'data/F0_200mm.csv', 0.28: 'data/F0_280mm.csv'}
+for d_tape, f in files.items():
+    df = pd.read_csv(f, header=1, skipinitialspace=True)
+    z = df['ValueIn8']
+    print(f'{d_tape:.2f} m: mean {z.mean():.4f} m, bias {z.mean()-d_tape:+.4f} m, '
+          f'std {z.std()*1000:.2f} mm, R = {z.var():.2e} m^2')</code></pre></div></details>
+  <p>Reference from <code>FAQ tuning</code>: 6072 samples → σ ≈ 3.5 mm → R ≈ 1.25·10⁻⁵ m². Typical range 10⁻⁶ to 10⁻⁴ m².</p>
+
+  <h3>3.2 Which R?</h3>
+  <ul>
+    <li>An IR sensor like this has a 1/raw calibration (<code>sharp41S.cpp</code>), so the noise <b>grows with distance</b>. Expect a bigger variance at 0.28 m than at 0.10 m. <span class="own">own derivation</span></li>
+    <li>The linear filter has one fixed R. Take the value at the distance where the controller will work (the reference distance of Step 7), or the largest one to be safe. Mention the distance dependence in the report.</li>
+    <li>A constant <b>bias</b> (mean ≠ tape) isn't noise. R doesn't fix it; it shifts the whole estimate. Note it, and explain it as a sensor calibration error.</li>
+  </ul>
+
+  <details class="src"><summary>Sources</summary><div class="body"><ul>
+    <li>R definition → <code>A3 notebook</code> §2; <code>Ch 5</code> §5.3.1.3.2 ("The measurement noise matrix models the noise in our sensors")</li>
+    <li>Method, example value, typical range, tuning order → <code>FAQ tuning</code> §"R: Measurement Noise Covariance", §"Three parameters to tune"</li>
+    <li><code>read_csv(..., header=1)</code> → <code>A2 notebook</code> Appendix "How to read a csv file with Python"; <code>skipinitialspace</code> because the header has spaces after the commas <span class="own">own</span></li>
+    <li>Distance-dependent noise, choice of R <span class="own">own derivation</span></li>
+  </ul></div></details>
+</div>
+<div class="card notes" data-step="s3"><h3 style="margin-top:0">Notes</h3></div>
+</section>
+
+<!-- =================================== STEP 4 =================================== -->
+<section class="tab" id="s4" data-title="Noise Q" data-num="4">
+<div class="card">
+  <div class="head"><span class="big">Step 4</span><div>
+    <h2>Process noise Q (from Assignment 2)</h2>
+    <p class="lead">Q is how wrong one prediction step can be. With the measured speed as input, that error comes from the speed noise.</p>
+    <span class="output">Output: <b>Q value with derivation, in state units</b></span>
+  </div></div>
+
+  <details class="ctx"><summary>Why &amp; where in Assignment 3 <span class="need">§2 prediction table · §3 goal 1</span></summary><div class="body">
+    <h4>In the assignment notebook</h4>
+    <blockquote class="nb"><span class="where">§2 Assignment context</span>"\(\mathbf Q\) is the process covariance."</blockquote>
+    <blockquote class="nb"><span class="where">§3 goal 1</span>"the process model matrices (\(\mathbf F,\mathbf B\)) and, corresponding uncertainty (\(\mathbf Q\))"</blockquote>
+    <h4>Role in the process</h4>
+    <p>Second tuning number. Together with R it sets the Kalman gain (\(K \propto \sqrt{Q/R}\) in steady state, <code>FAQ tuning</code>).</p>
+    <h4>Why this step</h4>
+    <p>A derived starting value is something we can defend. Tuning (Step 5) then only adjusts it, and we can explain why.</p>
+  </div></details>
+
+  <h3>Tasks <span class="tprog"></span></h3>
+  <ul class="tasks" data-step="s4">
+    <li data-id="s4-1">Take σ<sub>ω</sub> (wheel-speed noise) from A2 Step 6, method 2 (or compute it from a constant-speed part of F1/F2)</li>
+    <li data-id="s4-2">Compute Q in state units (4.1) and convert to m² to compare with the FAQ range</li>
+    <li data-id="s4-3">Write the derivation in the notes (it goes into the report)</li>
+  </ul>
+
+  <h3>4.1 From speed noise to Q</h3>
+  <p>The prediction adds \(\Delta t\cdot v\), with \(v\) the mean of two noisy wheel speeds. If each wheel speed has standard deviation \(\sigma_\omega\) and the noise of the two wheels is independent:</p>
+  $$\sigma_v = \frac{\sigma_\omega}{\sqrt 2},\qquad Q = (\Delta t\,\sigma_v)^2\ \ [\text{rad}^2],\qquad Q_{[\text{m}^2]} = r^2\,Q$$
+  <p>This is the A2 formula \(\mathbf Q = \mathbf B\mathbf G\mathbf B^\mathsf T\) with \(\mathbf B = [\Delta t/2,\ \Delta t/2]\) and \(\mathbf G = \mathrm{diag}(\sigma_\omega^2, \sigma_\omega^2)\). <span class="own">own derivation</span></p>
+  <details class="code"><summary>Q from σ<sub>ω</sub> <span class="tag">Python</span></summary><div class="body"><pre><code># Q from the wheel-speed noise (A2 Step 6). State units: rad^2 (template), and m^2 to compare with FAQ.
+# TWEAK: sigma_w = our measured wheel-speed std from A2 (rad/s).
+dt, r = 0.01, 0.0325
+sigma_w = 0.35                      # rad/s, example: one encoder count per sample (A2 Step 0)
+sigma_v = sigma_w / np.sqrt(2)      # mean of two independent wheels
+Q = (dt * sigma_v)**2               # rad^2   -> goes into state_estimator.cpp
+print(f'Q = {Q:.2e} rad^2 = {Q*r**2:.2e} m^2')</code></pre></div></details>
+  <p>With the example σ<sub>ω</sub> = 0.35 rad/s: Q ≈ 6·10⁻⁶ rad² ≈ 6.5·10⁻⁹ m², inside the FAQ's typical range 10⁻⁹–10⁻⁵ m².</p>
+  <p class="note"><b>Units trap:</b> Q lives in <i>state</i> units (rad² in the template), R in <i>measurement</i> units (m²). H = −r connects them. Copying the FAQ's Q in m² into the template without dividing by r² makes Q about 1000× too small.</p>
+  <p class="hint">Q from speed noise alone ignores wheel slip and an imperfect wheel radius. If the filter lags in Step 5, that's the reason to increase it. Ch 4.9 calls a filter with too small Q "smug": it stops listening to the sensor.</p>
+
+  <details class="src"><summary>Sources</summary><div class="body"><ul>
+    <li>Q from encoder uncertainty, \(Q = (\Delta t\,\sigma_v)^2\), "If encoder specs unknown: start with Q = 0.01 × R", typical range → <code>FAQ tuning</code> §"Q: Process Noise Covariance"</li>
+    <li>\(\mathbf Q = \mathbf B\mathbf G\mathbf B^\mathsf T\) with G = speed noise → <code>A2 plan</code> Step 6 method 2; <code>Ch 6</code> §6.2.1.3</li>
+    <li>σ<sub>ω</sub> = 0.35 rad/s quantization → <code>A2 plan</code> Step 0 <span class="own">own derivation</span></li>
+    <li>√2 for the mean, state/measurement unit conversion <span class="own">own derivation</span></li>
+    <li>Smug filter → <code>Ch 4</code> §4.9</li>
+  </ul></div></details>
+</div>
+<div class="card notes" data-step="s4"><h3 style="margin-top:0">Notes</h3></div>
+</section>
+
+<!-- =================================== STEP 5 =================================== -->
+<section class="tab" id="s5" data-title="Simulate" data-num="5">
+<div class="card">
+  <div class="head"><span class="big">Step 5</span><div>
+    <h2>Simulate the filter in Python</h2>
+    <p class="lead">Run the exact robot algorithm on logged data, look at the plots, and tune Q (and maybe R) before touching C++.</p>
+    <span class="output">Output: <b>plots: estimate vs. measurement, P, innovation; tuned Q/R</b></span>
+  </div></div>
+
+  <details class="ctx"><summary>Why &amp; where in Assignment 3 <span class="need">§3 goal 2 · §2 algorithm</span></summary><div class="body">
+    <h4>In the assignment notebook</h4>
+    <blockquote class="nb"><span class="where">§3 goal 2</span>"Simulate the behavior of the Kalman filter by collecting data (input signals and measurement signals) of the mobile platform."</blockquote>
+    <blockquote class="nb"><span class="where">§2 Assignment context</span>"In this assignment we will learn how to simulate and implement the prediction and update step for a linear Kalman filter"</blockquote>
+    <h4>Role in the process</h4>
+    <p>This is the core of the notebook. The tuned Q and R go into C++ in Step 6, and the same code gives the reference numbers to check the C++ against.</p>
+    <h4>Why this step</h4>
+    <p>Writing the loop ourselves, in the same order as <code>robot.cpp</code> (correct, then predict), means the plots show exactly what the robot will do.</p>
+  </div></details>
+
+  <h3>Tasks <span class="tprog"></span></h3>
+  <ul class="tasks" data-step="s5">
+    <li data-id="s5-1">Run the filter loop (5.1) on one F1 run</li>
+    <li data-id="s5-2">Make the 3 plots (5.2)</li>
+    <li data-id="s5-3">Tune: try Q×0.01, Q×1, Q×100 and compare (5.3)</li>
+    <li data-id="s5-4">Validate the final Q/R on an F2 run (not used for tuning)</li>
+    <li data-id="s5-5">Optional: same result with FilterPy (Ch 5.3.2 template) as a cross-check</li>
+  </ul>
+
+  <h3>5.1 The filter loop</h3>
+  <details class="code"><summary>1D Kalman filter, same order and units as robot.cpp <span class="tag">Python</span></summary><div class="body"><pre><code># 1D Kalman filter on a logged run: correction first, then prediction (as robot.cpp).
+# State x = -d/r [rad], input = mean wheel speed [rad/s], measurement = front distance [m].
+# TWEAK: Q, R (Steps 3-4), P0; column names (SET 1: speeds ValueIn6/7, distance ValueIn8).
+df = pd.read_csv('data/F1_run1.csv', header=1, skipinitialspace=True)
+w = (df['ValueIn6'] + df['ValueIn7']) / 2          # mean wheel speed, rad/s
+z = df['ValueIn8']                                 # front distance, m
+
+dt, r = 0.01, 0.0325
+F, B, H = 1.0, dt, -r
+Q, R, P = 6e-6, 1.25e-5, 1e-2                      # rad^2, m^2, rad^2
+x = z.iloc[0] / H                                  # start at the first measurement
+
+xs, Ps, nus, Ss = [], [], [], []
+for wk, zk in zip(w, z):
+    nu = zk - H*x                                  # innovation (m)
+    S = H*P*H + R                                  # innovation variance (m^2)
+    K = P*H / S                                    # Kalman gain
+    x = x + K*nu;  P = (1 - K*H)*P                 # corrected estimate
+    xs.append(x); Ps.append(P); nus.append(nu); Ss.append(S)
+    x = F*x + B*wk;  P = F*P*F + Q                 # prediction for the next sample
+
+df['d_hat'] = H*np.array(xs)                       # back to metres for plotting
+df['sd_hat'] = r*np.sqrt(Ps)                       # 1 sigma of the estimate, m
+df['nu'], df['S'] = nus, Ss</code></pre></div></details>
+
+  <h3>5.2 Plots that tell the story</h3>
+  <details class="code"><summary>Estimate, uncertainty and innovation <span class="tag">Python</span></summary><div class="body"><pre><code># Three plots: estimate vs measurement (+-2 sigma), sigma of the estimate, innovation (+-2 sqrt(S)).
+# TWEAK: time axis (A2 Step 3 time conversion), zoom with plt.xlim.
+import matplotlib.pyplot as plt
+t = np.arange(len(df)) * dt
+fig, ax = plt.subplots(3, 1, sharex=True, figsize=(10, 8))
+ax[0].plot(t, z, '.', ms=2, label='measurement'); ax[0].plot(t, df.d_hat, label='KF estimate')
+ax[0].fill_between(t, df.d_hat-2*df.sd_hat, df.d_hat+2*df.sd_hat, alpha=.3, label='±2σ')
+ax[0].set_ylabel('distance (m)'); ax[0].legend()
+ax[1].plot(t, df.sd_hat*1000); ax[1].set_ylabel('σ estimate (mm)')
+ax[2].plot(t, df.nu*1000, lw=.8); ax[2].plot(t, 2000*np.sqrt(df.S), 'k:'); ax[2].plot(t, -2000*np.sqrt(df.S), 'k:')
+ax[2].set_ylabel('innovation (mm)'); ax[2].set_xlabel('time (s)')
+plt.show()</code></pre></div></details>
+  <ul>
+    <li><b>Plot 1:</b> smooth estimate through the noisy measurements, no lag behind them while driving.</li>
+    <li><b>Plot 2:</b> σ drops fast from P₀ and settles to a constant: the steady state.</li>
+    <li><b>Plot 3:</b> about 95% of the innovations inside ±2√S, centred on zero. A long run of same-sign innovations means the model is off (scale, bias, or Q too small).</li>
+  </ul>
+
+  <h3>5.3 Tuning</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>Estimate as noisy as the measurement</td><td>R too small / Q too big</td><td>Lower Q (or raise R)</td></tr>
+      <tr><td>Estimate lags behind while driving</td><td>Q too small ("smug")</td><td>Raise Q</td></tr>
+      <tr><td>Innovations mostly one sign while moving</td><td>Model scale wrong (wheel radius, slip) or sensor bias</td><td>Check r, sensor bias from Step 3</td></tr>
+    </tbody>
+  </table></div>
+  <p>Show 3 values of Q in one figure (×0.01, ×1, ×100) in the report: that is the clearest proof that we understand what Q does.</p>
+  <p class="hint">FilterPy alternative: Ch 5.3.2 has a ready <code>KalmanFilter</code> template ("EDIT THIS PART"). Fill in <code>F</code>, <code>B</code>, <code>H</code>, <code>Q</code>, <code>R</code>, <code>X0</code>, <code>P0</code>, and loop <code>kf.predict(u=w)</code> / <code>kf.update(z)</code>. Note FilterPy predicts before updating, so its first sample differs slightly from our loop. Install with <code>pip install filterpy</code>.</p>
+
+  <details class="src"><summary>Sources</summary><div class="body"><ul>
+    <li>Goal 2 → <code>A3 notebook</code> §3; predict/update equations → <code>A3 notebook</code> §2 tables</li>
+    <li>Order correct → predict → <code>robot.cpp:37-88</code></li>
+    <li>Tuning table → <code>FAQ tuning</code> §"Quick Diagnostic", §"What happens when wrong"; smug filter → <code>Ch 4</code> §4.9</li>
+    <li>Innovation within ±2√S (95%) → <code>Ch 3</code> §3.5 (68-95-99.7 rule) <span class="own">applied to the innovation: own</span></li>
+    <li>FilterPy template → <code>Ch 5</code> §5.3.2; <code>predict(x, P, F, Q, B, u)</code> → <code>Ch 5</code> §5.3.1.1.4</li>
+    <li>Loop code, plots <span class="own">own code</span></li>
+  </ul></div></details>
+</div>
+<div class="card notes" data-step="s5"><h3 style="margin-top:0">Notes</h3></div>
+</section>
+
+<!-- =================================== STEP 6 =================================== -->
+<section class="tab" id="s6" data-title="Implement on robot" data-num="6">
+<div class="card">
+  <div class="head"><span class="big">Step 6</span><div>
+    <h2>Implement on the robot</h2>
+    <p class="lead">Fill in <code>state_estimator.cpp</code> with the Step 5 values and test the estimator <b>alone</b> before any control.</p>
+    <span class="output">Output: <b><code>state_estimator.cpp</code> filled in, estimator tested alone</b></span>
+  </div></div>
+
+  <details class="ctx"><summary>Why &amp; where in Assignment 3 <span class="need">§3 goal 3</span></summary><div class="body">
+    <h4>In the assignment notebook</h4>
+    <blockquote class="nb"><span class="where">§3 goal 3</span>"Run the designed Kalman filter on the provided control software of the mobile robot by editing the state_estimator.cpp file."</blockquote>
+    <h4>Role in the process</h4>
+    <p>Turns the paper design into the code we upload and defend. The controller of Step 7 depends on it.</p>
+    <h4>Why this step</h4>
+    <p>Testing the estimator with the motors off (only Button 1) is the debugging mode <code>FAQ loops</code> recommends: no driving, just watch the estimate follow the measurement.</p>
+  </div></details>
+
+  <h3>Tasks <span class="tprog"></span></h3>
+  <ul class="tasks" data-step="s6">
+    <li data-id="s6-1">Work in a copy: <code>experiences/ours_assignment_3/StateEstimation_ours/</code> (rename the .ino to match the folder)</li>
+    <li data-id="s6-2">Fill in <code>PredictionUpdate</code> and <code>CorrectionUpdate</code> (6.1), with our Q and R</li>
+    <li data-id="s6-3">Compile (Verify) without errors</li>
+    <li data-id="s6-4">Test 1 (Button 1 only): robot still, set QRC ch1 = tape distance → estimate ≈ measurement, innovation small</li>
+    <li data-id="s6-5">Test 2 (Button 1 only): push the robot by hand towards/away from the wall → estimate follows</li>
+    <li data-id="s6-6">Test 3: log a run, re-run our Python loop on it, same estimate as channel 4/7</li>
+  </ul>
+
+  <h3>6.1 The code</h3>
+  <details class="code"><summary>state_estimator.cpp, filled in <span class="tag">C++</span></summary><div class="body"><pre><code>#include "state_estimator.h"
+
+// PREDICTION: x = -d/R_WHEEL [rad] grows by dt * mean wheel speed.
+// TWEAK: Q (rad^2) from Step 4/5.
+void PredictionUpdate(const BLA::Matrix&lt;2&gt; &amp;u, BLA::Matrix&lt;1&gt; &amp;xhat, BLA::Matrix&lt;1&gt; &amp;_Phat) {
+  BLA::Matrix&lt;1,1&gt; F = {1.0};
+  BLA::Matrix&lt;1,1&gt; B = {TSAMPLE};                 // 0.01 s
+  BLA::Matrix&lt;1,1&gt; Q = {6e-6};                    // rad^2  &lt;- Step 4/5
+  BLA::Matrix&lt;1,1&gt; v = {(u(0) + u(1)) / 2.0};     // mean wheel speed, rad/s
+
+  xhat = F*xhat + B*v;
+  _Phat = F*_Phat*~F + Q;                          // template line 15 missed the ';'
+}
+
+// CORRECTION: front distance z [m] = -R_WHEEL * x.
+// TWEAK: R (m^2) from Step 3/5.
+void CorrectionUpdate(const BLA::Matrix&lt;1&gt; &amp;y, BLA::Matrix&lt;1&gt; &amp;xhat, BLA::Matrix&lt;1&gt; &amp;nu, BLA::Matrix&lt;1&gt; &amp;_Phat) {
+  BLA::Matrix&lt;1,1&gt; R = {1.25e-5};                 // m^2  &lt;- Step 3/5
+  BLA::Matrix&lt;1,1&gt; H = {-R_WHEEL};                // state -&gt; metres
+
+  nu = y - H*xhat;                                 // innovation, m
+  BLA::Matrix&lt;1,1&gt; S = H*_Phat*~H + R;             // innovation variance
+  BLA::Matrix&lt;1,1&gt; K = _Phat*~H*Inverse(S);        // Kalman gain
+
+  xhat += K*nu;
+  BLA::Matrix&lt;1,1&gt; I = {1.0};
+  _Phat = (I - K*H)*_Phat;
+}</code></pre></div></details>
+  <p>The structure is the template's; only the <code>??</code> are filled and <code>;</code>/<code>~</code> added. <code>TSAMPLE</code> and <code>R_WHEEL</code> come from <code>mecotron.h</code> (already included).</p>
+
+  <h3>6.2 Initial state</h3>
+  <p>Button 1 sets \(\hat x_0\) = QRC channel 1 × <code>Meas2State</code>, so <b>type the tape-measured distance in m into channel 1 before pressing Button 1</b>. Forgetting it starts the filter at 0 m; it converges, but the first second is wrong. Alternative (own suggestion): start from the first measurement, <code>_xhat(0) = getFrontDistance()*Meas2State;</code> in <code>resetStateEstimator()</code> (<code>robot.cpp:120</code>). \(P_0 = 10^{-2}\) rad² (σ ≈ 3 mm) is fine if the start is measured; make it bigger if not.</p>
+
+  <h3>6.3 Upload</h3>
+  <ol>
+    <li>Libraries: the A3 folder has its own <code>libraries/</code>; same as A2, already installed (check <code>BasicLinearAlgebra</code> is there).</li>
+    <li>Close QRoboticsCenter, upload, open QRC.</li>
+    <li>Channels to watch: 5 (measurement) vs. 4 (estimate, rad: multiply by −0.0325 to compare) and 6 (innovation).</li>
+  </ol>
+
+  <details class="src"><summary>Sources</summary><div class="body"><ul>
+    <li>Goal 3 → <code>A3 notebook</code> §3</li>
+    <li>Template → <code>state_estimator.cpp:1-36</code>, <code>state_estimator.h</code>; missing <code>;</code> → line 15</li>
+    <li>Estimator-only testing → <code>FAQ loops</code> §"Only Kalman Filter (Button 1)"</li>
+    <li>Initial state from channel 1, P₀ → <code>robot.cpp:114-121</code>; alternative init <span class="own">own suggestion</span></li>
+    <li>Filled-in values <span class="own">own code</span> from Steps 1, 3, 4</li>
+  </ul></div></details>
+</div>
+<div class="card notes" data-step="s6"><h3 style="margin-top:0">Notes</h3></div>
+</section>
+
+<!-- =================================== STEP 7 =================================== -->
+<section class="tab" id="s7" data-title="Wall control" data-num="7">
+<div class="card">
+  <div class="head"><span class="big">Step 7</span><div>
+    <h2>Close the loop: wall-distance control</h2>
+    <p class="lead">Use the estimate to keep the robot at a reference distance. One line of control, one gain to tune.</p>
+    <span class="output">Output: <b>tuned gain K, logged reference steps (F3)</b></span>
+  </div></div>
+
+  <details class="ctx"><summary>Why &amp; where in Assignment 3 <span class="need">§2 context</span></summary><div class="body">
+    <h4>In the assignment notebook</h4>
+    <blockquote class="nb"><span class="where">§2 Assignment context</span>"This estimator will be used inside a control loop that makes sure the robot stays at a fixed distance of a wall in front."</blockquote>
+    <h4>Role in the process</h4>
+    <p>The demo for the defense. It shows why we filter: the controller acts on the smooth estimate, not on the noisy sensor.</p>
+    <h4>Why this step</h4>
+    <p><code>FAQ feedback</code>: "This assignment is about state estimation, not control design." Keep the given velocity controller; only K is ours.</p>
+  </div></details>
+
+  <h3>Tasks <span class="tprog"></span></h3>
+  <ul class="tasks" data-step="s7">
+    <li data-id="s7-1">Set QRC ch0 = reference (e.g. 0.15 m), ch1 = start distance; Button 1, then Button 0</li>
+    <li data-id="s7-2">Tune K: start 0.5, then up/down (7.1)</li>
+    <li data-id="s7-3">F3 logs: change the reference during the run (0.15 → 0.10 → 0.20 m), 3 runs</li>
+    <li data-id="s7-4">F3b: one run with the raw measurement in the controller instead of the estimate (comparison for the report, optional)</li>
+  </ul>
+
+  <h3>7.1 The controller</h3>
+  <p><code>robot.cpp:51-53</code>, already there: <code>desired_velocity = K * (xref - _xhat);</code>. Both in rad, so K is in 1/s: an error of 1 rad (3.25 cm) asks for K rad/s of wheel speed.</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Observation</th><th>Action</th></tr></thead>
+    <tbody>
+      <tr><td>Oscillates around the reference</td><td>Lower K</td></tr>
+      <tr><td>Very slow</td><td>Raise K</td></tr>
+      <tr><td>Good</td><td>Smooth approach, settles in 1–2 s, little overshoot</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Keep the reference inside the sensor range (≈ 0.06–0.25 m). If the robot drives off and never stops, check the buttons first (<code>FAQ direction</code>): estimator <b>and</b> control must both be on.</p>
+  <p class="hint">Optional comparison: replace <code>_xhat</code> by <code>getFrontDistance()*Meas2State</code> in line 53 for one run. The motor voltages (ch 0/1) should get visibly noisier. That is the argument for the filter in one plot. <span class="own">own suggestion</span></p>
+
+  <details class="src"><summary>Sources</summary><div class="body"><ul>
+    <li>Control goal → <code>A3 notebook</code> §2</li>
+    <li>One line of state feedback, don't touch the velocity controller → <code>FAQ feedback</code></li>
+    <li>K tuning procedure and typical range 0.3–2.0 → <code>FAQ tuning</code> §"K: State Feedback Gain"</li>
+    <li>Buttons → <code>FAQ direction</code>, <code>robot.cpp:123-158</code></li>
+    <li>Units of K, raw-measurement comparison <span class="own">own derivation</span></li>
+  </ul></div></details>
+</div>
+<div class="card notes" data-step="s7"><h3 style="margin-top:0">Notes</h3></div>
+</section>
+
+<!-- =================================== STEP 8 =================================== -->
+<section class="tab" id="s8" data-title="Evaluate" data-num="8">
+<div class="card">
+  <div class="head"><span class="big">Step 8</span><div>
+    <h2>Evaluate</h2>
+    <p class="lead">Show that the filter on the robot does what the simulation predicted, and what Q and R change.</p>
+    <span class="output">Output: <b>robot vs. simulation, effect of Q/R, conclusions</b></span>
+  </div></div>
+
+  <details class="ctx"><summary>Why &amp; where in Assignment 3 <span class="need">§3 goals 2–3 · §4</span></summary><div class="body">
+    <h4>In the assignment notebook</h4>
+    <blockquote class="nb"><span class="where">§4 Submission format</span>"Upload your arduino script and relevant Jupyter notebooks to Toledo at least 24 hours before the start of the defense. You will defend your work during a provided timeslot."</blockquote>
+    <h4>Role in the process</h4>
+    <p>Connects goal 2 (simulation) to goal 3 (robot). These plots carry the defense.</p>
+    <h4>Why this step</h4>
+    <p>"It drives to the wall" isn't evidence. Matching numbers between Python and the robot, and an innovation that looks like white noise, are.</p>
+  </div></details>
+
+  <h3>Tasks <span class="tprog"></span></h3>
+  <ul class="tasks" data-step="s8">
+    <li data-id="s8-1">Re-run the Python loop on an F3 log: same estimate as robot channel 4 (max difference ≈ 0)</li>
+    <li data-id="s8-2">Plot reference, estimate and measurement for an F3 run</li>
+    <li data-id="s8-3">Innovation check: mean ≈ 0, ~95% inside ±2√S</li>
+    <li data-id="s8-4">Final distance: estimate vs. tape measure at rest</li>
+    <li data-id="s8-5">Write 4–6 conclusion lines (8.1)</li>
+  </ul>
+
+  <h3>8.1 Questions the conclusions should answer</h3>
+  <ul>
+    <li>How much smoother is the estimate than the measurement (std while standing still)?</li>
+    <li>Does the estimate lag while driving? Which Q fixed that?</li>
+    <li>What did Q/R do (the 3-Q figure from Step 5)?</li>
+    <li>Limitations: fixed R although the noise depends on distance; sensor bias; wheel slip; sensor range.</li>
+  </ul>
+
+  <details class="src"><summary>Sources</summary><div class="body"><ul>
+    <li>Submission + defense → <code>A3 notebook</code> §4</li>
+    <li>Channels → <code>robot.cpp:91-101</code></li>
+    <li>Evaluation criteria <span class="own">own suggestion</span>; 95% band → <code>Ch 3</code> §3.5</li>
+  </ul></div></details>
+</div>
+<div class="card notes" data-step="s8"><h3 style="margin-top:0">Notes</h3></div>
+</section>
+
+<!-- =================================== STEP 9 =================================== -->
+<section class="tab" id="s9" data-title="Submit &amp; defend" data-num="9">
+<div class="card">
+  <div class="head"><span class="big">Step 9</span><div>
+    <h2>Notebook, upload and defense prep</h2>
+    <p class="lead">One clean notebook, the Arduino folder, uploaded 24 h early, and both of us ready for questions.</p>
+    <span class="output">Output: <b>submission + answers to likely questions</b></span>
+  </div></div>
+
+  <details class="ctx"><summary>Why &amp; where in Assignment 3 <span class="need">§4 Submission format</span></summary><div class="body">
+    <h4>In the assignment notebook</h4>
+    <blockquote class="nb"><span class="where">§4 Submission format</span>"Upload your arduino script and relevant Jupyter notebooks to Toledo at least 24 hours before the start of the defense. You will defend your work during a provided timeslot. Please register using the provided link on Toledo!"</blockquote>
+    <h4>Role in the process</h4>
+    <p>Last step. Unlike A2, there's a defense, so understanding every line matters as much as the files.</p>
+  </div></details>
+
+  <h3>Tasks <span class="tprog"></span></h3>
+  <ul class="tasks" data-step="s9">
+    <li data-id="s9-1">Notebook in the order of 9.1, runs top to bottom (Restart &amp; Run All)</li>
+    <li data-id="s9-2">Arduino folder zipped (all files: .ino, robot.*, state_estimator.*)</li>
+    <li data-id="s9-3">Uploaded to Toledo ≥ 24 h before the slot</li>
+    <li data-id="s9-4">Each of us answers all questions in 9.2 out loud without notes</li>
+  </ul>
+
+  <h3>9.1 Notebook structure</h3>
+  <ol>
+    <li>Goal + setup (sensor, inputs, state choice and why one state).</li>
+    <li>Model: x, u, z, F, B, H with units (Step 1).</li>
+    <li>R from static logs (Step 3), Q from the speed noise (Step 4).</li>
+    <li>Simulation on logged data + tuning figure (Step 5).</li>
+    <li>Robot implementation: the filled-in C++ (short), how it's called (Step 6).</li>
+    <li>Closed-loop results + evaluation (Steps 7–8). Conclusion.</li>
+  </ol>
+
+  <h3>9.2 Likely defense questions</h3>
+  <ul>
+    <li>Why one state? Why is the wheel speed an input and not a measurement?</li>
+    <li>What happens to the estimate if Q → 0? If R → 0?</li>
+    <li>What are the units of x, Q, R, H? Why is H = −r?</li>
+    <li>Where does Q come from? Why the √2?</li>
+    <li>Why is the correction done before the prediction in <code>robot.cpp</code>?</li>
+    <li>What is the innovation and what should it look like?</li>
+    <li>Kalman filter loop vs. control loop: what is the difference?</li>
+    <li>Change R live: what do you expect to see?</li>
+  </ul>
+
+  <details class="src"><summary>Sources</summary><div class="body"><ul>
+    <li>Submission + defense → <code>A3 notebook</code> §4</li>
+    <li>Loop vs. control question → <code>FAQ loops</code>; state count → <code>FAQ states</code></li>
+    <li>Structure and questions <span class="own">own suggestion</span>; "explainable by the student" → <code>ExperiencesRulesForAI.MD</code></li>
+  </ul></div></details>
+</div>
+<div class="card notes" data-step="s9"><h3 style="margin-top:0">Notes</h3></div>
+</section>
+
+<div class="pager"><button id="prev">← Previous</button><button id="next">Next →</button></div>
+<p class="hint" style="margin-top:28px">Saving: open this file in <b>Chrome or Edge</b>, click <b>Link file</b> and pick this same .html file. After that every change is saved into the file automatically, and OneDrive syncs it. Your teammate's saved changes are merged in automatically (every 15 s while linked). In other browsers use <b>Download copy</b> and replace the file.<br>Online (GitHub Pages): click <b>Connect GitHub</b> and paste your own fine-grained token (repo <code>mobile_robotics_experience</code>, Contents: Read and write). Progress is then saved in the private repo and shared with your teammate; without a token the page is view-only.</p>
+</main>
+</div>
+
+<script>
+/* ---------- capture pristine source BEFORE anything changes the DOM ---------- */
+const SRC = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+const STATE_RE = /(<script id="plan-state" type="application\/json">)([\s\S]*?)(<\/script>)/;
+
+/* ---------- state: {tasks:{id:{done,t}}, notes:{step:{text,t}}, savedAt} ---------- */
+function parseState(txt){ try{ const s = JSON.parse(txt || '{}'); return {tasks:s.tasks||{}, notes:s.notes||{}, savedAt:s.savedAt||null}; }catch(e){ return {tasks:{},notes:{},savedAt:null}; } }
+function mergeInto(a, b){ // last-write-wins per item, returns true if a changed
+  let changed = false;
+  for (const kind of ['tasks','notes']) for (const [k,v] of Object.entries(b[kind]||{}))
+    if (!a[kind][k] || (v.t||'') > (a[kind][k].t||'')) { a[kind][k] = v; changed = true; }
+  if ((b.savedAt||'') > (a.savedAt||'')) a.savedAt = b.savedAt;
+  return changed;
+}
+let state = parseState(document.getElementById('plan-state').textContent);
+const LS_KEY = 'plan-a3:' + location.pathname;
+try { const d = localStorage.getItem(LS_KEY); if (d) mergeInto(state, parseState(d)); } catch(e){}
+
+function serialize(){ return SRC.replace(STATE_RE, (m,a,b,c) => a + JSON.stringify(state).replace(/</g,'\\u003c') + c); }
+const now = () => new Date().toISOString();
+function fmt(iso){ const d = new Date(iso); return d.toLocaleDateString(undefined,{day:'numeric',month:'short'}) + ' ' + d.toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'}); }
+
+/* ---------- navigation ---------- */
+const tabs = [...document.querySelectorAll('section.tab')];
+const nav = document.getElementById('nav');
+tabs.forEach((s,i) => {
+  if (i === 1) nav.insertAdjacentHTML('beforeend','<div class="sep"></div>');
+  const b = document.createElement('button');
+  b.dataset.tab = s.id;
+  b.innerHTML = `<span class="num">${s.dataset.num}</span><span class="lbl">${s.dataset.title}</span><span class="cnt"></span>`;
+  b.onclick = () => show(s.id);
+  nav.appendChild(b);
+});
+function show(id){
+  if (!document.getElementById(id)) id = 'overview';
+  tabs.forEach(s => s.classList.toggle('active', s.id === id));
+  nav.querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.tab === id));
+  const i = tabs.findIndex(s => s.id === id);
+  document.getElementById('prev').style.visibility = i > 0 ? 'visible' : 'hidden';
+  document.getElementById('next').style.visibility = i < tabs.length-1 ? 'visible' : 'hidden';
+  if (location.hash !== '#'+id) history.replaceState(null,'','#'+id);
+  window.scrollTo({top:0});
+}
+document.getElementById('prev').onclick = () => { const i = tabs.findIndex(s=>s.classList.contains('active')); show(tabs[Math.max(0,i-1)].id); };
+document.getElementById('next').onclick = () => { const i = tabs.findIndex(s=>s.classList.contains('active')); show(tabs[Math.min(tabs.length-1,i+1)].id); };
+document.querySelectorAll('[data-go]').forEach(r => r.onclick = () => show(r.dataset.go));
+window.addEventListener('hashchange', () => show(location.hash.slice(1)));
+
+/* ---------- tasks ---------- */
+document.querySelectorAll('.tasks li').forEach(li => {
+  const id = li.dataset.id;
+  const label = document.createElement('label'); label.innerHTML = li.innerHTML; label.htmlFor = 'cb-'+id;
+  const cb = document.createElement('input'); cb.type = 'checkbox'; cb.id = 'cb-'+id;
+  const when = document.createElement('span'); when.className = 'when';
+  li.textContent = ''; li.append(cb, label, when);
+  cb.onchange = () => { state.tasks[id] = {done: cb.checked, t: now()}; changed(); };
+});
+
+/* ---------- notes ---------- */
+document.querySelectorAll('.notes').forEach(box => {
+  const step = box.dataset.step;
+  const ta = document.createElement('textarea');
+  ta.placeholder = 'Type anything: file names, measured values, questions, decisions…';
+  const meta = document.createElement('div'); meta.className = 'meta';
+  box.append(ta, meta);
+  let timer;
+  ta.oninput = () => { clearTimeout(timer); timer = setTimeout(() => { state.notes[step] = {text: ta.value, t: now()}; changed(); }, 600); };
+});
+
+/* ---------- render state into the page ---------- */
+function render(){
+  let total = 0, done = 0;
+  document.querySelectorAll('.tasks li').forEach(li => {
+    const s = state.tasks[li.dataset.id], on = !!(s && s.done);
+    li.querySelector('input').checked = on;
+    li.classList.toggle('done', on);
+    li.querySelector('.when').textContent = on ? fmt(s.t) : '';
+  });
+  tabs.forEach(sec => {
+    const lis = sec.querySelectorAll('.tasks li'), n = lis.length;
+    const d = [...lis].filter(li => li.classList.contains('done')).length;
+    total += n; done += d;
+    const btn = nav.querySelector(`[data-tab="${sec.id}"]`);
+    btn.querySelector('.cnt').textContent = n ? `${d}/${n}` : '';
+    btn.classList.toggle('done', n > 0 && d === n);
+    btn.classList.toggle('part', d > 0 && d < n);
+    sec.querySelectorAll('.tprog').forEach(p => { if (!p.style.float) p.textContent = `${d} / ${n}`; });
+  });
+  document.getElementById('overall-bar').style.width = (total ? 100*done/total : 0) + '%';
+  document.getElementById('overall-txt').textContent = `${done} / ${total} tasks`;
+  document.querySelectorAll('.notes').forEach(box => {
+    const n = state.notes[box.dataset.step], ta = box.querySelector('textarea');
+    if (document.activeElement !== ta) ta.value = n ? n.text : '';
+    box.querySelector('.meta').textContent = n && n.text ? 'Last edited ' + fmt(n.t) : '';
+  });
+}
+
+/* ---------- saving into the file itself (File System Access API, Chrome/Edge) ---------- */
+const pill = document.getElementById('save-pill'), linkBtn = document.getElementById('link-btn');
+const hasFS = 'showOpenFilePicker' in window;
+let handle = null, dirty = false, saveTimer = null, saving = false;
+function setPill(txt, cls){ pill.textContent = txt; pill.className = 'pill' + (cls ? ' '+cls : ''); }
+function banner(txt){ const b = document.getElementById('banner'); b.style.display = txt ? 'block' : 'none'; document.getElementById('banner-txt').textContent = txt || ''; }
+
+function changed(){
+  dirty = true; render();
+  try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch(e){}
+  if (ghToken) { ghPending = true; setPill('Unsaved…','warn'); clearTimeout(ghTimer); ghTimer = setTimeout(ghSave, 2000); }
+  if (handle) { setPill('Unsaved…','warn'); clearTimeout(saveTimer); saveTimer = setTimeout(save, 800); }
+  else if (!ghToken) setPill('Not saved','warn');
+}
+
+async function readDisk(){
+  const txt = await (await handle.getFile()).text();
+  const m = txt.match(STATE_RE);
+  if (!m) throw new Error('The linked file is not this plan.');
+  return parseState(m[2]);
+}
+async function save(){
+  if (!handle || saving) return;
+  saving = true; setPill('Saving…');
+  try {
+    mergeInto(state, await readDisk());            // keep teammate's changes
+    state.savedAt = now();
+    const w = await handle.createWritable();
+    await w.write(serialize()); await w.close();
+    dirty = false; render(); setPill('Saved ' + fmt(state.savedAt).split(' ').pop(), 'ok'); banner('');
+  } catch(e) { setPill('Save failed','warn'); banner('Could not save: ' + e.message + ' Click "Link file" again.'); }
+  saving = false;
+}
+async function syncFromDisk(){
+  if (!handle || saving || document.hidden) return;
+  try { const disk = await readDisk(); if (mergeInto(state, disk)) { render(); try{localStorage.setItem(LS_KEY, JSON.stringify(state));}catch(e){} } } catch(e){}
+}
+
+/* remember the file handle between sessions (IndexedDB) */
+function idb(){ return new Promise((res,rej) => { const r = indexedDB.open('plan-a3',1); r.onupgradeneeded = () => r.result.createObjectStore('h'); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); }
+async function idbSet(v){ try{ const db = await idb(); db.transaction('h','readwrite').objectStore('h').put(v, location.pathname); }catch(e){} }
+async function idbGet(){ try{ const db = await idb(); return await new Promise(r => { const q = db.transaction('h').objectStore('h').get(location.pathname); q.onsuccess = () => r(q.result); q.onerror = () => r(null); }); }catch(e){ return null; } }
+
+async function activate(h){
+  handle = h; await idbSet(h);
+  linkBtn.textContent = 'Linked'; linkBtn.classList.remove('primary');
+  await syncFromDisk();
+  if (dirty) await save(); else setPill('Linked · up to date','ok');
+}
+let stored = null;
+linkBtn.onclick = async () => {
+  if (!hasFS) { alert('Saving into the file needs Chrome or Edge. Use "Download copy" instead.'); return; }
+  try {
+    if (stored && await stored.requestPermission({mode:'readwrite'}) === 'granted') return activate(stored);
+    const [h] = await window.showOpenFilePicker({types:[{description:'Plan',accept:{'text/html':['.html']}}]});
+    if (await h.requestPermission({mode:'readwrite'}) !== 'granted') return;
+    const txt = await (await h.getFile()).text();
+    if (!STATE_RE.test(txt) || !txt.includes('Assignment 3 · 1D Linear Kalman filter')) { alert('That file is not this plan. Pick plan_assignment_3.html.'); return; }
+    await activate(h);
+  } catch(e) { if (e.name !== 'AbortError') banner('Link failed: ' + e.message); }
+};
+document.getElementById('dl-btn').onclick = () => {
+  state.savedAt = now();
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([serialize()], {type:'text/html'}));
+  a.download = 'plan_assignment_3.html'; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+};
+window.addEventListener('beforeunload', e => { if (dirty && handle) { save(); e.preventDefault(); e.returnValue=''; } });
+setInterval(syncFromDisk, 15000);
+document.addEventListener('visibilitychange', syncFromDisk);
+
+/* ---------- saving to GitHub (private repo, works on the online page) ----------
+   Token: GitHub → Settings → Developer settings → Fine-grained tokens.
+   Repository access: only mobile_robotics_experience · Permission: Contents = Read and write.
+   The token is kept in this browser only (localStorage). Without a token the page is view-only. */
+const GH_REPO = 'Ruben-V-Student/mobile_robotics_experience';
+const GH_PATH = 'plans/' + (location.pathname.split('/').pop() || 'plan_assignment_3.html').replace(/\.html$/, '') + '.state.json';
+const ghBtn = document.getElementById('gh-btn');
+const onPages = location.hostname.endsWith('github.io');
+let ghToken = null, ghSha = null, ghTimer = null, ghBusy = false, ghPending = false;
+try { ghToken = localStorage.getItem('gh-token'); } catch(e){}
+
+function b64dec(b){ return new TextDecoder().decode(Uint8Array.from(atob(b.replace(/\s/g,'')), c => c.charCodeAt(0))); }
+function b64enc(s){ let bin = ''; new TextEncoder().encode(s).forEach(x => bin += String.fromCharCode(x)); return btoa(bin); }
+async function gh(method, body){
+  const r = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${GH_PATH}`, {
+    method, cache: 'no-store', body: body && JSON.stringify(body),
+    headers: {Authorization: 'Bearer ' + ghToken, Accept: 'application/vnd.github+json'} });
+  if (r.status === 401 || r.status === 403) throw new Error('token rejected (expired or no access to the repo)');
+  return r;
+}
+async function ghRead(){ // remote state; remembers its sha for the next write
+  const r = await gh('GET');
+  if (r.status === 404) { ghSha = null; return parseState('{}'); }
+  if (!r.ok) throw new Error('GitHub ' + r.status);
+  const j = await r.json(); ghSha = j.sha; return parseState(b64dec(j.content));
+}
+async function ghSave(){
+  if (!ghToken) return;
+  if (ghBusy) { clearTimeout(ghTimer); ghTimer = setTimeout(ghSave, 1000); return; }
+  ghTimer = null; ghBusy = true; ghPending = false; setPill('Saving to GitHub…');
+  try {
+    for (let i = 0; ; i++) {                       // retry when teammate saved in between
+      mergeInto(state, await ghRead());
+      state.savedAt = now();
+      const r = await gh('PUT', {message: 'Update plan progress', content: b64enc(JSON.stringify(state, null, 1)), sha: ghSha || undefined});
+      if (r.ok) { ghSha = (await r.json()).content.sha; break; }
+      if ((r.status !== 409 && r.status !== 422) || i >= 2) throw new Error('GitHub ' + r.status);
+    }
+    render(); setPill('Saved to GitHub ' + fmt(state.savedAt).split(' ').pop(), 'ok'); banner('');
+  } catch(e) { ghPending = true; setPill('GitHub save failed','warn'); banner('Could not save to GitHub: ' + e.message); }
+  ghBusy = false;
+  if (ghPending && !ghTimer) ghTimer = setTimeout(ghSave, 2000);
+}
+async function ghSync(){
+  if (!ghToken || ghBusy || ghPending || document.hidden) return;
+  try { if (mergeInto(state, await ghRead())) { render(); try{localStorage.setItem(LS_KEY, JSON.stringify(state));}catch(e){} } }
+  catch(e) { setPill('GitHub: ' + e.message, 'warn'); }
+}
+async function ghConnect(){
+  ghBtn.textContent = 'GitHub ✓';
+  try {
+    const remote = await ghRead();
+    mergeInto(state, remote); render();
+    if (mergeInto(remote, state)) ghSave();        // this browser had newer changes → push them
+    else setPill('GitHub · up to date', 'ok');
+  } catch(e) { setPill('GitHub: ' + e.message, 'warn'); }
+}
+ghBtn.onclick = () => {
+  const t = prompt('Paste your GitHub token (fine-grained, repo ' + GH_REPO + ', Contents: Read and write).\nLeave empty to disconnect.', '');
+  if (t === null) return;
+  ghToken = t.trim() || null;
+  try { ghToken ? localStorage.setItem('gh-token', ghToken) : localStorage.removeItem('gh-token'); } catch(e){}
+  if (ghToken) ghConnect(); else { ghBtn.textContent = 'Connect GitHub'; setPill('View only'); }
+};
+setInterval(ghSync, 15000);
+document.addEventListener('visibilitychange', ghSync);
+window.addEventListener('beforeunload', e => { if (ghPending) { ghSave(); e.preventDefault(); e.returnValue=''; } });
+
+(async () => {
+  if (ghToken) ghConnect();
+  if (onPages) { linkBtn.style.display = 'none'; if (!ghToken) setPill('View only · Connect GitHub to edit'); return; }
+  if (!hasFS) { setPill('View only · use Download copy'); linkBtn.disabled = true; return; }
+  stored = await idbGet();
+  if (stored) {
+    try { if (await stored.queryPermission({mode:'readwrite'}) === 'granted') return activate(stored); } catch(e){}
+    linkBtn.textContent = 'Reconnect file'; setPill('Click Reconnect to save','warn');
+  }
+})();
+
+/* ---------- copy buttons + math ---------- */
+document.querySelectorAll('details.code pre').forEach(pre => {
+  const b = document.createElement('button'); b.className = 'copy'; b.textContent = 'Copy';
+  b.onclick = e => { e.preventDefault(); navigator.clipboard.writeText(pre.innerText).then(() => { b.textContent = 'Copied'; setTimeout(() => b.textContent = 'Copy', 1200); }); };
+  pre.parentElement.appendChild(b);
+});
+window.renderMath = () => renderMathInElement(document.body, {
+  delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}],
+  ignoredTags:['script','noscript','style','textarea','pre','code'], throwOnError:false });
+if (window.renderMathInElement) window.renderMath();
+
+render();
+show(location.hash.slice(1) || 'overview');
+if (!onPages && (Object.keys(state.tasks).length || Object.keys(state.notes).length)) setPill(state.savedAt ? 'Saved ' + fmt(state.savedAt) : 'Not linked', state.savedAt ? 'ok' : '');
+</script>
+</body>
+</html>

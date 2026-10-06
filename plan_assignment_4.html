@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Assignment 4 Plan</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="window.renderMath && window.renderMath()"></script>
+<style>
+:root{
+  --bg:#f6f7f9; --surface:#ffffff; --ink:#1c2230; --ink2:#3d4555; --muted:#6b7280; --line:#e5e7ec;
+  --accent:#2563eb; --accent-soft:#edf3ff; --ok:#15803d; --ok-soft:#eaf7ee;
+  --own:#a16207; --own-soft:#fdf6e3; --code:#f4f5f8; --radius:10px;
+  --mono: ui-monospace, "Cascadia Code", "JetBrains Mono", Consolas, monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+a{color:var(--accent)}
+code{font-family:var(--mono);font-size:.86em;background:var(--code);padding:.1em .35em;border-radius:4px}
+pre{margin:0;overflow:auto;background:var(--code);border-radius:8px;padding:14px 16px;font-size:13px;line-height:1.5}
+pre code{background:none;padding:0;font-size:inherit}
+table{border-collapse:collapse;width:100%;font-size:14px;margin:8px 0 4px}
+th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+.table-wrap{overflow-x:auto}
+h1,h2,h3{line-height:1.3;margin:0}
+h2{font-size:22px;letter-spacing:-.01em}
+h3{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;margin:28px 0 10px}
+p{margin:8px 0}
+ul,ol{padding-left:22px;margin:8px 0}
+li{margin:3px 0}
+
+/* top bar */
+.top{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.top-in{max-width:1180px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.brand{font-weight:650;font-size:15px}
+.brand small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+.overall{flex:1;min-width:160px;display:flex;align-items:center;gap:10px}
+.bar{flex:1;height:6px;background:var(--line);border-radius:99px;overflow:hidden}
+.bar>i{display:block;height:100%;width:0;background:var(--ok);border-radius:99px;transition:width .3s}
+.overall span{font-size:12px;color:var(--muted);white-space:nowrap}
+.save{display:flex;align-items:center;gap:8px}
+.pill{font-size:12px;padding:4px 10px;border-radius:99px;background:var(--code);color:var(--muted);white-space:nowrap}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.warn{background:var(--own-soft);color:var(--own)}
+button{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:6px 12px;border-radius:8px;cursor:pointer}
+button:hover{border-color:#c9cdd6}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+button.primary:hover{filter:brightness(1.07)}
+
+/* layout */
+.wrap{max-width:1180px;margin:0 auto;padding:24px 16px 80px;display:grid;grid-template-columns:250px minmax(0,1fr);gap:28px}
+nav{position:sticky;top:76px;align-self:start;max-height:calc(100vh - 96px);overflow:auto}
+nav button{display:flex;width:100%;align-items:center;gap:10px;text-align:left;border:0;background:none;padding:8px 10px;border-radius:8px;color:var(--ink2)}
+nav button:hover{background:#eceef2}
+nav button.active{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(16,24,40,.06),0 0 0 1px var(--line)}
+nav .num{width:22px;height:22px;flex:none;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:600;background:#e9ebf0;color:var(--muted)}
+nav button.done .num{background:var(--ok);color:#fff}
+nav button.part .num{background:var(--accent-soft);color:var(--accent)}
+nav .lbl{flex:1;font-size:14px;line-height:1.3}
+nav .cnt{font-size:11px;color:var(--muted)}
+nav .sep{height:1px;background:var(--line);margin:8px 10px}
+
+main{min-width:0}
+section.tab{display:none}
+section.tab.active{display:block}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px}
+.card + .card{margin-top:16px}
+.head{display:flex;gap:14px;align-items:flex-start}
+.head .big{font-size:13px;font-weight:600;color:var(--accent);background:var(--accent-soft);border-radius:8px;padding:4px 9px;flex:none;margin-top:2px}
+.lead{color:var(--ink2);font-size:15.5px;margin-top:6px}
+.output{display:inline-block;margin-top:10px;font-size:13px;color:var(--muted)}
+.output b{color:var(--ink2);font-weight:600}
+
+/* tasks */
+.tasks{list-style:none;padding:0;margin:4px 0 0}
+.tasks li{display:flex;gap:12px;align-items:flex-start;padding:9px 4px;border-bottom:1px solid var(--line);margin:0}
+.tasks li:last-child{border-bottom:0}
+.tasks input{appearance:none;width:18px;height:18px;flex:none;margin-top:2px;border:1.5px solid #b8bdc8;border-radius:5px;cursor:pointer;display:grid;place-items:center;background:#fff}
+.tasks input:checked{background:var(--ok);border-color:var(--ok)}
+.tasks input:checked::after{content:"";width:5px;height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.tasks label{flex:1;cursor:pointer}
+.tasks li.done label{color:var(--muted);text-decoration:line-through;text-decoration-color:#c4c8d0}
+.tasks .when{font-size:12px;color:var(--ok);white-space:nowrap;margin-top:2px}
+.tprog{float:right;font-size:12px;color:var(--muted);font-weight:500;text-transform:none;letter-spacing:0}
+
+/* notes */
+.notes textarea{width:100%;min-height:90px;resize:vertical;font:inherit;font-size:14px;line-height:1.5;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:#fcfcfd}
+.notes textarea:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
+.notes .meta{font-size:12px;color:var(--muted);margin-top:4px;min-height:18px}
+
+/* callouts / collapsibles */
+details.ctx{margin-top:14px;border-color:#d9e4fb;background:#fafcff}
+details.ctx>summary{flex-wrap:wrap;color:var(--ink)}
+details.ctx .need{margin-left:auto;font-size:12px;font-weight:500;color:var(--accent);background:var(--accent-soft);border-radius:99px;padding:2px 10px}
+details.ctx h4{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600;margin:14px 0 6px}
+details.ctx h4:first-child{margin-top:4px}
+details.ctx ul{margin:4px 0}
+blockquote.nb{margin:6px 0;padding:8px 14px;border-left:3px solid var(--accent);background:var(--surface);border-radius:0 6px 6px 0;font-size:14px;color:var(--ink2)}
+blockquote.nb .where{display:block;font-size:12px;font-weight:600;color:var(--accent);margin-bottom:2px}
+.note{border-left:3px solid var(--line);padding:2px 0 2px 12px;color:var(--ink2);margin:10px 0}
+details{border:1px solid var(--line);border-radius:8px;margin:10px 0;background:var(--surface)}
+details>summary{cursor:pointer;padding:9px 14px;font-size:14px;font-weight:500;color:var(--ink2);list-style:none;display:flex;align-items:center;gap:8px}
+details>summary::-webkit-details-marker{display:none}
+details>summary::before{content:"";width:6px;height:6px;border:solid var(--muted);border-width:0 1.5px 1.5px 0;transform:rotate(-45deg);transition:transform .15s;flex:none}
+details[open]>summary::before{transform:rotate(45deg)}
+details>summary .tag{margin-left:auto;font-size:11px;font-weight:500;color:var(--muted);font-family:var(--mono)}
+details>.body{padding:0 14px 12px}
+details.code>.body{padding:0 0 0;position:relative}
+details.code pre{border-radius:0 0 8px 8px}
+details.src{background:#fbfbfc}
+details.src>summary{font-size:13px;color:var(--muted)}
+details.src ul{font-size:13px;color:var(--ink2);margin:0}
+.copy{position:absolute;top:8px;right:8px;font-size:11px;padding:3px 8px;opacity:.75}
+.copy:hover{opacity:1}
+.own{display:inline-block;font-size:11px;font-weight:600;color:var(--own);background:var(--own-soft);border-radius:4px;padding:0 6px;white-space:nowrap}
+.katex-display{overflow-x:auto;overflow-y:hidden;padding:4px 0}
+.steps-table tr{cursor:pointer}
+.steps-table tr:hover td{background:#fafbfc}
+.steps-table td:first-child{color:var(--muted);width:36px}
+.pager{display:flex;justify-content:space-between;margin-top:18px;gap:10px}
+.hint{font-size:13px;color:var(--muted)}
+.banner{display:none;max-width:1180px;margin:12px auto 0;padding:0 16px}
+.banner div{background:var(--own-soft);color:var(--own);border-radius:8px;padding:10px 14px;font-size:13px}
+
+@media (max-width:820px){
+  .wrap{grid-template-columns:1fr;gap:14px;padding-top:14px}
+  nav{position:static;max-height:none;display:flex;overflow-x:auto;gap:4px;padding-bottom:4px}
+  nav button{width:auto;flex:none}
+  nav .lbl,nav .cnt,nav .sep{display:none}
+  .card{padding:18px 16px}
+  .head .big{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ STORED PROGRESS (rewritten by the Save function, do not edit by hand) ============ -->
+<script id="plan-state" type="application/json">{}</script>
+
+<header class="top"><div class="top-in">
+  <div class="brand">Assignment 4 · Extended Kalman filter<small>Plan &amp; shared progress</small></div>
+  <div class="overall"><div class="bar"><i id="overall-bar"></i></div><span id="overall-txt">0 / 0 tasks</span></div>
+  <div class="save">
+    <span class="pill" id="save-pill">Not linked</span>
+    <button id="gh-btn" title="Save progress to the private GitHub repo (needs your token)">Connect GitHub</button>
+    <button class="primary" id="link-btn" title="Pick this same .html file so progress is saved into it">Link file</button>
+    <button id="dl-btn" title="Download a copy of this page with the current progress inside">Download copy</button>
+  </div>
+</div></header>
+<div class="banner" id="banner"><div id="banner-txt"></div></div>
+
+<div class="wrap">
+<nav id="nav"></nav>
+<main>
+
+<!-- =================================== OVERVIEW =================================== -->
+<section class="tab" id="overview" data-title="Overview" data-num="★">
+<div class="card">
+  <div class="head"><div>
+    <h2>Overview</h2>
+    <p class="lead">Design an <b>Extended Kalman filter</b> that estimates the robot's pose \((x, y, \varphi)\) in a world frame, using the wheel speeds to predict and the front + side IR distances to two walls to correct. Simulate it on logged data, then run it on the robot.</p>
+  </div></div>
+  $$\bar{\mathbf x}_k = f(\mathbf x_{k-1}, \mathbf u_k),\quad \bar{\mathbf P}_k = \mathbf F_k\mathbf P_{k-1}\mathbf F_k^\mathsf T + \mathbf B_k\mathbf G\mathbf B_k^\mathsf T \qquad \mathbf y_k = \mathbf z_k - h(\bar{\mathbf x}_k),\quad \mathbf K = \bar{\mathbf P}_k\mathbf H_k^\mathsf T(\mathbf H_k\bar{\mathbf P}_k\mathbf H_k^\mathsf T + \mathbf R)^{-1}$$
+  <p>The three parts of the assignment (same as A3, now nonlinear):</p>
+  <ol>
+    <li><b>Specify the matrices</b>: Jacobians \(\mathbf F_k, \mathbf B_k\) of the motion model, its uncertainty \(\mathbf Q_k = \mathbf B_k\mathbf G\mathbf B_k^\mathsf T\), and \(\mathbf H_k, \mathbf R\) of the measurement model.</li>
+    <li><b>Simulate the EKF</b> in Python on logged inputs and measurements.</li>
+    <li><b>Run the EKF on the robot</b> by filling in <code>state_estimator.cpp</code>.</li>
+  </ol>
+  <p class="note">Deliverable: the Arduino script + the relevant Jupyter notebook(s), uploaded to Toledo <b>at least 24 h before the defense</b>, then a <b>defense</b>. Every code block must be understood by both of us, so blocks are short and start with a one-line comment on <i>what it does</i> and <i>what to tweak</i>.</p>
+  <details class="src"><summary>Sources</summary><div class="body"><ul>
+    <li>Goal + context → <code>A4 notebook</code> §2 "Assignment context", §3 "Assignment goals"</li>
+    <li>EKF equations → <code>A4 notebook</code> §2 (linear KF vs. EKF table); <code>Ch 6</code> §6.1</li>
+    <li>Deliverable + defense → <code>A4 notebook</code> §4 "Submission format"</li>
+    <li>Code style → <code>experiences/ours_assignment_2/ExperiencesRulesForAI.MD</code></li>
+  </ul></div></details>
+
+  <h3>Before starting</h3>
+  <ul class="tasks" data-step="overview">
+    <li data-id="ov-1">Re-read Ch 6 completely (it is short and is almost this assignment: robot localization with landmarks)</li>
+    <li data-id="ov-2">Finish A3 first: the A3 filter, R of the front sensor and the logging setup are reused here</li>
+    <li data-id="ov-3">Both read this whole plan once and agree on the order</li>
+    <li data-id="ov-4">Register for the defense slot on Toledo; deadline (slot − 24 h) in the notes</li>
+  </ul>
+
+  <h3>Steps</h3>
+  <div class="table-wrap"><table class="steps-table">
+    <thead><tr><th>#</th><th>Step</th><th>Output</th></tr></thead>
+    <tbody>
+      <tr data-go="s0"><td>0</td><td>Know the A4 program, signals and template gaps</td><td>Buttons, channels, list of template problems</td></tr>
+      <tr data-go="s1"><td>1</td><td>World frame, arena and sensor geometry</td><td>Corner set-up, α β γ measured, initial state</td></tr>
+      <tr data-go="s2"><td>2</td><td>Motion model: f, F<sub>k</sub>, B<sub>k</sub>, G</td><td>Equations + SymPy check</td></tr>
+      <tr data-go="s3"><td>3</td><td>Measurement model: h, H<sub>k</sub></td><td>Equations + SymPy check</td></tr>
+      <tr data-go="s4"><td>4</td><td>Record the data</td><td>Static, odometry-check and corner logs with end poses</td></tr>
+      <tr data-go="s5"><td>5</td><td>Noise values R and G</td><td>R (2×2), G (2×2) with derivation</td></tr>
+      <tr data-go="s6"><td>6</td><td>Simulate the EKF in Python</td><td>Path + ellipses, dead reckoning vs. EKF, innovations</td></tr>
+      <tr data-go="s7"><td>7</td><td>Implement on the robot</td><td>Filled-in <code>state_estimator.cpp</code>, motion profile, reset</td></tr>
+      <tr data-go="s8"><td>8</td><td>Run and evaluate</td><td>Robot vs. simulation vs. tape measure</td></tr>
+      <tr data-go="s9"><td>9</td><td>Notebook, upload and defense prep</td><td>Submission + answers to likely questions</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Division of work</h3>
+  <ol>
+    <li>Steps 0–1 together at the robot (measure the geometry together).</li>
+    <li>Steps 2–3: one person each, then swap and check the other's derivation with the SymPy cell.</li>
+    <li>Step 4 together in one session. Then one person Steps 5–6 (Python), the other Step 7 (C++). Meet when C++ and Python give the same numbers on the same log.</li>
+    <li>Steps 8–9 together.</li>
+  </ol>
+
+  <h3>What A2 and A3 give us</h3>
+  <ul>
+    <li><b>A2</b>: the 2D motion structure \((x, y, \varphi)\) and the wheel-speed noise σ<sub>ω</sub> (→ G). The A2 IMU model is not used: the A4 sensor list has no IMU. A gyro log is still handy as a heading check.</li>
+    <li><b>A3</b>: R of the front sensor, the Python filter loop, the habit of testing the estimator with the motors off, and the logging sketch.</li>
+  </ul>
+
+  <details><summary>Theory map: where to look in <code>course_text/</code></summary><div class="body"><div class="table-wrap"><table>
+    <thead><tr><th>Topic</th><th>Chapter</th><th>Step</th></tr></thead>
+    <tbody>
+      <tr><td>Linearize at the current estimate; Jacobians F and H; use f(x,u) and h(x̄) themselves, not Fx and Hx̄</td><td>Ch 6.1 Linearizing the Kalman Filter</td><td>2, 3, 7</td></tr>
+      <tr><td>State [x, y, θ], odometry input, motion model, F and B via SymPy, \(\mathbf Q = \mathbf B\mathbf G\mathbf B^\mathsf T\) (noise in control space)</td><td>Ch 6.2.1 Motion model (6.2.1.1–6.2.1.3)</td><td>2, 5</td></tr>
+      <tr><td>Measurement model to known landmarks, H via SymPy</td><td>Ch 6.2.1.4 Design the measurement model</td><td>3</td></tr>
+      <tr><td>R diagonal (independent sensors)</td><td>Ch 6.2.2 Design Measurement Noise</td><td>5</td></tr>
+      <tr><td>FilterPy <code>ExtendedKalmanFilter</code>, own <code>predict()</code>/<code>move()</code>, covariance ellipses, dead reckoning = huge R</td><td>Ch 6.2.3 Python implementation</td><td>6</td></tr>
+      <tr><td>Multivariate Gaussians, covariance ellipses</td><td>Ch 5.1</td><td>6, 8</td></tr>
+    </tbody>
+  </table></div>
+  <p class="hint">A4 is Ch 6.2 with two changes: our input is two wheel speeds instead of (distance, heading change), and our "landmarks" are two walls measured with distances instead of points measured with range + bearing.</p>
+  </div></details>
+
+  <details><summary>How to read the source references</summary><div class="body">
+    <p class="hint">Every fact has a "Sources" box. Paths are relative to the <code>mobile robotics/</code> folder.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Short name</th><th>Full path</th></tr></thead>
+      <tbody>
+        <tr><td><code>A4</code></td><td><code>Assignments_Toledo_git/Assignment4_EKF/</code></td></tr>
+        <tr><td><code>A4 notebook</code></td><td><code>A4/Assignment_EKF.ipynb</code> (one cell: §1 prior knowledge, §2 context + EKF table, §3 goals, §4 submission)</td></tr>
+        <tr><td><code>robot.cpp</code>, <code>robot.h</code>, <code>state_estimator.cpp</code></td><td><code>A4/INTERNAL-EKF-StateEstimation/…</code></td></tr>
+        <tr><td><code>mecotron.h</code>, <code>trajectory.h</code></td><td><code>A4/libraries/control-theory/…</code></td></tr>
+        <tr><td><code>FAQ direction</code>, <code>FAQ states</code></td><td><code>Assignments_Toledo_git/faq-details/FAQ_robot_runs_same_direction.md</code> ("APPLIES TO: Assignment 3 &amp; 4"), <code>FAQ_kalman_number_of_states.md</code> §"How about assignment 4"</td></tr>
+        <tr><td><code>A2 plan</code>, <code>A3 plan</code></td><td><code>plans/plan_assignment_2.html</code>, <code>plans/plan_assignment_3.html</code></td></tr>
+        <tr><td><code>Ch N</code></td><td><code>experiences/course_text/N. &lt;title&gt; — Mobile Robotics.pdf</code></td></tr>
+        <tr><td><span class="own">own derivation</span></td><td>Not in the course material. Checked with SymPy, but double-check and explain in the report.</td></tr>
+      </tbody>
+    </table></div>
+    <p class="hint">The FAQ has no A4 entries yet (<code>FAQ.md</code> §"Assignment 4" is empty). Check again before the defense.</p>
+  </div></details>
+</div>
+<div class="card notes" data-step="overview"><h3 style="margin-top:0">General notes</h3></div>
+</section>
+
+<!-- =================================== STEP 0 =================================== -->
+<section class="tab" id="s0" data-title="Program &amp; gaps" data-num="0">
+<div class="card">
+  <div class="head"><span class="big">Step 0</span><div>
+    <h2>Know the A4 program, signals and template gaps</h2>
+    <p class="lead">The A4 template is less finished than A3's. Find every gap before designing anything.</p>
+    <span class="output">Output: <b>buttons, channels, list of template problems</b></span>
+  </div></div>
+
+  <details class="ctx"><summary>Why &amp; where in Assignment 4 <span class="need">§2 sensors · §3 goal 3</span></summary><div class="body">
+    <h4>In the assignment notebook</h4>
+    <blockquote class="nb"><span class="where">§2 Assignment context</span>"We want to design an extended Kalman filter that estimates the X-Y position of the mobile robot in a chosen world frame. This estimator can be used to localize the mobile robot in a room."</blockquote>
+    <blockquote class="nb"><span class="where">§3 goal 3</span>"Run the designed Extended Kalman filter on the provided control software of the mobile robot by editing the state_estimator.cpp file."</blockquote>
+    <h4>Role in the process</h4>
+    <p>The template fixes the state (3), the input (2 wheel speeds), the measurements (front + side distance) and the wall description. Steps 1–3 must fit it.</p>
+    <h4>Why this step</h4>
+    <p>Several template lines contradict each other (see 0.3). Deciding on them now saves hours of "the filter diverges" later.</p>
+  </div></details>
+
+  <h3>Tasks <span class="tprog"></span></h3>
+  <ul class="tasks" data-step="s0">
+    <li data-id="s0-1">Read <code>robot.cpp</code>, <code>robot.h</code>, <code>state_estimator.cpp</code> with the tables below</li>
+    <li data-id="s0-2">Go through the problem list 0.3 and note our decision for each</li>
+    <li data-id="s0-3">Find the side sensor on the robot: which side does it look to?</li>
+  </ul>
+
+  <h3>0.1 How the program runs</h3>
+  <p><code>Robot::control()</code> every 10 ms. If the EKF is on (<code>robot.cpp:33-57</code>): <b>prediction</b> with the wheel speeds, then <b>correction</b> with front + side distance, then (if move is on) the motor voltages. Note the order is predict → correct here (A3 was correct → predict).</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Button</th><th>Does</th><th>Code</th></tr></thead>
+    <tbody>
+      <tr><td>Button 0</td><td>Move on/off (motors run only while the EKF is also on)</td><td><code>robot.cpp:101-116</code></td></tr>
+      <tr><td>Button 1</td><td>EKF on/off; <b>on = reset</b>: P₀, x̂₀, wall equations from the current readings</td><td><code>robot.cpp:73-99, 118-127</code></td></tr>
+    </tbody>
+  </table></div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Channel</th><th>Value</th><th>Unit</th></tr></thead>
+    <tbody>
+      <tr><td>0, 1, 2</td><td>\(\hat x, \hat y, \hat\varphi\)</td><td>m, m, rad</td></tr>
+      <tr><td>3, 4</td><td>wheel speeds A, B</td><td>rad/s</td></tr>
+      <tr><td>5, 7</td><td>front, side distance</td><td>m</td></tr>
+      <tr><td>6</td><td>innovation of the front sensor \(\nu_0\)</td><td>m</td></tr>
+      <tr><td>8, 9</td><td>wheel positions A, B</td><td>rad</td></tr>
+      <tr><td>10, 11</td><td>free → we add \(\nu_1\) and \(\sigma_\varphi\) in Step 7</td><td></td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>0.2 Wall equations</h3>
+  <p>The template describes each wall as a line \(a x + b y = c\), stored as <code>_weq1 = {a, b, c}</code> (front wall) and <code>_weq2</code> (side wall). At reset: wall 1 is \(x = c_1\) (\(a=1, b=0\)), wall 2 is \(y = c_2\) (\(a=0, b=1\)). So the robot starts <b>facing +x</b> with the front wall ahead and the side wall to the side, square to both.</p>
+
+  <h3>0.3 Template problems</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Where</th><th>Problem</th><th>Our fix</th></tr></thead>
+    <tbody>
+      <tr><td><code>state_estimator.cpp:9-26, 38-60</code></td><td><code>??</code> placeholders; H has a stray <code>)</code></td><td>Step 7 code</td></tr>
+      <tr><td><code>state_estimator.cpp:6</code></td><td><code>b = 0.073</code> "distance between the wheels" is unused and contradicts <code>WHEELBASE = 0.166</code> used on line 13</td><td>Delete; use <code>WHEELBASE</code> (measure it once)</td></tr>
+      <tr><td><code>robot.cpp:83-93</code></td><td>x̂₀ = (−0.3, −0.2, 0), but the wall equations put the robot at the origin (c = reading + offset). Both can't be true</td><td>Choose one world frame (Step 1)</td></tr>
+      <tr><td><code>robot.cpp:93</code> vs. <code>state_estimator.cpp:34-35</code></td><td>Side wall offset uses 0.09 (β, "longitudinal"), but along the side sensor's ray the offset is the lateral γ = 0.073</td><td>Measure; use the lateral offset (Step 1)</td></tr>
+      <tr><td><code>robot.cpp:43-55</code></td><td>Move = constant 1.0 V on both motors; <code>trajectory.v()/X()</code> read but unused (and <code>trajectory.start()</code> is never called; <code>trajectory.h</code> says "for assignment 5")</td><td>Own motion profile (Step 7)</td></tr>
+    </tbody>
+  </table></div>
+
+  <details class="src"><summary>Sources</summary><div class="body"><ul>
+    <li>Run order, buttons, channels → <code>robot.cpp:17-127</code></li>
+    <li>Walls → <code>robot.cpp:87-93</code>, <code>state_estimator.cpp:46-53</code> (a, b, c from <code>weq</code>)</li>
+    <li>Constants → <code>mecotron.h:41-42, 45</code>; sensors → <code>mecotron.h:108-109, 222-223</code></li>
+    <li>Problems: <code>state_estimator.cpp:6, 13, 33-35, 55-57</code>; <code>robot.cpp:43-55, 83-93</code>; <code>trajectory.h</code> (<code>start()</code>, "Include trajectory, for assignment 5" in <code>robot.h:20</code>) — interpretation <span class="own">own reading of the code</span></li>
+  </ul></div></details>
+</div>
+<div class="card notes" data-step="s0"><h3 style="margin-top:0">Notes</h3></div>
+</section>
+
+<!-- =================================== STEP 1 =================================== -->
+<section class="tab" id="s1" data-title="World frame &amp; arena" data-num="1">
+<div class="card">
+  <div class="head"><span class="big">Step 1</span><div>
+    <h2>World frame, arena and sensor geometry</h2>
+    <p class="lead">Build a corner of two perpendicular walls, choose where (0, 0) is, and measure where the sensors sit on the robot.</p>
+    <span class="output">Output: <b>corner set-up, α β γ measured, initial state</b></span>
+  </div></div>
+
+  <details class="ctx"><summary>Why &amp; where in Assignment 4 <span class="need">§2 "chosen world frame"</span></summary><div class="body">
+    <h4>In the assignment notebook</h4>
+    <blockquote class="nb"><span class="where">§2 Assignment context</span>"estimates the X-Y position of the mobile robot in a chosen world frame"</blockquote>
+    <h4>Role in the process</h4>
+    <p>The measurement model (Step 3) is the distance from each sensor to a known wall. "Known" means: in our chosen frame, with the sensor positions measured on our robot.</p>
+    <h4>Why this step</h4>
+    <p>The IR sensors only see about 4–30 cm, and give nonsense on a wall hit at a steep angle. The arena must keep both walls in view during the whole run.</p>
+  </div></details>
+
+  <h3>Tasks <span class="tprog"></span></h3>
+  <ul class="tasks" data-step="s1">
+    <li data-id="s1-1">Build the corner: two flat, matte, perpendicular walls (boxes, check with a set square)</li>
+    <li data-id="s1-2">Measure α, β, γ and the wheelbase on our robot (1.2)</li>
+    <li data-id="s1-3">Choose the world frame (1.1) and write it in the notes</li>
+    <li data-id="s1-4">Mark the start pose on the floor with tape (two marks for the heading)</li>
+  </ul>
+
+  <h3>1.1 Choose the world frame</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th></th><th>A · corner = origin (recommended)</th><th>B · start = origin</th></tr></thead>
+    <tbody>
+      <tr><td>Walls</td><td>\(x = 0\) and \(y = 0\) (c₁ = c₂ = 0)</td><td>\(x = c_1\), \(y = c_2\) from the first readings</td></tr>
+      <tr><td>Start</td><td>\(\hat x_0 = -(z_{f,0} + \alpha)\), \(\hat y_0 = -(z_{s,0} + \gamma)\), \(\hat\varphi_0 = 0\)</td><td>\((0, 0, 0)\)</td></tr>
+      <tr><td>Why</td><td>Frame fixed to the "room"; matches the template's negative start values (−0.3, −0.2)</td><td>Fewest code changes</td></tr>
+    </tbody>
+  </table></div>
+  <p>Both are the same filter. A gives coordinates that mean something on the floor (distance to the corner), which makes the tape-measure comparison in Step 8 direct. With A and the side wall at \(y = 0\), the robot is at \(y &lt; 0\), so the side sensor must look to the <b>left</b> (+y). If ours looks right, put the side wall on the right and redo h and H with the SymPy cell of Step 3 for a right-pointing ray (some signs flip).</p>
+
+  <h3>1.2 Sensor geometry</h3>
+  <p>Reference point = middle of the wheel axle (the point that moves with speed \(v\)). Measure with a ruler:</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Symbol</th><th>Meaning</th><th>Template value</th><th>Ours</th></tr></thead>
+    <tbody>
+      <tr><td>α</td><td>front sensor: distance in front of the axle (to the point where the reading is 0)</td><td>0.085 m</td><td>…</td></tr>
+      <tr><td>β</td><td>side sensor: distance in front of the axle</td><td>0.09 m</td><td>…</td></tr>
+      <tr><td>γ</td><td>side sensor: distance sideways from the axle middle</td><td>0.073 m</td><td>…</td></tr>
+      <tr><td>W</td><td>wheelbase (centre to centre of the wheels)</td><td>0.166 m (<code>WHEELBASE</code>)</td><td>…</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">The sensor's 0 isn't necessarily its front face: put the robot at a known tape distance, compare with the reading (A3 Step 3 bias), and fold the difference into α (and γ for the side sensor).</p>
+
+  <h3>1.3 Stay inside what the sensors can see</h3>
+  <ul>
+    <li>Both distances between ~5 and ~25 cm during the whole run → the robot moves in a box of roughly 20 × 20 cm.</li>
+    <li>Keep \(|\varphi|\) small (start with ±20°): the model divides by \(\cos\varphi\), and the IR reading gets unreliable on a slanted wall. <span class="own">own suggestion</span></li>
+  </ul>
+
+  <details class="src"><summary>Sources</summary><div class="body"><ul>
+    <li>"Chosen world frame" → <code>A4 notebook</code> §2</li>
+    <li>Template geometry → <code>state_estimator.cpp:33-35</code>, <code>robot.cpp:83-93</code>; <code>WHEELBASE</code> → <code>mecotron.h:42</code></li>
+    <li>Sensor range → Sharp GP2Y0A41SK0F (<code>mecotron.h:108-109</code>), <span class="own">check the datasheet</span></li>
+    <li>Frame options, start formulas, angle limit <span class="own">own derivation</span> (start formulas = h(x) of Step 3 solved at φ = 0)</li>
+  </ul></div></details>
+</div>
+<div class="card notes" data-step="s1"><h3 style="margin-top:0">Notes</h3></div>
+</section>
+
+<!-- =================================== STEP 2 =================================== -->
+<section class="tab" id="s2" data-title="Motion model" data-num="2">
+<div class="card">
+  <div class="head"><span class="big">Step 2</span><div>
+    <h2>Motion model: f, F<sub>k</sub>, B<sub>k</sub>, G</h2>
+    <p class="lead">Predict the next pose from the wheel speeds, and linearize it to propagate the uncertainty.</p>
+    <span class="output">Output: <b>equations + SymPy check</b></span>
+  </div></div>
+
+  <details class="ctx"><summary>Why &amp; where in Assignment 4 <span class="need">§2 EKF table · §3 goal 1</span></summary><div class="body">
+    <h4>In the assignment notebook</h4>
+    <blockquote class="nb"><span class="where">§2 EKF table</span>"\(\mathbf F_k = \frac{\partial f(\mathbf x, \mathbf u)}{\partial \mathbf x}\), \(\mathbf B_k = \frac{\partial f(\mathbf x, \mathbf u)}{\partial \mathbf u}\), \(\bar{\mathbf x}_k = f(\mathbf x_{k-1}, \mathbf u_k)\), \(\bar{\mathbf P}_k = \mathbf F_k\mathbf P_{k-1}\mathbf F_k^\mathsf T + \mathbf Q_k\) with \(\mathbf Q_k = \mathbf B_k\mathbf G\mathbf B_k^\mathsf T\)"</blockquote>
+    <blockquote class="nb"><span class="where">§2</span>"\(\mathbf F_k\) and \(\mathbf B_k\) are the relevant matrices of the linearized prediction function at time step \(k\)."</blockquote>
+    <h4>Role in the process</h4>
+    <p>First half of goal 1. The state is propagated with the nonlinear f; only P uses the Jacobians.</p>
+    <h4>Why this step</h4>
+    <p>F<sub>k</sub> and B<sub>k</sub> depend on the current heading, so they are recomputed every 10 ms. Only G stays fixed.</p>
+  </div></details>
+
+  <h3>Tasks <span class="tprog"></span></h3>
+  <ul class="tasks" data-step="s2">
+    <li data-id="s2-1">Write f, F<sub>k</sub>, B<sub>k</sub> by hand (2.1)</li>
+    <li data-id="s2-2">Check with the SymPy cell (2.2)</li>
+    <li data-id="s2-3">Check the turn direction: which wheel is left? (2.3)</li>
+  </ul>
+
+  <h3>2.1 The model</h3>
+  <p>State \(\mathbf x = [x, y, \varphi]^\mathsf T\) (m, m, rad), input \(\mathbf u = [\omega_A, \omega_B]^\mathsf T\) (wheel speeds, rad/s), as in the template:</p>
+  $$v = \frac{r(\omega_A + \omega_B)}{2},\qquad \omega = \frac{r(\omega_B - \omega_A)}{W}$$
+  $$f(\mathbf x, \mathbf u) = \begin{bmatrix} x + \Delta t\, v\cos\varphi \\ y + \Delta t\, v\sin\varphi \\ \varphi + \Delta t\,\omega \end{bmatrix}$$
+  $$\mathbf F_k = \begin{bmatrix} 1 &amp; 0 &amp; -\Delta t\, v\sin\varphi \\ 0 &amp; 1 &amp; \Delta t\, v\cos\varphi \\ 0 &amp; 0 &amp; 1 \end{bmatrix},\qquad \mathbf B_k = \begin{bmatrix} \tfrac{r\Delta t}{2}\cos\varphi &amp; \tfrac{r\Delta t}{2}\cos\varphi \\ \tfrac{r\Delta t}{2}\sin\varphi &amp; \tfrac{r\Delta t}{2}\sin\varphi \\ -\tfrac{r\Delta t}{W} &amp; \tfrac{r\Delta t}{W} \end{bmatrix}$$
+  $$\mathbf G = \begin{bmatrix}\sigma_{\omega}^2 &amp; 0 \\ 0 &amp; \sigma_{\omega}^2\end{bmatrix}\quad[(\text{rad/s})^2],\qquad \mathbf Q_k = \mathbf B_k\mathbf G\mathbf B_k^\mathsf T$$
+  <p>Evaluate at the estimate <i>before</i> the update (\(\varphi = \hat\varphi_{k-1}\)). Ch 6.2 uses the same idea with input (distance, heading change) \(= (v\Delta t, \omega\Delta t)\). In the template, G is called <code>Q</code> (2×2) and <code>_Phat = A*_Phat*~A + B*Q*~B</code>.</p>
+
+  <h3>2.2 SymPy check (goes into the notebook)</h3>
+  <details class="code"><summary>Jacobians of the motion model <span class="tag">Python</span></summary><div class="body"><pre><code># Motion model and its Jacobians with SymPy (as Ch 6.2.1.3). Prints F_k and B_k.
+# TWEAK: nothing; change f if you change the model (e.g. heading phi + omega*dt/2).
+import sympy as sp
+x, y, phi, wA, wB, dt, r, W = sp.symbols('x y phi omega_A omega_B Delta_t r W')
+v  = r*(wA + wB)/2                     # forward speed
+om = r*(wB - wA)/W                     # turn rate (B faster -&gt; turn left)
+f = sp.Matrix([x + dt*v*sp.cos(phi),
+               y + dt*v*sp.sin(phi),
+               phi + dt*om])
+F = f.jacobian([x, y, phi]); B = f.jacobian([wA, wB])
+display(sp.simplify(F), sp.simplify(B))</code></pre></div></details>
+
+  <h3>2.3 Which wheel is left?</h3>
+  <p>The template's \(\omega = r(\omega_B - \omega_A)/W\) means: B faster ⇒ \(\omega &gt; 0\) ⇒ turning left (counter-clockwise, \(\varphi\) grows). That's only true if B is the <b>right</b> wheel. Check with the A2 rotate-in-place log (E4): when GyroZ is positive (CCW, if Z points up), should \(\omega_B - \omega_A\) be positive. If not, swap the sign in the model.</p>
+
+  <details class="src"><summary>Sources</summary><div class="body"><ul>
+    <li>EKF prediction equations → <code>A4 notebook</code> §2 table</li>
+    <li>v, ω from wheel speeds → <code>state_estimator.cpp:12-13</code>; <code>_Phat = A*_Phat*~A + B*Q*~B</code> → line 28</li>
+    <li>Motion model, Jacobians with SymPy, \(\mathbf Q = \mathbf B\mathbf G\mathbf B^\mathsf T\) → <code>Ch 6</code> §6.2.1.1–6.2.1.3</li>
+    <li>f, F<sub>k</sub>, B<sub>k</sub> for wheel-speed input <span class="own">own derivation, checked with SymPy</span></li>
+    <li>Left/right check with A2 E4 → <code>experiences/Identification_ours/robot.cpp</code> (E4 table) <span class="own">own suggestion</span></li>
+  </ul></div></details>
+</div>
+<div class="card notes" data-step="s2"><h3 style="margin-top:0">Notes</h3></div>
+</section>
+
+<!-- =================================== STEP 3 =================================== -->
+<section class="tab" id="s3" data-title="Measurement model" data-num="3">
+<div class="card">
+  <div class="head"><span class="big">Step 3</span><div>
+    <h2>Measurement model: h, H<sub>k</sub></h2>
+    <p class="lead">Predict what each IR sensor should read from the pose, and linearize it.</p>
+    <span class="output">Output: <b>equations + SymPy check</b></span>
+  </div></div>
+
+  <details class="ctx"><summary>Why &amp; where in Assignment 4 <span class="need">§2 EKF table · §3 goal 1</span></summary><div class="body">
+    <h4>In the assignment notebook</h4>
+    <blockquote class="nb"><span class="where">§2 EKF table</span>"\(\mathbf H_k = \frac{\partial h(\bar{\mathbf x})}{\partial \bar{\mathbf x}}\Big|_{\bar{\mathbf x}_k}\), \(\mathbf y_k = \mathbf z_k - h(\bar{\mathbf x}_k)\)"</blockquote>
+    <blockquote class="nb"><span class="where">§2</span>"\(\mathbf H_k\) is a matrix of the linearized measurement function at time step \(k\)."</blockquote>
+    <h4>Role in the process</h4>
+    <p>Second half of goal 1. The innovation uses the nonlinear h itself; H<sub>k</sub> is only for the gain and P.</p>
+    <h4>Why this step</h4>
+    <p>This is the part Ch 6 does with landmarks (range + bearing). Ours is "distance along a ray to a line", which we derive ourselves.</p>
+  </div></details>
+
+  <h3>Tasks <span class="tprog"></span></h3>
+  <ul class="tasks" data-step="s3">
+    <li data-id="s3-1">Derive h for the front sensor with a sketch (3.1)</li>
+    <li data-id="s3-2">Same for the side sensor</li>
+    <li data-id="s3-3">Check h and H with the SymPy cell (3.2), also for the side our sensor looks to</li>
+    <li data-id="s3-4">Sanity check: at the start pose, h(x̂₀) = first readings</li>
+  </ul>
+
+  <h3>3.1 Distance along a ray to a wall</h3>
+  <p>A sensor at position \(\mathbf p\) looking in direction \(\psi\) hits the wall \(a x + b y = c\) after a distance</p>
+  $$d = \frac{c - a p_x - b p_y}{a\cos\psi + b\sin\psi}$$
+  <p>(the perpendicular distance divided by the cosine of the angle of incidence). With frame A (walls \(x = 0\), \(y = 0\)), the front sensor at \(\alpha\) in front of the axle looking along \(\varphi\), and the side sensor at \(\beta\) in front and \(\gamma\) to the left, looking along \(\varphi + 90°\):</p>
+  $$h(\mathbf x) = \begin{bmatrix} \dfrac{c_1 - x}{\cos\varphi} - \alpha \\[2mm] \dfrac{c_2 - y}{\cos\varphi} - \beta\tan\varphi - \gamma \end{bmatrix}\qquad (c_1 = c_2 = 0\ \text{in frame A})$$
+  $$\mathbf H_k = \begin{bmatrix} -\dfrac{1}{\cos\varphi} &amp; 0 &amp; \dfrac{(c_1 - x)\sin\varphi}{\cos^2\varphi} \\[2mm] 0 &amp; -\dfrac{1}{\cos\varphi} &amp; \dfrac{(c_2 - y)\sin\varphi - \beta}{\cos^2\varphi} \end{bmatrix}$$
+  <p>Check at the template start \((-0.3, -0.2, 0)\): front reads \(0.3 - 0.085 = 0.215\) m, side \(0.2 - 0.073 = 0.127\) m. Both inside the sensor range. ✓</p>
+  <p class="note"><b>What H says about the heading:</b> at \(\varphi = 0\) the front sensor's \(\partial h/\partial\varphi = 0\): a small rotation doesn't change its reading. The side sensor still has \(-\beta\): because it sits β in front of the axle, rotating moves it towards/away from the side wall. So the heading is corrected mainly through the side sensor. Mention this in the report (observability). <span class="own">own derivation</span></p>
+
+  <h3>3.2 SymPy check</h3>
+  <details class="code"><summary>h and H for a sensor ray to a wall <span class="tag">Python</span></summary><div class="body"><pre><code># Measurement model: distance along a sensor ray to the wall a*x + b*y = c, and its Jacobian.
+# TWEAK: sensor that looks RIGHT -&gt; psi0 = -pi/2 and s = -gamma.
+a, b, c, l, s, psi0 = sp.symbols('a b c l s psi_0')
+al, be, ga = sp.symbols('alpha beta gamma')
+def ray_to_wall(a, b, c, l, s, psi0):
+    px = x + l*sp.cos(phi) - s*sp.sin(phi)              # sensor position: l ahead, s to the left
+    py = y + l*sp.sin(phi) + s*sp.cos(phi)
+    psi = phi + psi0                                    # direction of the ray
+    return (c - a*px - b*py) / (a*sp.cos(psi) + b*sp.sin(psi))
+c1, c2 = sp.symbols('c_1 c_2')
+h = sp.Matrix([ray_to_wall(1, 0, c1, al, 0, 0),         # front sensor -&gt; wall x = c1
+               ray_to_wall(0, 1, c2, be, ga, sp.pi/2)]) # side sensor (left) -&gt; wall y = c2
+H = h.jacobian([x, y, phi])
+display(sp.simplify(h), sp.simplify(H))</code></pre></div></details>
+
+  <details class="src"><summary>Sources</summary><div class="body"><ul>
+    <li>EKF update equations → <code>A4 notebook</code> §2 table</li>
+    <li>Measurement model to known positions, Jacobian with SymPy, "use h(x̄) not Hx̄" → <code>Ch 6</code> §6.1, §6.2.1.4</li>
+    <li>Wall equations a, b, c and offsets α, β, γ → <code>state_estimator.cpp:33-53</code>, <code>robot.cpp:87-93</code></li>
+    <li>Ray-to-line distance, h, H, observability remark <span class="own">own derivation, checked with SymPy</span></li>
+  </ul></div></details>
+</div>
+<div class="card notes" data-step="s3"><h3 style="margin-top:0">Notes</h3></div>
+</section>
+
+<!-- =================================== STEP 4 =================================== -->
+<section class="tab" id="s4" data-title="Record data" data-num="4">
+<div class="card">
+  <div class="head"><span class="big">Step 4</span><div>
+    <h2>Record the data</h2>
+    <p class="lead">Log wheel speeds + both distances (+ gyro as heading check) while the robot moves in the corner, with the end pose measured by hand.</p>
+    <span class="output">Output: <b>static, odometry-check and corner logs with end poses</b></span>
+  </div></div>
+
+  <details class="ctx"><summary>Why &amp; where in Assignment 4 <span class="need">§3 goal 2</span></summary><div class="body">
+    <h4>In the assignment notebook</h4>
+    <blockquote class="nb"><span class="where">§3 goal 2</span>"Simulate the behavior of the Extended Kalman filter by collecting data (input signals and measurement signals) of the mobile platform."</blockquote>
+    <h4>Role in the process</h4>
+    <p>Steps 5 (noise values), 6 (simulation) and 8 (comparison) all run on these logs.</p>
+    <h4>Why this step</h4>
+    <p>An EKF bug on the robot is hard to see. On a log we can replay the filter as often as we want with any setting.</p>
+  </div></details>
+
+  <h3>Tasks <span class="tprog"></span></h3>
+  <ul class="tasks" data-step="s4">
+    <li data-id="s4-1">Add SET 3 and profiles G1/G2 to our A2 sketch (4.2), upload</li>
+    <li data-id="s4-2">G0: static side-sensor logs at 3 distances (front sensor: reuse A3)</li>
+    <li data-id="s4-3">G1: odometry check away from the walls, end pose measured, 3 runs</li>
+    <li data-id="s4-4">G2: corner runs, start + end pose measured, 5 runs</li>
+    <li data-id="s4-5">Write start/end poses of every run in the notes</li>
+  </ul>
+
+  <h3>4.1 The experiments</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Log</th><th>What</th><th>Used for</th></tr></thead>
+    <tbody>
+      <tr><td><b>G0</b> static</td><td>Side sensor at ~0.10, 0.15, 0.20 m from a wall, 30 s each</td><td>R of the side sensor</td></tr>
+      <tr><td><b>G1</b> odometry</td><td>Open floor: straight, turn ~90°, straight; measure end position + heading</td><td>Motion model + G check (dead reckoning only)</td></tr>
+      <tr><td><b>G2</b> corner</td><td>Start ~10 cm from both walls, back off, small turn right, forward again; both walls in view all the time</td><td>EKF simulation (Step 6)</td></tr>
+      <tr><td><b>G3</b> on robot</td><td>Later, same profile with our EKF running</td><td>Evaluation (Step 8)</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>4.2 Additions to our A2 sketch</h3>
+  <details class="code"><summary>SET 3 + profiles G1, G2 <span class="tag">C++</span></summary><div class="body"><pre><code>// In sendChannels(), add:
+    case 3:
+      // SET 3 - A4 EKF data: wheel speeds + angles, both IR distances, gyro around the vertical axis.
+      // TWEAK: GyroZ only if Z is vertical (A2 Step 7).
+      out[0] = getVoltageMotorA();    // V
+      out[1] = getVoltageMotorB();    // V
+      out[2] = getSpeedMotorA();      // rad/s (wheel)  -&gt; input u
+      out[3] = getSpeedMotorB();      // rad/s (wheel)  -&gt; input u
+      out[4] = getPositionMotorA();   // rad
+      out[5] = getPositionMotorB();   // rad
+      out[6] = getFrontDistance();    // m  -&gt; measurement z1
+      out[7] = getSideDistance();     // m  -&gt; measurement z2
+      out[8] = getIMUGyroZ();         // rad/s, heading check only
+      break;
+// and at the top: const int N_SETS = 3;
+
+// G1 - A4 odometry check (open floor): straight, ~90 deg turn, straight.  (= E5 profile)
+// G2 - A4 corner: start ~10 cm from both walls; wait, back off 0.75 s, small turn right
+// (away from the side wall), wait, forward 0.6 s, wait.
+// TWEAK: durations so both IR distances stay within ~5-25 cm and the turn stays below ~20 deg.
+const Segment G2[] = { {100, 0.0, 0.0}, {75, -3.0, -3.0}, {50, 0.0, 0.0},
+                       {15, 3.0, -3.0}, {50, 0.0, 0.0}, {60, 3.0, 3.0}, {100, 0.0, 0.0} };
+// in EXPS[]:  {"G2 corner (A4)", G2, LEN(G2)},</code></pre></div></details>
+  <p>G1 can reuse our A2 E5 profile (straight, ~90°, straight) with SET 3. Tune the G2 turn duration with the A2 E4 rotation data before going to the corner. Simulated with the Step 2 model: at 3–6 rad/s wheel speed this profile keeps the front reading between 10 and 27 cm, the side reading between 10 and 19 cm, and turns 10–20°. <span class="own">own check</span></p>
+
+  <h3>4.3 Measuring the pose by hand</h3>
+  <ol>
+    <li>Tape two marks on the floor under the robot: one under the axle middle, one under the front. Their line is the heading.</li>
+    <li>After the run: mark the same two points again, measure x and y of both to the walls (frame A) → \(x, y\) and \(\varphi = \operatorname{atan2}(\Delta y, \Delta x)\).</li>
+    <li>Optional: film from above (as in A2) for the whole path.</li>
+  </ol>
+
+  <details class="src"><summary>Sources</summary><div class="body"><ul>
+    <li>Goal 2 → <code>A4 notebook</code> §3</li>
+    <li>Our sketch, Segment tables, <code>sendChannels()</code>, E4/E5 → <code>experiences/Identification_ours/robot.cpp</code></li>
+    <li>Sensors → §2 sensor list of <code>A4 notebook</code>; <code>getSideDistance()</code> → <code>mecotron.h:223</code></li>
+    <li>Experiment design, hand pose measurement <span class="own">own suggestion</span></li>
+  </ul></div></details>
+</div>
+<div class="card notes" data-step="s4"><h3 style="margin-top:0">Notes</h3></div>
+</section>
+
+<!-- =================================== STEP 5 =================================== -->
+<section class="tab" id="s5" data-title="Noise R, G" data-num="5">
+<div class="card">
+  <div class="head"><span class="big">Step 5</span><div>
+    <h2>Noise values R and G</h2>
+    <p class="lead">R: how noisy the two IR sensors are. G: how noisy the wheel speeds are. The EKF turns G into a heading-dependent Q<sub>k</sub> itself.</p>
+    <span class="output">Output: <b>R (2×2), G (2×2) with derivation</b></span>
+  </div></div>
+
+  <details class="ctx"><summary>Why &amp; where in Assignment 4 <span class="need">§2 · §3 goal 1</span></summary><div class="body">
+    <h4>In the assignment notebook</h4>
+    <blockquote class="nb"><span class="where">§2</span>"\(\mathbf z_k\), \(\mathbf R\) are the measurement mean and noise covariance." and "\(\mathbf Q_k = \mathbf B_k\mathbf G\mathbf B_k^\mathsf T\)"</blockquote>
+    <h4>Role in the process</h4>
+    <p>The only numbers the filter needs besides geometry. Same method as A3: R measured, G from the A2 speed noise.</p>
+    <h4>Why this step</h4>
+    <p>In the EKF, the noise is defined where it happens (wheel speeds), and B<sub>k</sub> maps it into x, y, φ. That's why Q isn't a fixed matrix here.</p>
+  </div></details>
+
+  <h3>Tasks <span class="tprog"></span></h3>
+  <ul class="tasks" data-step="s5">
+    <li data-id="s5-1">R: front variance from A3, side variance from G0 → diagonal R</li>
+    <li data-id="s5-2">G: σ<sub>ω</sub>² from A2 Step 6 on the diagonal</li>
+    <li data-id="s5-3">Check G with G1: does the predicted spread of the end pose (√ of P diagonal after dead reckoning) roughly match the error we measured?</li>
+  </ul>
+
+  <h3>5.1 Values</h3>
+  $$\mathbf R = \begin{bmatrix}\sigma_{front}^2 &amp; 0\\ 0 &amp; \sigma_{side}^2\end{bmatrix}\ [\text{m}^2],\qquad \mathbf G = \begin{bmatrix}\sigma_\omega^2 &amp; 0\\ 0 &amp; \sigma_\omega^2\end{bmatrix}\ [(\text{rad/s})^2]$$
+  <ul>
+    <li>Off-diagonals 0: the two IR sensors and the two encoders have independent noise (Ch 6.2.2 makes the same assumption).</li>
+    <li>Example: σ<sub>ω</sub> = 0.35 rad/s (one encoder count per sample) → G = 0.12 (rad/s)² on the diagonal.</li>
+    <li>Speed noise alone ignores <b>wheel slip</b> and an imperfect wheel radius/wheelbase, which matter more in turns. If G1 shows a larger heading error than P predicts, increase G (Ch 6 uses a variance that grows with the input: <code>std_dist*u[0]**2</code>).</li>
+  </ul>
+
+  <details class="src"><summary>Sources</summary><div class="body"><ul>
+    <li>R, Q<sub>k</sub> = B<sub>k</sub>GB<sub>k</sub><sup>T</sup> → <code>A4 notebook</code> §2</li>
+    <li>Diagonal R → <code>Ch 6</code> §6.2.2; G in control space, input-dependent G → <code>Ch 6</code> §6.2.1.3 and §6.2.3 (<code>predict()</code>)</li>
+    <li>R method → <code>FAQ tuning</code> §"R"; front R → <code>A3 plan</code> Step 3; σ<sub>ω</sub> → <code>A2 plan</code> Steps 0 and 6</li>
+    <li>G1 consistency check <span class="own">own suggestion</span></li>
+  </ul></div></details>
+</div>
+<div class="card notes" data-step="s5"><h3 style="margin-top:0">Notes</h3></div>
+</section>
+
+<!-- =================================== STEP 6 =================================== -->
+<section class="tab" id="s6" data-title="Simulate" data-num="6">
+<div class="card">
+  <div class="head"><span class="big">Step 6</span><div>
+    <h2>Simulate the EKF in Python</h2>
+    <p class="lead">Replay the G2 logs through the exact robot algorithm, and show what the walls add on top of dead reckoning.</p>
+    <span class="output">Output: <b>path + ellipses, dead reckoning vs. EKF, innovations</b></span>
+  </div></div>
+
+  <details class="ctx"><summary>Why &amp; where in Assignment 4 <span class="need">§3 goal 2 · §1</span></summary><div class="body">
+    <h4>In the assignment notebook</h4>
+    <blockquote class="nb"><span class="where">§3 goal 2</span>"Simulate the behavior of the Extended Kalman filter by collecting data (input signals and measurement signals) of the mobile platform."</blockquote>
+    <blockquote class="nb"><span class="where">§1 Required prior knowledge</span>"Python implementation of the Extended Kalman filter"</blockquote>
+    <h4>Role in the process</h4>
+    <p>The core of the notebook, and the reference the C++ must match in Step 7.</p>
+    <h4>Why this step</h4>
+    <p>Ch 6.2.3 shows the key comparison: the same filter with a huge R is pure dead reckoning. The difference between the two is what the wall measurements add.</p>
+  </div></details>
+
+  <h3>Tasks <span class="tprog"></span></h3>
+  <ul class="tasks" data-step="s6">
+    <li data-id="s6-1">Implement <code>predict</code> and <code>correct</code> (6.1)</li>
+    <li data-id="s6-2">Run on a G2 log, plot path with walls + covariance ellipses</li>
+    <li data-id="s6-3">Same log with R = 10³·I (dead reckoning) on the same plot</li>
+    <li data-id="s6-4">Plot x, y, φ vs. time with ±2σ; φ against the integrated GyroZ</li>
+    <li data-id="s6-5">Innovations of both sensors within ±2√S</li>
+    <li data-id="s6-6">End pose of the EKF vs. tape measure for all G2 runs (table)</li>
+  </ul>
+
+  <h3>6.1 The EKF functions</h3>
+  <details class="code"><summary>predict / correct, same equations as state_estimator.cpp <span class="tag">Python</span></summary><div class="body"><pre><code># EKF for the corner set-up (frame A: walls x = 0 and y = 0). Same equations as the robot.
+# TWEAK: geometry (Step 1), G and R (Step 5).
+import numpy as np
+r, W, dt = 0.0325, 0.166, 0.01
+al, be, ga = 0.085, 0.09, 0.073                     # sensor offsets (m), measure ours
+G = np.diag([0.12, 0.12])                           # wheel-speed noise (rad/s)^2
+
+def predict(X, P, wA, wB):
+    # nonlinear motion f + covariance with Jacobians F, B (Step 2)
+    x, y, ph = X
+    v, om = r*(wA + wB)/2, r*(wB - wA)/W
+    F = np.array([[1, 0, -dt*v*np.sin(ph)],
+                  [0, 1,  dt*v*np.cos(ph)],
+                  [0, 0,  1]])
+    B = np.array([[dt*r/2*np.cos(ph), dt*r/2*np.cos(ph)],
+                  [dt*r/2*np.sin(ph), dt*r/2*np.sin(ph)],
+                  [-dt*r/W,           dt*r/W]])
+    X = np.array([x + dt*v*np.cos(ph), y + dt*v*np.sin(ph), ph + dt*om])
+    return X, F @ P @ F.T + B @ G @ B.T
+
+def correct(X, P, z, R, c1=0.0, c2=0.0):
+    # predicted readings h(x) and Jacobian H (Step 3), then the standard update
+    x, y, ph = X
+    cp, sp_ = np.cos(ph), np.sin(ph)
+    h = np.array([(c1 - x)/cp - al,
+                  (c2 - y)/cp - be*sp_/cp - ga])
+    H = np.array([[-1/cp, 0,     (c1 - x)*sp_/cp**2],
+                  [0,     -1/cp, ((c2 - y)*sp_ - be)/cp**2]])
+    nu = z - h
+    S = H @ P @ H.T + R
+    K = P @ H.T @ np.linalg.inv(S)
+    return X + K @ nu, (np.eye(3) - K @ H) @ P, nu, S</code></pre></div></details>
+  <details class="code"><summary>Run on a log: EKF and dead reckoning <span class="tag">Python</span></summary><div class="body"><pre><code># Replay a G2 log: predict then correct every sample (order of A4 robot.cpp).
+# TWEAK: file; R; dead reckoning = run_ekf(df, np.eye(2)*1e3) (as Ch 6.2.3).
+import pandas as pd
+def run_ekf(df, R):
+    wA, wB = df['ValueIn2'].values, df['ValueIn3'].values       # SET 3
+    z = df[['ValueIn6', 'ValueIn7']].values                     # front, side (m)
+    X = np.array([-(z[0, 0] + al), -(z[0, 1] + ga), 0.0])       # start pose, frame A
+    P = np.diag([1e-2, 1e-2, 0.25])
+    rows = []
+    for k in range(len(df)):
+        X, P = predict(X, P, wA[k], wB[k])
+        X, P, nu, S = correct(X, P, z[k], R)
+        rows.append([*X, *np.sqrt(np.diag(P)), *nu, *np.sqrt(np.diag(S))])
+    return pd.DataFrame(rows, columns=['x','y','phi','sx','sy','sphi','nu1','nu2','sS1','sS2'])
+
+df  = pd.read_csv('data/G2_run1.csv', header=1, skipinitialspace=True)
+R   = np.diag([1.3e-5, 1.3e-5])                                 # Step 5
+ekf = run_ekf(df, R)
+dr  = run_ekf(df, np.eye(2)*1e3)                                # walls ignored</code></pre></div></details>
+
+  <h3>6.2 Plots</h3>
+  <ul>
+    <li><b>Path</b>: walls as lines at x = 0 and y = 0, EKF and dead-reckoning paths, tape-measured start/end poses, ellipses every 0.5 s (<code>from filterpy.stats import plot_covariance_ellipse</code>, as Ch 6.2.3, using <code>P[0:2, 0:2]</code>; store P in the loop for this).</li>
+    <li><b>States vs. time</b> with ±2σ bands. Expect σ<sub>x</sub>, σ<sub>y</sub> to stay small (walls) and σ<sub>φ</sub> to be the largest (3.1: heading only seen through β).</li>
+    <li><b>Heading check</b>: \(\varphi_{gyro}(t) = \sum \text{GyroZ}\cdot\Delta t\) (minus the A2 bias) next to \(\hat\varphi\).</li>
+    <li><b>Innovations</b> ν₁, ν₂ with ±2√S: centred on 0, ~95% inside.</li>
+  </ul>
+
+  <details class="src"><summary>Sources</summary><div class="body"><ul>
+    <li>Goal 2, prior knowledge → <code>A4 notebook</code> §3, §1</li>
+    <li>Own <code>predict()</code>, dead reckoning via R = 10³, covariance ellipses → <code>Ch 6</code> §6.2.3</li>
+    <li>Order predict → correct → <code>robot.cpp:35-41</code></li>
+    <li>Gyro bias → <code>A2 plan</code> Step 7</li>
+    <li>Functions and plots <span class="own">own code</span>, equations from Steps 2–3</li>
+  </ul></div></details>
+</div>
+<div class="card notes" data-step="s6"><h3 style="margin-top:0">Notes</h3></div>
+</section>
+
+<!-- =================================== STEP 7 =================================== -->
+<section class="tab" id="s7" data-title="Implement on robot" data-num="7">
+<div class="card">
+  <div class="head"><span class="big">Step 7</span><div>
+    <h2>Implement on the robot</h2>
+    <p class="lead">Fill in <code>state_estimator.cpp</code>, give the robot a motion profile, fix the reset, and test with the motors off first.</p>
+    <span class="output">Output: <b>filled-in <code>state_estimator.cpp</code>, motion profile, reset</b></span>
+  </div></div>
+
+  <details class="ctx"><summary>Why &amp; where in Assignment 4 <span class="need">§3 goal 3</span></summary><div class="body">
+    <h4>In the assignment notebook</h4>
+    <blockquote class="nb"><span class="where">§3 goal 3</span>"Run the designed Extended Kalman filter on the provided control software of the mobile robot by editing the state_estimator.cpp file."</blockquote>
+    <h4>Role in the process</h4>
+    <p>The code we upload and defend. It must give the same numbers as Step 6 on the same data.</p>
+  </div></details>
+
+  <h3>Tasks <span class="tprog"></span></h3>
+  <ul class="tasks" data-step="s7">
+    <li data-id="s7-1">Copy the template to <code>experiences/ours_assignment_4/EKF_ours/</code> (rename the .ino)</li>
+    <li data-id="s7-2">Fill in <code>state_estimator.cpp</code> (7.1) with our geometry, G, R</li>
+    <li data-id="s7-3">Reset for frame A (7.2) and the motion profile (7.3)</li>
+    <li data-id="s7-4">Add channels 10, 11 (7.4); compile</li>
+    <li data-id="s7-5">Test 1, motors off (Button 1 only): robot still in the start pose → x̂ stays put, ν ≈ 0</li>
+    <li data-id="s7-6">Test 2, motors off: push the robot by hand in the corner → estimate follows</li>
+    <li data-id="s7-7">Test 3: log a run, replay in Python → same x̂, ŷ, φ̂ as channels 0–2</li>
+  </ul>
+
+  <h3>7.1 state_estimator.cpp</h3>
+  <details class="code"><summary>PredictionUpdate <span class="tag">C++</span></summary><div class="body"><pre><code>#include "state_estimator.h"
+
+// PREDICTION: unicycle model, input = wheel speeds (u(0) = A, u(1) = B), rad/s.
+// TWEAK: Q = wheel-speed noise variances (rad/s)^2  (= G in the notebook).
+void PredictionUpdate(const BLA::Matrix&lt;2&gt; &amp;u, BLA::Matrix&lt;3&gt; &amp;xhat, BLA::Matrix&lt;3,3&gt; &amp;_Phat) {
+  const float dt = TSAMPLE;
+  float x = xhat(0);
+  float y = xhat(1);
+  float phi = xhat(2);
+  float v = (u(0) + u(1))*R_WHEEL / 2;             // forward speed, m/s
+  float omega = (u(1) - u(0))*R_WHEEL / WHEELBASE;  // turn rate, rad/s (B faster -&gt; left)
+
+  // Jacobians at the current estimate (Step 2)
+  BLA::Matrix&lt;3,3&gt; A = {1, 0, -dt*v*sin(phi),
+                        0, 1,  dt*v*cos(phi),
+                        0, 0,  1};
+  BLA::Matrix&lt;3,2&gt; B = {dt*R_WHEEL/2*cos(phi), dt*R_WHEEL/2*cos(phi),
+                        dt*R_WHEEL/2*sin(phi), dt*R_WHEEL/2*sin(phi),
+                        -dt*R_WHEEL/WHEELBASE, dt*R_WHEEL/WHEELBASE};
+  BLA::Matrix&lt;2,2&gt; Q = {0.12, 0,
+                        0,    0.12};             // (rad/s)^2  &lt;- Step 5
+
+  // Nonlinear prediction f(x, u), not A*x + B*u (Ch 6.1)
+  xhat(0) = x + dt*v*cos(phi);
+  xhat(1) = y + dt*v*sin(phi);
+  xhat(2) = phi + dt*omega;
+
+  _Phat = A*_Phat*~A + B*Q*~B;
+}</code></pre></div></details>
+  <details class="code"><summary>CorrectionUpdate <span class="tag">C++</span></summary><div class="body"><pre><code>// CORRECTION: front sensor -&gt; wall x = c1, side sensor (looking left) -&gt; wall y = c2.
+// TWEAK: alpha, beta, gamma (Step 1), R (Step 5).
+void CorrectionUpdate(const BLA::Matrix&lt;2&gt; &amp;z, float weq1[3], float weq2[3], BLA::Matrix&lt;3&gt; &amp;xhat, BLA::Matrix&lt;3,3&gt; &amp;Phat, BLA::Matrix&lt;2&gt; &amp;nu, BLA::Matrix&lt;2,2&gt; &amp;S) {
+  const float alpha = 0.085;  // front sensor: m in front of the axle   &lt;- measure
+  const float beta  = 0.09;   // side sensor:  m in front of the axle   &lt;- measure
+  const float gamma = 0.073;  // side sensor:  m left of the axle middle &lt;- measure
+
+  BLA::Matrix&lt;2,2&gt; R = {1.3e-5, 0,
+                        0,      1.3e-5};          // m^2  &lt;- Step 5
+
+  float x = xhat(0), y = xhat(1), phi = xhat(2);
+  float c1 = weq1[2];                              // front wall: x = c1
+  float c2 = weq2[2];                              // side wall:  y = c2
+  float cp = cos(phi), sp = sin(phi);
+
+  // predicted readings h(x) and Jacobian H (Step 3)
+  BLA::Matrix&lt;2&gt; h = {(c1 - x)/cp - alpha,
+                      (c2 - y)/cp - beta*sp/cp - gamma};
+  BLA::Matrix&lt;2,3&gt; H = {-1/cp, 0,     (c1 - x)*sp/(cp*cp),
+                        0,     -1/cp, ((c2 - y)*sp - beta)/(cp*cp)};
+
+  nu = z - h;                                      // innovation, m
+  S = H*Phat*~H + R;
+  BLA::Matrix&lt;3,2&gt; K = Phat*~H*Inverse(S);         // Kalman gain
+  xhat += K*nu;
+  Phat -= K*H*Phat;
+}</code></pre></div></details>
+  <p>The structure is the template's. Removed: the unused <code>b</code> and <code>V</code>. The walls stay as <code>weq</code> so the function keeps its signature; <code>a</code>, <code>b</code> are fixed by our corner (1, 0) and (0, 1).</p>
+
+  <h3>7.2 Reset for frame A</h3>
+  <details class="code"><summary>resetKalmanFilter(), walls and start pose <span class="tag">C++</span></summary><div class="body"><pre><code>  // World frame A: corner = origin, front wall x = 0, side wall y = 0, robot starts facing +x.
+  // TWEAK: offsets = alpha and gamma of state_estimator.cpp (keep them equal!).
+  _weq1[0] = 1; _weq1[1] = 0; _weq1[2] = 0;       // front wall: 1*x + 0*y = 0
+  _weq2[0] = 0; _weq2[1] = 1; _weq2[2] = 0;       // side wall:  0*x + 1*y = 0
+  _xhat(0) = -(getFrontDistance() + 0.085);        // start x from the first front reading
+  _xhat(1) = -(getSideDistance() + 0.073);         // start y from the first side reading
+  _xhat(2) = 0.0;                                  // start square to the walls</code></pre></div></details>
+  <p>Replaces <code>robot.cpp:83-93</code>. P₀ (lines 77-80) can stay; it's large, so the filter trusts the first readings.</p>
+
+  <h3>7.3 Motion profile</h3>
+  <p>Replace the constant 1.0 V (<code>robot.cpp:43-55</code>) with the G2 profile, the same Segment idea as our A2 sketch. Add <code>int i = 0;</code> to <code>robot.h</code> and <code>i = 0;</code> in <code>button0callback()</code> when move turns on.</p>
+  <details class="code"><summary>Segment profile in control() <span class="tag">C++</span></summary><div class="body"><pre><code>// Above Robot::control(): motion profile = list of (samples, vA, vB); 1 sample = 10 ms.
+// TWEAK: same table as G2 (Step 4) so robot runs and logs are comparable.
+struct Segment { int samples; float vA; float vB; };
+const Segment PROFILE[] = { {100, 0.0, 0.0}, {75, -3.0, -3.0}, {50, 0.0, 0.0},
+                            {15, 3.0, -3.0}, {50, 0.0, 0.0}, {60, 3.0, 3.0}, {100, 0.0, 0.0} };
+const int N_SEG = sizeof(PROFILE) / sizeof(PROFILE[0]);
+
+// Inside control(), instead of the template's move block:
+  if(moveEnabled()) {
+    float vA = 0.0, vB = 0.0;                    // after the last segment: stop
+    int t = i;
+    for (int k = 0; k &lt; N_SEG; k++) {            // find the segment we are in
+      if (t &lt; PROFILE[k].samples) { vA = PROFILE[k].vA; vB = PROFILE[k].vB; break; }
+      t -= PROFILE[k].samples;
+    }
+    i++;
+    setVoltageMotorA(vA);
+    setVoltageMotorB(vB);
+  } else {
+    setVoltageMotorA(0.0);
+    setVoltageMotorB(0.0);
+  }</code></pre></div></details>
+
+  <h3>7.4 Extra channels</h3>
+  <details class="code"><summary>Channels 10, 11 <span class="tag">C++</span></summary><div class="body"><pre><code>  writeValue(10, _nu(1));              // innovation of the side sensor, m
+  writeValue(11, sqrt(_Phat(2,2)));     // sigma of the heading, rad</code></pre></div></details>
+  <p class="note">Order on the robot: <b>Button 1 first</b> (EKF on, reset in the start pose), <b>then Button 0</b> (move). The motors only run while the EKF is on (<code>robot.cpp:33-57</code>). See <code>FAQ direction</code> if the robot keeps driving.</p>
+
+  <details class="src"><summary>Sources</summary><div class="body"><ul>
+    <li>Goal 3 → <code>A4 notebook</code> §3</li>
+    <li>Template → <code>state_estimator.cpp:1-74</code>, <code>robot.cpp:17-99</code>, <code>robot.h:29-35</code></li>
+    <li>Use f, not Ax + Bu, for the state → <code>Ch 6</code> §6.1 ("We don't normally use Fx to propagate the state for the EKF")</li>
+    <li>Button order → <code>robot.cpp:33, 43</code>; <code>FAQ direction</code></li>
+    <li>Filled-in code, reset, profile <span class="own">own code</span>, from Steps 1–5</li>
+  </ul></div></details>
+</div>
+<div class="card notes" data-step="s7"><h3 style="margin-top:0">Notes</h3></div>
+</section>
+
+<!-- =================================== STEP 8 =================================== -->
+<section class="tab" id="s8" data-title="Run &amp; evaluate" data-num="8">
+<div class="card">
+  <div class="head"><span class="big">Step 8</span><div>
+    <h2>Run and evaluate</h2>
+    <p class="lead">Run the EKF on the robot in the corner, and compare three things: robot estimate, Python replay, tape measure.</p>
+    <span class="output">Output: <b>robot vs. simulation vs. tape measure</b></span>
+  </div></div>
+
+  <details class="ctx"><summary>Why &amp; where in Assignment 4 <span class="need">§2 "localize the robot in a room"</span></summary><div class="body">
+    <h4>In the assignment notebook</h4>
+    <blockquote class="nb"><span class="where">§2 Assignment context</span>"This estimator can be used to localize the mobile robot in a room."</blockquote>
+    <h4>Role in the process</h4>
+    <p>Shows that the estimate is correct (vs. tape measure) and that the robot runs what we designed (vs. Python).</p>
+  </div></details>
+
+  <h3>Tasks <span class="tprog"></span></h3>
+  <ul class="tasks" data-step="s8">
+    <li data-id="s8-1">G3: 5 runs with the EKF on the robot, start and end pose measured</li>
+    <li data-id="s8-2">Replay each G3 log in Python: same estimate as channels 0–2</li>
+    <li data-id="s8-3">Table: end pose EKF vs. dead reckoning vs. tape, per run + mean error</li>
+    <li data-id="s8-4">One run with a "kidnap": shift the robot 3 cm by hand while still → does the EKF follow?</li>
+    <li data-id="s8-5">Write 4–6 conclusion lines (8.1)</li>
+  </ul>
+
+  <h3>8.1 Questions the conclusions should answer</h3>
+  <ul>
+    <li>How much better is the EKF end pose than dead reckoning? In x, y and φ separately?</li>
+    <li>Which state stays the most uncertain, and why (3.1 observability)?</li>
+    <li>Do the innovations look like white noise? If not, what's wrong in the model (geometry, wall not square, slip)?</li>
+    <li>Limits: sensor range, steep angles, only two walls, linearization error in turns.</li>
+  </ul>
+
+  <details class="src"><summary>Sources</summary><div class="body"><ul>
+    <li>Localization goal → <code>A4 notebook</code> §2</li>
+    <li>Dead reckoning comparison → <code>Ch 6</code> §6.2.3</li>
+    <li>Evaluation set-up, kidnap test <span class="own">own suggestion</span></li>
+  </ul></div></details>
+</div>
+<div class="card notes" data-step="s8"><h3 style="margin-top:0">Notes</h3></div>
+</section>
+
+<!-- =================================== STEP 9 =================================== -->
+<section class="tab" id="s9" data-title="Submit &amp; defend" data-num="9">
+<div class="card">
+  <div class="head"><span class="big">Step 9</span><div>
+    <h2>Notebook, upload and defense prep</h2>
+    <p class="lead">One notebook, the Arduino folder, uploaded 24 h early, both of us ready for questions.</p>
+    <span class="output">Output: <b>submission + answers to likely questions</b></span>
+  </div></div>
+
+  <details class="ctx"><summary>Why &amp; where in Assignment 4 <span class="need">§4 Submission format</span></summary><div class="body">
+    <h4>In the assignment notebook</h4>
+    <blockquote class="nb"><span class="where">§4 Submission format</span>"Upload your arduino script and relevant Jupyter notebooks to Toledo at least 24 hours before the start of the defense. You will defend your work during a provided timeslot. Please register using the provided link on Toledo!"</blockquote>
+  </div></details>
+
+  <h3>Tasks <span class="tprog"></span></h3>
+  <ul class="tasks" data-step="s9">
+    <li data-id="s9-1">Notebook in the order of 9.1, Restart &amp; Run All works</li>
+    <li data-id="s9-2">Arduino folder zipped (all files)</li>
+    <li data-id="s9-3">Uploaded to Toledo ≥ 24 h before the slot</li>
+    <li data-id="s9-4">Each of us answers all questions in 9.2 out loud without notes</li>
+  </ul>
+
+  <h3>9.1 Notebook structure</h3>
+  <ol>
+    <li>Goal, set-up (corner, world frame, sensor geometry with a sketch).</li>
+    <li>Motion model: f, F<sub>k</sub>, B<sub>k</sub>, G (SymPy cell).</li>
+    <li>Measurement model: h, H<sub>k</sub>, R (SymPy cell).</li>
+    <li>Simulation on logs: EKF vs. dead reckoning, ellipses, innovations.</li>
+    <li>Robot implementation (short C++ excerpts) + robot results vs. tape measure. Conclusion.</li>
+  </ol>
+
+  <h3>9.2 Likely defense questions</h3>
+  <ul>
+    <li>Why an EKF and not the linear KF of A3? Which part is nonlinear?</li>
+    <li>What is a Jacobian here, and why recompute it every step?</li>
+    <li>Why is the state predicted with f and not with F<sub>k</sub>x?</li>
+    <li>Why \(\mathbf Q_k = \mathbf B_k\mathbf G\mathbf B_k^\mathsf T\)? What are the units of G?</li>
+    <li>Derive h for the front sensor on the board. What happens at φ = 90°?</li>
+    <li>Why is the heading the most uncertain state?</li>
+    <li>What changes if the walls are not perpendicular? If there is only one wall?</li>
+    <li>How did you choose R and G? What if G → 0?</li>
+  </ul>
+
+  <details class="src"><summary>Sources</summary><div class="body"><ul>
+    <li>Submission + defense → <code>A4 notebook</code> §4</li>
+    <li>f vs. F<sub>k</sub>x → <code>Ch 6</code> §6.1; one landmark gives a bad result → <code>Ch 6</code> §6.2.3</li>
+    <li>Structure and questions <span class="own">own suggestion</span></li>
+  </ul></div></details>
+</div>
+<div class="card notes" data-step="s9"><h3 style="margin-top:0">Notes</h3></div>
+</section>
+
+<div class="pager"><button id="prev">← Previous</button><button id="next">Next →</button></div>
+<p class="hint" style="margin-top:28px">Saving: open this file in <b>Chrome or Edge</b>, click <b>Link file</b> and pick this same .html file. After that every change is saved into the file automatically, and OneDrive syncs it. Your teammate's saved changes are merged in automatically (every 15 s while linked). In other browsers use <b>Download copy</b> and replace the file.<br>Online (GitHub Pages): click <b>Connect GitHub</b> and paste your own fine-grained token (repo <code>mobile_robotics_experience</code>, Contents: Read and write). Progress is then saved in the private repo and shared with your teammate; without a token the page is view-only.</p>
+</main>
+</div>
+
+<script>
+/* ---------- capture pristine source BEFORE anything changes the DOM ---------- */
+const SRC = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+const STATE_RE = /(<script id="plan-state" type="application\/json">)([\s\S]*?)(<\/script>)/;
+
+/* ---------- state: {tasks:{id:{done,t}}, notes:{step:{text,t}}, savedAt} ---------- */
+function parseState(txt){ try{ const s = JSON.parse(txt || '{}'); return {tasks:s.tasks||{}, notes:s.notes||{}, savedAt:s.savedAt||null}; }catch(e){ return {tasks:{},notes:{},savedAt:null}; } }
+function mergeInto(a, b){ // last-write-wins per item, returns true if a changed
+  let changed = false;
+  for (const kind of ['tasks','notes']) for (const [k,v] of Object.entries(b[kind]||{}))
+    if (!a[kind][k] || (v.t||'') > (a[kind][k].t||'')) { a[kind][k] = v; changed = true; }
+  if ((b.savedAt||'') > (a.savedAt||'')) a.savedAt = b.savedAt;
+  return changed;
+}
+let state = parseState(document.getElementById('plan-state').textContent);
+const LS_KEY = 'plan-a4:' + location.pathname;
+try { const d = localStorage.getItem(LS_KEY); if (d) mergeInto(state, parseState(d)); } catch(e){}
+
+function serialize(){ return SRC.replace(STATE_RE, (m,a,b,c) => a + JSON.stringify(state).replace(/</g,'\\u003c') + c); }
+const now = () => new Date().toISOString();
+function fmt(iso){ const d = new Date(iso); return d.toLocaleDateString(undefined,{day:'numeric',month:'short'}) + ' ' + d.toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'}); }
+
+/* ---------- navigation ---------- */
+const tabs = [...document.querySelectorAll('section.tab')];
+const nav = document.getElementById('nav');
+tabs.forEach((s,i) => {
+  if (i === 1) nav.insertAdjacentHTML('beforeend','<div class="sep"></div>');
+  const b = document.createElement('button');
+  b.dataset.tab = s.id;
+  b.innerHTML = `<span class="num">${s.dataset.num}</span><span class="lbl">${s.dataset.title}</span><span class="cnt"></span>`;
+  b.onclick = () => show(s.id);
+  nav.appendChild(b);
+});
+function show(id){
+  if (!document.getElementById(id)) id = 'overview';
+  tabs.forEach(s => s.classList.toggle('active', s.id === id));
+  nav.querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.tab === id));
+  const i = tabs.findIndex(s => s.id === id);
+  document.getElementById('prev').style.visibility = i > 0 ? 'visible' : 'hidden';
+  document.getElementById('next').style.visibility = i < tabs.length-1 ? 'visible' : 'hidden';
+  if (location.hash !== '#'+id) history.replaceState(null,'','#'+id);
+  window.scrollTo({top:0});
+}
+document.getElementById('prev').onclick = () => { const i = tabs.findIndex(s=>s.classList.contains('active')); show(tabs[Math.max(0,i-1)].id); };
+document.getElementById('next').onclick = () => { const i = tabs.findIndex(s=>s.classList.contains('active')); show(tabs[Math.min(tabs.length-1,i+1)].id); };
+document.querySelectorAll('[data-go]').forEach(r => r.onclick = () => show(r.dataset.go));
+window.addEventListener('hashchange', () => show(location.hash.slice(1)));
+
+/* ---------- tasks ---------- */
+document.querySelectorAll('.tasks li').forEach(li => {
+  const id = li.dataset.id;
+  const label = document.createElement('label'); label.innerHTML = li.innerHTML; label.htmlFor = 'cb-'+id;
+  const cb = document.createElement('input'); cb.type = 'checkbox'; cb.id = 'cb-'+id;
+  const when = document.createElement('span'); when.className = 'when';
+  li.textContent = ''; li.append(cb, label, when);
+  cb.onchange = () => { state.tasks[id] = {done: cb.checked, t: now()}; changed(); };
+});
+
+/* ---------- notes ---------- */
+document.querySelectorAll('.notes').forEach(box => {
+  const step = box.dataset.step;
+  const ta = document.createElement('textarea');
+  ta.placeholder = 'Type anything: file names, measured values, questions, decisions…';
+  const meta = document.createElement('div'); meta.className = 'meta';
+  box.append(ta, meta);
+  let timer;
+  ta.oninput = () => { clearTimeout(timer); timer = setTimeout(() => { state.notes[step] = {text: ta.value, t: now()}; changed(); }, 600); };
+});
+
+/* ---------- render state into the page ---------- */
+function render(){
+  let total = 0, done = 0;
+  document.querySelectorAll('.tasks li').forEach(li => {
+    const s = state.tasks[li.dataset.id], on = !!(s && s.done);
+    li.querySelector('input').checked = on;
+    li.classList.toggle('done', on);
+    li.querySelector('.when').textContent = on ? fmt(s.t) : '';
+  });
+  tabs.forEach(sec => {
+    const lis = sec.querySelectorAll('.tasks li'), n = lis.length;
+    const d = [...lis].filter(li => li.classList.contains('done')).length;
+    total += n; done += d;
+    const btn = nav.querySelector(`[data-tab="${sec.id}"]`);
+    btn.querySelector('.cnt').textContent = n ? `${d}/${n}` : '';
+    btn.classList.toggle('done', n > 0 && d === n);
+    btn.classList.toggle('part', d > 0 && d < n);
+    sec.querySelectorAll('.tprog').forEach(p => { if (!p.style.float) p.textContent = `${d} / ${n}`; });
+  });
+  document.getElementById('overall-bar').style.width = (total ? 100*done/total : 0) + '%';
+  document.getElementById('overall-txt').textContent = `${done} / ${total} tasks`;
+  document.querySelectorAll('.notes').forEach(box => {
+    const n = state.notes[box.dataset.step], ta = box.querySelector('textarea');
+    if (document.activeElement !== ta) ta.value = n ? n.text : '';
+    box.querySelector('.meta').textContent = n && n.text ? 'Last edited ' + fmt(n.t) : '';
+  });
+}
+
+/* ---------- saving into the file itself (File System Access API, Chrome/Edge) ---------- */
+const pill = document.getElementById('save-pill'), linkBtn = document.getElementById('link-btn');
+const hasFS = 'showOpenFilePicker' in window;
+let handle = null, dirty = false, saveTimer = null, saving = false;
+function setPill(txt, cls){ pill.textContent = txt; pill.className = 'pill' + (cls ? ' '+cls : ''); }
+function banner(txt){ const b = document.getElementById('banner'); b.style.display = txt ? 'block' : 'none'; document.getElementById('banner-txt').textContent = txt || ''; }
+
+function changed(){
+  dirty = true; render();
+  try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch(e){}
+  if (ghToken) { ghPending = true; setPill('Unsaved…','warn'); clearTimeout(ghTimer); ghTimer = setTimeout(ghSave, 2000); }
+  if (handle) { setPill('Unsaved…','warn'); clearTimeout(saveTimer); saveTimer = setTimeout(save, 800); }
+  else if (!ghToken) setPill('Not saved','warn');
+}
+
+async function readDisk(){
+  const txt = await (await handle.getFile()).text();
+  const m = txt.match(STATE_RE);
+  if (!m) throw new Error('The linked file is not this plan.');
+  return parseState(m[2]);
+}
+async function save(){
+  if (!handle || saving) return;
+  saving = true; setPill('Saving…');
+  try {
+    mergeInto(state, await readDisk());            // keep teammate's changes
+    state.savedAt = now();
+    const w = await handle.createWritable();
+    await w.write(serialize()); await w.close();
+    dirty = false; render(); setPill('Saved ' + fmt(state.savedAt).split(' ').pop(), 'ok'); banner('');
+  } catch(e) { setPill('Save failed','warn'); banner('Could not save: ' + e.message + ' Click "Link file" again.'); }
+  saving = false;
+}
+async function syncFromDisk(){
+  if (!handle || saving || document.hidden) return;
+  try { const disk = await readDisk(); if (mergeInto(state, disk)) { render(); try{localStorage.setItem(LS_KEY, JSON.stringify(state));}catch(e){} } } catch(e){}
+}
+
+/* remember the file handle between sessions (IndexedDB) */
+function idb(){ return new Promise((res,rej) => { const r = indexedDB.open('plan-a4',1); r.onupgradeneeded = () => r.result.createObjectStore('h'); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); }
+async function idbSet(v){ try{ const db = await idb(); db.transaction('h','readwrite').objectStore('h').put(v, location.pathname); }catch(e){} }
+async function idbGet(){ try{ const db = await idb(); return await new Promise(r => { const q = db.transaction('h').objectStore('h').get(location.pathname); q.onsuccess = () => r(q.result); q.onerror = () => r(null); }); }catch(e){ return null; } }
+
+async function activate(h){
+  handle = h; await idbSet(h);
+  linkBtn.textContent = 'Linked'; linkBtn.classList.remove('primary');
+  await syncFromDisk();
+  if (dirty) await save(); else setPill('Linked · up to date','ok');
+}
+let stored = null;
+linkBtn.onclick = async () => {
+  if (!hasFS) { alert('Saving into the file needs Chrome or Edge. Use "Download copy" instead.'); return; }
+  try {
+    if (stored && await stored.requestPermission({mode:'readwrite'}) === 'granted') return activate(stored);
+    const [h] = await window.showOpenFilePicker({types:[{description:'Plan',accept:{'text/html':['.html']}}]});
+    if (await h.requestPermission({mode:'readwrite'}) !== 'granted') return;
+    const txt = await (await h.getFile()).text();
+    if (!STATE_RE.test(txt) || !txt.includes('Assignment 4 · Extended Kalman filter')) { alert('That file is not this plan. Pick plan_assignment_4.html.'); return; }
+    await activate(h);
+  } catch(e) { if (e.name !== 'AbortError') banner('Link failed: ' + e.message); }
+};
+document.getElementById('dl-btn').onclick = () => {
+  state.savedAt = now();
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([serialize()], {type:'text/html'}));
+  a.download = 'plan_assignment_4.html'; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+};
+window.addEventListener('beforeunload', e => { if (dirty && handle) { save(); e.preventDefault(); e.returnValue=''; } });
+setInterval(syncFromDisk, 15000);
+document.addEventListener('visibilitychange', syncFromDisk);
+
+/* ---------- saving to GitHub (private repo, works on the online page) ----------
+   Token: GitHub → Settings → Developer settings → Fine-grained tokens.
+   Repository access: only mobile_robotics_experience · Permission: Contents = Read and write.
+   The token is kept in this browser only (localStorage). Without a token the page is view-only. */
+const GH_REPO = 'Ruben-V-Student/mobile_robotics_experience';
+const GH_PATH = 'plans/' + (location.pathname.split('/').pop() || 'plan_assignment_4.html').replace(/\.html$/, '') + '.state.json';
+const ghBtn = document.getElementById('gh-btn');
+const onPages = location.hostname.endsWith('github.io');
+let ghToken = null, ghSha = null, ghTimer = null, ghBusy = false, ghPending = false;
+try { ghToken = localStorage.getItem('gh-token'); } catch(e){}
+
+function b64dec(b){ return new TextDecoder().decode(Uint8Array.from(atob(b.replace(/\s/g,'')), c => c.charCodeAt(0))); }
+function b64enc(s){ let bin = ''; new TextEncoder().encode(s).forEach(x => bin += String.fromCharCode(x)); return btoa(bin); }
+async function gh(method, body){
+  const r = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${GH_PATH}`, {
+    method, cache: 'no-store', body: body && JSON.stringify(body),
+    headers: {Authorization: 'Bearer ' + ghToken, Accept: 'application/vnd.github+json'} });
+  if (r.status === 401 || r.status === 403) throw new Error('token rejected (expired or no access to the repo)');
+  return r;
+}
+async function ghRead(){ // remote state; remembers its sha for the next write
+  const r = await gh('GET');
+  if (r.status === 404) { ghSha = null; return parseState('{}'); }
+  if (!r.ok) throw new Error('GitHub ' + r.status);
+  const j = await r.json(); ghSha = j.sha; return parseState(b64dec(j.content));
+}
+async function ghSave(){
+  if (!ghToken) return;
+  if (ghBusy) { clearTimeout(ghTimer); ghTimer = setTimeout(ghSave, 1000); return; }
+  ghTimer = null; ghBusy = true; ghPending = false; setPill('Saving to GitHub…');
+  try {
+    for (let i = 0; ; i++) {                       // retry when teammate saved in between
+      mergeInto(state, await ghRead());
+      state.savedAt = now();
+      const r = await gh('PUT', {message: 'Update plan progress', content: b64enc(JSON.stringify(state, null, 1)), sha: ghSha || undefined});
+      if (r.ok) { ghSha = (await r.json()).content.sha; break; }
+      if ((r.status !== 409 && r.status !== 422) || i >= 2) throw new Error('GitHub ' + r.status);
+    }
+    render(); setPill('Saved to GitHub ' + fmt(state.savedAt).split(' ').pop(), 'ok'); banner('');
+  } catch(e) { ghPending = true; setPill('GitHub save failed','warn'); banner('Could not save to GitHub: ' + e.message); }
+  ghBusy = false;
+  if (ghPending && !ghTimer) ghTimer = setTimeout(ghSave, 2000);
+}
+async function ghSync(){
+  if (!ghToken || ghBusy || ghPending || document.hidden) return;
+  try { if (mergeInto(state, await ghRead())) { render(); try{localStorage.setItem(LS_KEY, JSON.stringify(state));}catch(e){} } }
+  catch(e) { setPill('GitHub: ' + e.message, 'warn'); }
+}
+async function ghConnect(){
+  ghBtn.textContent = 'GitHub ✓';
+  try {
+    const remote = await ghRead();
+    mergeInto(state, remote); render();
+    if (mergeInto(remote, state)) ghSave();        // this browser had newer changes → push them
+    else setPill('GitHub · up to date', 'ok');
+  } catch(e) { setPill('GitHub: ' + e.message, 'warn'); }
+}
+ghBtn.onclick = () => {
+  const t = prompt('Paste your GitHub token (fine-grained, repo ' + GH_REPO + ', Contents: Read and write).\nLeave empty to disconnect.', '');
+  if (t === null) return;
+  ghToken = t.trim() || null;
+  try { ghToken ? localStorage.setItem('gh-token', ghToken) : localStorage.removeItem('gh-token'); } catch(e){}
+  if (ghToken) ghConnect(); else { ghBtn.textContent = 'Connect GitHub'; setPill('View only'); }
+};
+setInterval(ghSync, 15000);
+document.addEventListener('visibilitychange', ghSync);
+window.addEventListener('beforeunload', e => { if (ghPending) { ghSave(); e.preventDefault(); e.returnValue=''; } });
+
+(async () => {
+  if (ghToken) ghConnect();
+  if (onPages) { linkBtn.style.display = 'none'; if (!ghToken) setPill('View only · Connect GitHub to edit'); return; }
+  if (!hasFS) { setPill('View only · use Download copy'); linkBtn.disabled = true; return; }
+  stored = await idbGet();
+  if (stored) {
+    try { if (await stored.queryPermission({mode:'readwrite'}) === 'granted') return activate(stored); } catch(e){}
+    linkBtn.textContent = 'Reconnect file'; setPill('Click Reconnect to save','warn');
+  }
+})();
+
+/* ---------- copy buttons + math ---------- */
+document.querySelectorAll('details.code pre').forEach(pre => {
+  const b = document.createElement('button'); b.className = 'copy'; b.textContent = 'Copy';
+  b.onclick = e => { e.preventDefault(); navigator.clipboard.writeText(pre.innerText).then(() => { b.textContent = 'Copied'; setTimeout(() => b.textContent = 'Copy', 1200); }); };
+  pre.parentElement.appendChild(b);
+});
+window.renderMath = () => renderMathInElement(document.body, {
+  delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}],
+  ignoredTags:['script','noscript','style','textarea','pre','code'], throwOnError:false });
+if (window.renderMathInElement) window.renderMath();
+
+render();
+show(location.hash.slice(1) || 'overview');
+if (!onPages && (Object.keys(state.tasks).length || Object.keys(state.notes).length)) setPill(state.savedAt ? 'Saved ' + fmt(state.savedAt) : 'Not linked', state.savedAt ? 'ok' : '');
+</script>
+</body>
+</html>

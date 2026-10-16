@@ -168,12 +168,14 @@ details.src ul{font-size:13px;color:var(--ink2);margin:0}
   <ol>
     <li><b>Specify the matrices</b>: Jacobians \(\mathbf F_k, \mathbf B_k\) of the motion model, its uncertainty \(\mathbf Q_k = \mathbf B_k\mathbf G\mathbf B_k^\mathsf T\), and \(\mathbf H_k, \mathbf R\) of the measurement model.</li>
     <li><b>Simulate the EKF</b> in Python on logged inputs and measurements.</li>
-    <li><b>Run the EKF on the robot</b> by filling in <code>state_estimator.cpp</code>.</li>
+    <li><b>Run the EKF on the robot</b> by editing <code>robot.cpp</code> and <code>state_estimator.cpp</code>. The template drives a <b>given trajectory: a ~90° turn to the right</b>.</li>
   </ol>
+  <p class="note"><b>Template update 16 Oct:</b> the robot now drives the built-in trajectory (Button 0), P₀/x̂₀/wall parameters are <code>??</code>, the covariance update is the Joseph form, and the QRC channels were renumbered. This plan follows the new template; all changes and traps: <code>experiences/TEMPLATE_CHANGES_AND_PITFALLS.MD</code>.</p>
   <p class="note">Deliverable: the Arduino script + the relevant Jupyter notebook(s), uploaded to Toledo <b>at least 24 h before the defense</b>, then a <b>defense</b>. Every code block must be understood by both of us, so blocks are short and start with a one-line comment on <i>what it does</i> and <i>what to tweak</i>.</p>
   <details class="src"><summary>Sources</summary><div class="body"><ul>
-    <li>Goal + context → <code>A4 notebook</code> §2 "Assignment context", §3 "Assignment goals"</li>
+    <li>Goal + context → <code>A4 notebook</code> §2 "Assignment context", §3 "Assignment goals" (goal 3: "The defined trajectory is a ~90 degree turn to the right.")</li>
     <li>EKF equations → <code>A4 notebook</code> §2 (linear KF vs. EKF table); <code>Ch 6</code> §6.1</li>
+    <li>Template changes → course repo commits <code>7b3b188a</code>, <code>cb8af234</code> (16 Oct); <code>experiences/TEMPLATE_CHANGES_AND_PITFALLS.MD</code></li>
     <li>Deliverable + defense → <code>A4 notebook</code> §4 "Submission format"</li>
     <li>Code style → <code>experiences/ours_assignment_2/ExperiencesRulesForAI.MD</code></li>
   </ul></div></details>
@@ -183,6 +185,7 @@ details.src ul{font-size:13px;color:var(--ink2);margin:0}
     <li data-id="ov-1">Re-read Ch 6 completely (it is short and is almost this assignment: robot localization with landmarks)</li>
     <li data-id="ov-2">Finish A3 first: the A3 filter, R of the front sensor and the logging setup are reused here</li>
     <li data-id="ov-3">Both read this whole plan once and agree on the order</li>
+    <li data-id="ov-5">Read <code>experiences/TEMPLATE_CHANGES_AND_PITFALLS.MD</code> (A4 part)</li>
     <li data-id="ov-4">Register for the defense slot on Toledo; deadline (slot − 24 h) in the notes</li>
   </ul>
 
@@ -191,13 +194,13 @@ details.src ul{font-size:13px;color:var(--ink2);margin:0}
     <thead><tr><th>#</th><th>Step</th><th>Output</th></tr></thead>
     <tbody>
       <tr data-go="s0"><td>0</td><td>Know the A4 program, signals and template gaps</td><td>Buttons, channels, list of template problems</td></tr>
-      <tr data-go="s1"><td>1</td><td>World frame, arena and sensor geometry</td><td>Corner set-up, α β γ measured, initial state</td></tr>
+      <tr data-go="s1"><td>1</td><td>Dry run, world frame, arena and sensor geometry</td><td>Measured path of the trajectory, wall layout, α β γ measured, initial state</td></tr>
       <tr data-go="s2"><td>2</td><td>Motion model: f, F<sub>k</sub>, B<sub>k</sub>, G</td><td>Equations + SymPy check</td></tr>
       <tr data-go="s3"><td>3</td><td>Measurement model: h, H<sub>k</sub></td><td>Equations + SymPy check</td></tr>
-      <tr data-go="s4"><td>4</td><td>Record the data</td><td>Static, odometry-check and corner logs with end poses</td></tr>
+      <tr data-go="s4"><td>4</td><td>Record the data</td><td>Static and trajectory logs in the arena, with start/end poses</td></tr>
       <tr data-go="s5"><td>5</td><td>Noise values R and G</td><td>R (2×2), G (2×2) with derivation</td></tr>
       <tr data-go="s6"><td>6</td><td>Simulate the EKF in Python</td><td>Path + ellipses, dead reckoning vs. EKF, innovations</td></tr>
-      <tr data-go="s7"><td>7</td><td>Implement on the robot</td><td>Filled-in <code>state_estimator.cpp</code>, motion profile, reset</td></tr>
+      <tr data-go="s7"><td>7</td><td>Implement on the robot</td><td>Filled-in <code>state_estimator.cpp</code> and reset; trajectory as given</td></tr>
       <tr data-go="s8"><td>8</td><td>Run and evaluate</td><td>Robot vs. simulation vs. tape measure</td></tr>
       <tr data-go="s9"><td>9</td><td>Notebook, upload and defense prep</td><td>Submission + answers to likely questions</td></tr>
     </tbody>
@@ -213,7 +216,7 @@ details.src ul{font-size:13px;color:var(--ink2);margin:0}
 
   <h3>What A2 and A3 give us</h3>
   <ul>
-    <li><b>A2</b>: the 2D motion structure \((x, y, \varphi)\) and the wheel-speed noise σ<sub>ω</sub> (→ G). The A2 IMU model is not used: the A4 sensor list has no IMU. A gyro log is still handy as a heading check.</li>
+    <li><b>A2</b>: the 2D motion structure \((x, y, \varphi)\), the wheel-speed noise σ<sub>ω</sub> (→ G), and the motor model (gain ≈ 2.04 rad/s per V) to predict how far the trajectory drives. Wheel A = left, CCW = + (A2 Step 3). The A2 IMU model is not used by the EKF; a gyro log is still handy as a heading check.</li>
     <li><b>A3</b>: R of the front sensor, the Python filter loop, the habit of testing the estimator with the motors off, and the logging sketch.</li>
   </ul>
 
@@ -239,14 +242,15 @@ details.src ul{font-size:13px;color:var(--ink2);margin:0}
         <tr><td><code>A4</code></td><td><code>Assignments_Toledo_git/Assignment4_EKF/</code></td></tr>
         <tr><td><code>A4 notebook</code></td><td><code>A4/Assignment_EKF.ipynb</code> (one cell: §1 prior knowledge, §2 context + EKF table, §3 goals, §4 submission)</td></tr>
         <tr><td><code>robot.cpp</code>, <code>robot.h</code>, <code>state_estimator.cpp</code></td><td><code>A4/INTERNAL-EKF-StateEstimation/…</code></td></tr>
-        <tr><td><code>mecotron.h</code>, <code>trajectory.h</code></td><td><code>A4/libraries/control-theory/…</code></td></tr>
+        <tr><td><code>mecotron.h</code>, <code>trajectory.h</code>, <code>data_swivel.h</code></td><td><code>A4/libraries/control-theory/…</code> (<code>data_swivel.h</code> = the trajectory samples)</td></tr>
+        <tr><td><code>Pitfalls</code></td><td><code>experiences/TEMPLATE_CHANGES_AND_PITFALLS.MD</code></td></tr>
         <tr><td><code>FAQ direction</code>, <code>FAQ states</code></td><td><code>Assignments_Toledo_git/faq-details/FAQ_robot_runs_same_direction.md</code> ("APPLIES TO: Assignment 3 &amp; 4"), <code>FAQ_kalman_number_of_states.md</code> §"How about assignment 4"</td></tr>
         <tr><td><code>A2 plan</code>, <code>A3 plan</code></td><td><code>plans/plan_assignment_2.html</code>, <code>plans/plan_assignment_3.html</code></td></tr>
         <tr><td><code>Ch N</code></td><td><code>experiences/course_text/N. &lt;title&gt; — Mobile Robotics.pdf</code></td></tr>
         <tr><td><span class="own">own derivation</span></td><td>Not in the course material. Checked with SymPy, but double-check and explain in the report.</td></tr>
       </tbody>
     </table></div>
-    <p class="hint">The FAQ has no A4 entries yet (<code>FAQ.md</code> §"Assignment 4" is empty). Check again before the defense.</p>
+    <p class="hint">The FAQ has no A4 entries yet (<code>FAQ.md</code> §"Assignment 4" is empty). Check again before the defense (<code>git -C Assignments_Toledo_git pull</code>). Line numbers refer to the template of 16 Oct (course commit <code>cb8af234</code>).</p>
   </div></details>
 </div>
 <div class="card notes" data-step="overview"><h3 style="margin-top:0">General notes</h3></div>
@@ -264,61 +268,65 @@ details.src ul{font-size:13px;color:var(--ink2);margin:0}
   <details class="ctx"><summary>Why &amp; where in Assignment 4 <span class="need">§2 sensors · §3 goal 3</span></summary><div class="body">
     <h4>In the assignment notebook</h4>
     <blockquote class="nb"><span class="where">§2 Assignment context</span>"We want to design an extended Kalman filter that estimates the X-Y position of the mobile robot in a chosen world frame. This estimator can be used to localize the mobile robot in a room."</blockquote>
-    <blockquote class="nb"><span class="where">§3 goal 3</span>"Run the designed Extended Kalman filter on the provided control software of the mobile robot by editing the state_estimator.cpp file."</blockquote>
+    <blockquote class="nb"><span class="where">§3 goal 3</span>"Run the designed Extended Kalman filter on the provided control software of the mobile robot by editing "robot.cpp" and "state_estimator.cpp". The defined trajectory is a ~90 degree turn to the right."</blockquote>
     <h4>Role in the process</h4>
-    <p>The template fixes the state (3), the input (2 wheel speeds), the measurements (front + side distance) and the wall description. Steps 1–3 must fit it.</p>
+    <p>The template fixes the state (3), the input (2 wheel speeds), the measurements (front + side distance), the wall description and now also the motion (given trajectory). Steps 1–3 must fit it.</p>
     <h4>Why this step</h4>
-    <p>Several template lines contradict each other (see 0.3). Deciding on them now saves hours of "the filter diverges" later.</p>
+    <p>A few template choices still need a decision from us (see 0.3). Deciding on them now saves hours of "the filter diverges" later.</p>
   </div></details>
 
   <h3>Tasks <span class="tprog"></span></h3>
   <ul class="tasks" data-step="s0">
     <li data-id="s0-1">Read <code>robot.cpp</code>, <code>robot.h</code>, <code>state_estimator.cpp</code> with the tables below</li>
     <li data-id="s0-2">Go through the problem list 0.3 and note our decision for each</li>
-    <li data-id="s0-3">Find the side sensor on the robot: which side does it look to?</li>
+    <li data-id="s0-3">Find the side sensor on the robot: which side does it look to? (we think left; the template's wall 2 at \(y = +c_2\) also points to left, 0.2)</li>
   </ul>
 
   <h3>0.1 How the program runs</h3>
-  <p><code>Robot::control()</code> every 10 ms. If the EKF is on (<code>robot.cpp:33-57</code>): <b>prediction</b> with the wheel speeds, then <b>correction</b> with front + side distance, then (if move is on) the motor voltages. Note the order is predict → correct here (A3 was correct → predict).</p>
+  <p><code>Robot::control()</code> every 10 ms. If the EKF is on (<code>robot.cpp:34-43</code>): <b>prediction</b> with the measured wheel speeds, then <b>correction</b> with front + side distance. Then, if move is on (<code>robot.cpp:46-68</code>), the trajectory sets the motor voltages. Note the order is predict → correct here (A3 was correct → predict).</p>
   <div class="table-wrap"><table>
     <thead><tr><th>Button</th><th>Does</th><th>Code</th></tr></thead>
     <tbody>
-      <tr><td>Button 0</td><td>Move on/off (motors run only while the EKF is also on)</td><td><code>robot.cpp:101-116</code></td></tr>
-      <tr><td>Button 1</td><td>EKF on/off; <b>on = reset</b>: P₀, x̂₀, wall equations from the current readings</td><td><code>robot.cpp:73-99, 118-127</code></td></tr>
+      <tr><td>Button 0</td><td>Move on: trajectory reset + start; off: trajectory stop. Independent of the EKF</td><td><code>robot.cpp:111-113, 119-129</code></td></tr>
+      <tr><td>Button 1</td><td>EKF on/off; <b>on = reset</b>: P₀, x̂₀, wall equations (also at power-up via <code>init()</code>)</td><td><code>robot.cpp:14, 84-109, 131-140</code></td></tr>
     </tbody>
   </table></div>
+  <p><b>The trajectory</b> (<code>data_swivel.h</code>, 1405 samples = 14 s): \(v = 0.02\) m/s throughout; \(\omega = 0\) for 5 s, \(-0.445\) rad/s for ~3.5 s, then 0. <code>robot.cpp:49-53</code> turns it into voltages: \(V_{A,B} = (v \mp \tfrac{W}{2}\tfrac{\omega}{3})\cdot 85\), clamped ±8 V → about 1.7 V straight, 2.7 / 0.65 V in the turn. After 14 s it stops by itself. <span class="own">own decoding of <code>data_swivel.h</code></span></p>
   <div class="table-wrap"><table>
     <thead><tr><th>Channel</th><th>Value</th><th>Unit</th></tr></thead>
     <tbody>
-      <tr><td>0, 1, 2</td><td>\(\hat x, \hat y, \hat\varphi\)</td><td>m, m, rad</td></tr>
-      <tr><td>3, 4</td><td>wheel speeds A, B</td><td>rad/s</td></tr>
-      <tr><td>5, 7</td><td>front, side distance</td><td>m</td></tr>
-      <tr><td>6</td><td>innovation of the front sensor \(\nu_0\)</td><td>m</td></tr>
-      <tr><td>8, 9</td><td>wheel positions A, B</td><td>rad</td></tr>
-      <tr><td>10, 11</td><td>free → we add \(\nu_1\) and \(\sigma_\varphi\) in Step 7</td><td></td></tr>
+      <tr><td>0, 1</td><td>wheel positions A, B</td><td>rad</td></tr>
+      <tr><td>2, 3</td><td>wheel speeds A, B</td><td>rad/s</td></tr>
+      <tr><td>4, 5, 6</td><td>\(\hat x, \hat y, \hat\varphi\)</td><td>m, m, rad</td></tr>
+      <tr><td>7</td><td>innovation of the front sensor \(\nu_0\)</td><td>m</td></tr>
+      <tr><td>8, 9</td><td>front, side distance</td><td>m</td></tr>
+      <tr><td>10, 11</td><td>trajectory voltages A, B before the ±8 V clamp (only while moving)</td><td>V</td></tr>
     </tbody>
   </table></div>
 
   <h3>0.2 Wall equations</h3>
-  <p>The template describes each wall as a line \(a x + b y = c\), stored as <code>_weq1 = {a, b, c}</code> (front wall) and <code>_weq2</code> (side wall). At reset: wall 1 is \(x = c_1\) (\(a=1, b=0\)), wall 2 is \(y = c_2\) (\(a=0, b=1\)). So the robot starts <b>facing +x</b> with the front wall ahead and the side wall to the side, square to both.</p>
+  <p>The template describes each wall as a line \(a x + b y = c\), stored as <code>_weq1 = {a, b, c}</code> (front wall) and <code>_weq2</code> (side wall). <code>a</code>, <code>b</code> are now <code>??</code>; <code>c</code> is set from the readings: \(c_1\) = front reading + 0.085, \(c_2\) = side reading + 0.09 (<code>robot.cpp:98-103</code>). That reads as: robot axle at the origin facing +x, wall 1 \(x = c_1\) ahead (\(a=1, b=0\)), wall 2 \(y = c_2\) on the left (\(a=0, b=1\)). <span class="own">own reading</span></p>
 
-  <h3>0.3 Template problems</h3>
+  <h3>0.3 Template gaps and choices</h3>
   <div class="table-wrap"><table>
-    <thead><tr><th>Where</th><th>Problem</th><th>Our fix</th></tr></thead>
+    <thead><tr><th>Where</th><th>What</th><th>Our fix</th></tr></thead>
     <tbody>
-      <tr><td><code>state_estimator.cpp:9-26, 38-60</code></td><td><code>??</code> placeholders; H has a stray <code>)</code></td><td>Step 7 code</td></tr>
-      <tr><td><code>state_estimator.cpp:6</code></td><td><code>b = 0.073</code> "distance between the wheels" is unused and contradicts <code>WHEELBASE = 0.166</code> used on line 13</td><td>Delete; use <code>WHEELBASE</code> (measure it once)</td></tr>
-      <tr><td><code>robot.cpp:83-93</code></td><td>x̂₀ = (−0.3, −0.2, 0), but the wall equations put the robot at the origin (c = reading + offset). Both can't be true</td><td>Choose one world frame (Step 1)</td></tr>
-      <tr><td><code>robot.cpp:93</code> vs. <code>state_estimator.cpp:34-35</code></td><td>Side wall offset uses 0.09 (β, "longitudinal"), but along the side sensor's ray the offset is the lateral γ = 0.073</td><td>Measure; use the lateral offset (Step 1)</td></tr>
-      <tr><td><code>robot.cpp:43-55</code></td><td>Move = constant 1.0 V on both motors; <code>trajectory.v()/X()</code> read but unused (and <code>trajectory.start()</code> is never called; <code>trajectory.h</code> says "for assignment 5")</td><td>Own motion profile (Step 7)</td></tr>
+      <tr><td><code>state_estimator.cpp:6-23, 35-57</code></td><td><code>??</code> placeholders (A, B, Q, V, f, R, H, h)</td><td>Step 7 code</td></tr>
+      <tr><td><code>robot.cpp:88-103</code></td><td>P₀, x̂₀ and the wall a, b are <code>??</code></td><td>Our world frame (Step 1), reset (Step 7)</td></tr>
+      <tr><td><code>robot.cpp:100</code></td><td>\(c_1\) from the first front reading: only valid if the wall is within ~30 cm at the start</td><td>Tape-measure c if the wall is further (Step 1)</td></tr>
+      <tr><td><code>robot.cpp:103</code> vs. <code>state_estimator.cpp:31-32</code></td><td>Side wall offset uses 0.09 (β, "longitudinal"), but along the side sensor's ray the offset is the lateral γ = 0.073</td><td>Measure; use the lateral offset (Step 1)</td></tr>
+      <tr><td><code>robot.cpp:49-53</code></td><td>The trajectory turns ~90° right: after the turn the sensors see other walls than at the start</td><td>Arena + wall choice per sensor (Steps 1, 3)</td></tr>
     </tbody>
   </table></div>
+  <p class="hint">Fixed by the teacher on 16 Oct: the unused <code>b = 0.073</code> (now <code>WHEELBASE</code>), the stray <code>)</code> in H, the constant 1 V move. New: the covariance update is the Joseph form \(\mathbf P = (\mathbf I - \mathbf{KH})\bar{\mathbf P}(\mathbf I - \mathbf{KH})^\mathsf T + \mathbf{KRK}^\mathsf T\) (<code>state_estimator.cpp:70-76</code>): same result as \((\mathbf I - \mathbf{KH})\bar{\mathbf P}\), but stays symmetric and positive with rounding. Keep it, and use it in Python too.</p>
 
   <details class="src"><summary>Sources</summary><div class="body"><ul>
-    <li>Run order, buttons, channels → <code>robot.cpp:17-127</code></li>
-    <li>Walls → <code>robot.cpp:87-93</code>, <code>state_estimator.cpp:46-53</code> (a, b, c from <code>weq</code>)</li>
+    <li>Run order, buttons, channels → <code>robot.cpp:11-140</code></li>
+    <li>Trajectory → <code>robot.h:20, 26</code>, <code>trajectory.h</code> (<code>v()</code>, <code>omega()</code>, <code>start/stop/reset/update</code>), <code>data_swivel.h</code> (<code>NUMBER_OF_SAMPLES 1405</code>, <code>data_1max = 0.02</code>, <code>data_4max = 0.445</code>); decoding <span class="own">own</span></li>
+    <li>Walls → <code>robot.cpp:97-103</code>, <code>state_estimator.cpp:43-50</code> (a, b, c from <code>weq</code>)</li>
+    <li>Joseph form → <code>state_estimator.cpp:70-76</code></li>
     <li>Constants → <code>mecotron.h:41-42, 45</code>; sensors → <code>mecotron.h:108-109, 222-223</code></li>
-    <li>Problems: <code>state_estimator.cpp:6, 13, 33-35, 55-57</code>; <code>robot.cpp:43-55, 83-93</code>; <code>trajectory.h</code> (<code>start()</code>, "Include trajectory, for assignment 5" in <code>robot.h:20</code>) — interpretation <span class="own">own reading of the code</span></li>
+    <li>Interpretation of the gaps <span class="own">own reading of the code</span></li>
   </ul></div></details>
 </div>
 <div class="card notes" data-step="s0"><h3 style="margin-top:0">Notes</h3></div>
@@ -328,9 +336,9 @@ details.src ul{font-size:13px;color:var(--ink2);margin:0}
 <section class="tab" id="s1" data-title="World frame &amp; arena" data-num="1">
 <div class="card">
   <div class="head"><span class="big">Step 1</span><div>
-    <h2>World frame, arena and sensor geometry</h2>
-    <p class="lead">Build a corner of two perpendicular walls, choose where (0, 0) is, and measure where the sensors sit on the robot.</p>
-    <span class="output">Output: <b>corner set-up, α β γ measured, initial state</b></span>
+    <h2>Dry run, world frame, arena and sensor geometry</h2>
+    <p class="lead">Drive the given trajectory once on open floor to see how big it really is, then place the walls around it, choose where (0, 0) is, and measure where the sensors sit on the robot.</p>
+    <span class="output">Output: <b>measured path, wall layout, α β γ measured, initial state</b></span>
   </div></div>
 
   <details class="ctx"><summary>Why &amp; where in Assignment 4 <span class="need">§2 "chosen world frame"</span></summary><div class="body">
@@ -339,15 +347,25 @@ details.src ul{font-size:13px;color:var(--ink2);margin:0}
     <h4>Role in the process</h4>
     <p>The measurement model (Step 3) is the distance from each sensor to a known wall. "Known" means: in our chosen frame, with the sensor positions measured on our robot.</p>
     <h4>Why this step</h4>
-    <p>The IR sensors only see about 4–30 cm, and give nonsense on a wall hit at a steep angle. The arena must keep both walls in view during the whole run.</p>
+    <p>The IR sensors only see about 4–30 cm, and give nonsense on a wall hit at a steep angle. The path is fixed by the template, so the walls have to be placed around the path, not the other way round.</p>
   </div></details>
 
   <h3>Tasks <span class="tprog"></span></h3>
   <ul class="tasks" data-step="s1">
-    <li data-id="s1-1">Build the corner: two flat, matte, perpendicular walls (boxes, check with a set square)</li>
+    <li data-id="s1-5">Dry run (1.0): template with the EKF calls commented out, Button 0 on open floor, 3 runs; measure the path</li>
+    <li data-id="s1-6">Choose the wall layout (1.3) from the measured path; write it in the notes</li>
+    <li data-id="s1-1">Build it: flat, matte, perpendicular walls (boxes, check with a set square)</li>
     <li data-id="s1-2">Measure α, β, γ and the wheelbase on our robot (1.2)</li>
     <li data-id="s1-3">Choose the world frame (1.1) and write it in the notes</li>
     <li data-id="s1-4">Mark the start pose on the floor with tape (two marks for the heading)</li>
+  </ul>
+
+  <h3>1.0 Dry run: how big is the trajectory?</h3>
+  <p>The trajectory data says 0.02 m/s, but the voltage it gives (~1.7 V) drives our robot faster: our A2 motor model predicts ~3.5 rad/s ≈ 0.11 m/s, i.e. ~0.5 m straight, a ~90° right turn with a radius of ~0.25 m, ~0.5 m straight. The teacher's "/3 to get ~90°" fits that (the robot turns ~3× more than the data). Friction at 1.7 V makes it uncertain, so measure it. <span class="own">own estimate from A2 Step 4</span></p>
+  <ul>
+    <li>Copy the template, comment out the two lines with <code>PredictionUpdate</code>/<code>CorrectionUpdate</code> and fill the remaining <code>??</code> with 0 so it compiles. Button 0 starts the run, it stops after 14 s.</li>
+    <li>Record (GPIO on): ch 0–3 give the wheel angles/speeds → odometry path in Python (Step 2 model). Tape-measure start and end pose (4.3).</li>
+    <li>Too big for our floor? <code>speed_to_volt</code> (<code>robot.cpp:24</code>) scales the speed, but also the turn: keep the ratio with the <code>/3</code> to stay at ~90°. Note any change in the report.</li>
   </ul>
 
   <h3>1.1 Choose the world frame</h3>
@@ -356,10 +374,10 @@ details.src ul{font-size:13px;color:var(--ink2);margin:0}
     <tbody>
       <tr><td>Walls</td><td>\(x = 0\) and \(y = 0\) (c₁ = c₂ = 0)</td><td>\(x = c_1\), \(y = c_2\) from the first readings</td></tr>
       <tr><td>Start</td><td>\(\hat x_0 = -(z_{f,0} + \alpha)\), \(\hat y_0 = -(z_{s,0} + \gamma)\), \(\hat\varphi_0 = 0\)</td><td>\((0, 0, 0)\)</td></tr>
-      <tr><td>Why</td><td>Frame fixed to the "room"; matches the template's negative start values (−0.3, −0.2)</td><td>Fewest code changes</td></tr>
+      <tr><td>Why</td><td>Frame fixed to the "room"; matches the start (−0.3, −0.2) in the trajectory data (<code>data_swivel.h</code> X, Y)</td><td>Fewest code changes</td></tr>
     </tbody>
   </table></div>
-  <p>Both are the same filter. A gives coordinates that mean something on the floor (distance to the corner), which makes the tape-measure comparison in Step 8 direct. With A and the side wall at \(y = 0\), the robot is at \(y &lt; 0\), so the side sensor must look to the <b>left</b> (+y). If ours looks right, put the side wall on the right and redo h and H with the SymPy cell of Step 3 for a right-pointing ray (some signs flip).</p>
+  <p>Both are the same filter. A gives coordinates that mean something on the floor (distance to the corner), which makes the tape-measure comparison in Step 8 direct. B is what the template's reset lines suggest (c = reading + offset, 0.2). With B, \(c_1\) from the first front reading only works if that wall is within ~30 cm at the start; otherwise tape-measure it. With A and the side wall at \(y = 0\), the robot is at \(y &lt; 0\), so the side sensor must look to the <b>left</b> (+y). If ours looks right, put the side wall on the right and redo h and H with the SymPy cell of Step 3 for a right-pointing ray (some signs flip).</p>
 
   <h3>1.2 Sensor geometry</h3>
   <p>Reference point = middle of the wheel axle (the point that moves with speed \(v\)). Measure with a ruler:</p>
@@ -374,17 +392,29 @@ details.src ul{font-size:13px;color:var(--ink2);margin:0}
   </table></div>
   <p class="note">The sensor's 0 isn't necessarily its front face: put the robot at a known tape distance, compare with the reading (A3 Step 3 bias), and fold the difference into α (and γ for the side sensor).</p>
 
-  <h3>1.3 Stay inside what the sensors can see</h3>
+  <h3>1.3 Wall layout: decide after the dry run</h3>
+  <p>Facing +x at the start, side sensor looking left. After the right turn the robot faces −y: the front sensor looks along −y and the side sensor looks along +x. So the sensors see <b>different walls</b> before and after the turn. <span class="own">own derivation</span></p>
+  <div class="table-wrap"><table>
+    <thead><tr><th></th><th>L1 · three walls</th><th>L2 · two-wall corner</th></tr></thead>
+    <tbody>
+      <tr><td>Walls</td><td>W1 ahead at the start, W2 on the left of the first straight, W3 ahead after the turn</td><td>W1 and W2 only</td></tr>
+      <tr><td>Before the turn</td><td>front → W1, side → W2</td><td>front → W1, side → W2</td></tr>
+      <tr><td>After the turn</td><td>front → W3, side → W1</td><td>front → nothing, side → W1</td></tr>
+      <tr><td>Pro / con</td><td>Corrections during the whole run; one more wall to build and measure</td><td>Simpler; after the turn only one sensor helps</td></tr>
+    </tbody>
+  </table></div>
   <ul>
-    <li>Both distances between ~5 and ~25 cm during the whole run → the robot moves in a box of roughly 20 × 20 cm.</li>
-    <li>Keep \(|\varphi|\) small (start with ±20°): the model divides by \(\cos\varphi\), and the IR reading gets unreliable on a slanted wall. <span class="own">own suggestion</span></li>
+    <li>Both need the measurement model to pick the wall per sensor (Step 3.3), and to <b>skip</b> a reading that is outside ~4–30 cm or hits its wall at a steep angle (during the turn). Then the EKF just predicts (dead reckoning) until a wall is back in view.</li>
+    <li>Place the walls so each "seen" wall is within ~25 cm of its sensor on the measured path (e.g. W2 ~15 cm left of the first straight; W1 so the front reads &lt;30 cm before the turn).</li>
   </ul>
 
   <details class="src"><summary>Sources</summary><div class="body"><ul>
     <li>"Chosen world frame" → <code>A4 notebook</code> §2</li>
     <li>Template geometry → <code>state_estimator.cpp:33-35</code>, <code>robot.cpp:83-93</code>; <code>WHEELBASE</code> → <code>mecotron.h:42</code></li>
     <li>Sensor range → Sharp GP2Y0A41SK0F (<code>mecotron.h:108-109</code>), <span class="own">check the datasheet</span></li>
-    <li>Frame options, start formulas, angle limit <span class="own">own derivation</span> (start formulas = h(x) of Step 3 solved at φ = 0)</li>
+    <li>Trajectory "~90 degree turn to the right" → <code>A4 notebook</code> §3; voltage conversion, <code>speed_to_volt</code>, <code>/3</code> → <code>robot.cpp:24, 49-53</code></li>
+    <li>Path size from our motor model → <code>A2 plan</code> Step 4 <span class="own">own estimate</span></li>
+    <li>Frame options, start formulas, wall layouts <span class="own">own derivation</span> (start formulas = h(x) of Step 3 solved at φ = 0)</li>
   </ul></div></details>
 </div>
 <div class="card notes" data-step="s1"><h3 style="margin-top:0">Notes</h3></div>
@@ -438,14 +468,14 @@ F = f.jacobian([x, y, phi]); B = f.jacobian([wA, wB])
 display(sp.simplify(F), sp.simplify(B))</code></pre></div></details>
 
   <h3>2.3 Which wheel is left?</h3>
-  <p>The template's \(\omega = r(\omega_B - \omega_A)/W\) means: B faster ⇒ \(\omega &gt; 0\) ⇒ turning left (counter-clockwise, \(\varphi\) grows). That's only true if B is the <b>right</b> wheel. Check with the A2 rotate-in-place log (E4): when GyroZ is positive (CCW, if Z points up), should \(\omega_B - \omega_A\) be positive. If not, swap the sign in the model.</p>
+  <p>The template's \(\omega = r(\omega_B - \omega_A)/W\) means: B faster ⇒ \(\omega &gt; 0\) ⇒ turning left (counter-clockwise, \(\varphi\) grows). That's only true if B is the <b>right</b> wheel. Our A2 Step 3 found wheel A = left, CCW = + ✓, and the trajectory agrees: the right turn (\(\omega &lt; 0\)) gives \(V_A &gt; V_B\) (<code>robot.cpp:52-53</code>). Quick re-check on the dry run: \(\hat\varphi\) must go to about −90°.</p>
 
   <details class="src"><summary>Sources</summary><div class="body"><ul>
     <li>EKF prediction equations → <code>A4 notebook</code> §2 table</li>
     <li>v, ω from wheel speeds → <code>state_estimator.cpp:12-13</code>; <code>_Phat = A*_Phat*~A + B*Q*~B</code> → line 28</li>
     <li>Motion model, Jacobians with SymPy, \(\mathbf Q = \mathbf B\mathbf G\mathbf B^\mathsf T\) → <code>Ch 6</code> §6.2.1.1–6.2.1.3</li>
     <li>f, F<sub>k</sub>, B<sub>k</sub> for wheel-speed input <span class="own">own derivation, checked with SymPy</span></li>
-    <li>Left/right check with A2 E4 → <code>experiences/Identification_ours/robot.cpp</code> (E4 table) <span class="own">own suggestion</span></li>
+    <li>Left/right → <code>A2 plan</code> Step 3 (<code>preprocess.py</code> <code>add_encoder_signals()</code>); trajectory voltages → <code>robot.cpp:52-53</code></li>
   </ul></div></details>
 </div>
 <div class="card notes" data-step="s2"><h3 style="margin-top:0">Notes</h3></div>
@@ -476,6 +506,7 @@ display(sp.simplify(F), sp.simplify(B))</code></pre></div></details>
     <li data-id="s3-2">Same for the side sensor</li>
     <li data-id="s3-3">Check h and H with the SymPy cell (3.2), also for the side our sensor looks to</li>
     <li data-id="s3-4">Sanity check: at the start pose, h(x̂₀) = first readings</li>
+    <li data-id="s3-5">Wall choice per sensor and skip rules for our layout (3.3)</li>
   </ul>
 
   <h3>3.1 Distance along a ray to a wall</h3>
@@ -484,7 +515,7 @@ display(sp.simplify(F), sp.simplify(B))</code></pre></div></details>
   <p>(the perpendicular distance divided by the cosine of the angle of incidence). With frame A (walls \(x = 0\), \(y = 0\)), the front sensor at \(\alpha\) in front of the axle looking along \(\varphi\), and the side sensor at \(\beta\) in front and \(\gamma\) to the left, looking along \(\varphi + 90°\):</p>
   $$h(\mathbf x) = \begin{bmatrix} \dfrac{c_1 - x}{\cos\varphi} - \alpha \\[2mm] \dfrac{c_2 - y}{\cos\varphi} - \beta\tan\varphi - \gamma \end{bmatrix}\qquad (c_1 = c_2 = 0\ \text{in frame A})$$
   $$\mathbf H_k = \begin{bmatrix} -\dfrac{1}{\cos\varphi} &amp; 0 &amp; \dfrac{(c_1 - x)\sin\varphi}{\cos^2\varphi} \\[2mm] 0 &amp; -\dfrac{1}{\cos\varphi} &amp; \dfrac{(c_2 - y)\sin\varphi - \beta}{\cos^2\varphi} \end{bmatrix}$$
-  <p>Check at the template start \((-0.3, -0.2, 0)\): front reads \(0.3 - 0.085 = 0.215\) m, side \(0.2 - 0.073 = 0.127\) m. Both inside the sensor range. ✓</p>
+  <p>Check at the trajectory-data start \((-0.3, -0.2, 0)\): front reads \(0.3 - 0.085 = 0.215\) m, side \(0.2 - 0.073 = 0.127\) m. Both inside the sensor range. ✓</p>
   <p class="note"><b>What H says about the heading:</b> at \(\varphi = 0\) the front sensor's \(\partial h/\partial\varphi = 0\): a small rotation doesn't change its reading. The side sensor still has \(-\beta\): because it sits β in front of the axle, rotating moves it towards/away from the side wall. So the heading is corrected mainly through the side sensor. Mention this in the report (observability). <span class="own">own derivation</span></p>
 
   <h3>3.2 SymPy check</h3>
@@ -503,8 +534,17 @@ h = sp.Matrix([ray_to_wall(1, 0, c1, al, 0, 0),         # front sensor -&gt; wal
 H = h.jacobian([x, y, phi])
 display(sp.simplify(h), sp.simplify(H))</code></pre></div></details>
 
+  <h3>3.3 After the turn: which wall, and when to skip</h3>
+  <p>The formulas above hold for "front → wall x = c₁, side → wall y = c₂" near φ = 0. For the turn (1.3), use the general <code>ray_to_wall</code> form for every (sensor, wall) pair: the SymPy cell gives h and H for any a, b, c. Per sensor, every sample:</p>
+  <ol>
+    <li>Pick the wall: before the turn (\(\hat\varphi &gt; -45°\)) the "start" wall, after it the other one (table 1.3).</li>
+    <li>Skip the reading if it is outside ~0.04–0.30 m, or if the ray hits the wall at more than ~30° from perpendicular (\(|a\cos\psi + b\sin\psi| &lt; \cos 30°\)). Skipping = leave that row out of z, h, H, R (or give it a huge R, as dead reckoning in Ch 6.2.3).</li>
+  </ol>
+  <p class="note">With W1 as \(x = c_1\) and the side sensor at \(\psi = \varphi + 90° \approx 0°\) after the turn: \(h_{side} = (c_1 - p_x)/\cos(\varphi + 90°)\), the same formula type, so no new derivation is needed, just other a, b, c, l, s in <code>ray_to_wall</code>. <span class="own">own derivation</span></p>
+
   <details class="src"><summary>Sources</summary><div class="body"><ul>
     <li>EKF update equations → <code>A4 notebook</code> §2 table</li>
+    <li>Large R = ignore the measurement → <code>Ch 6</code> §6.2.3</li>
     <li>Measurement model to known positions, Jacobian with SymPy, "use h(x̄) not Hx̄" → <code>Ch 6</code> §6.1, §6.2.1.4</li>
     <li>Wall equations a, b, c and offsets α, β, γ → <code>state_estimator.cpp:33-53</code>, <code>robot.cpp:87-93</code></li>
     <li>Ray-to-line distance, h, H, observability remark <span class="own">own derivation, checked with SymPy</span></li>
@@ -518,8 +558,8 @@ display(sp.simplify(h), sp.simplify(H))</code></pre></div></details>
 <div class="card">
   <div class="head"><span class="big">Step 4</span><div>
     <h2>Record the data</h2>
-    <p class="lead">Log wheel speeds + both distances (+ gyro as heading check) while the robot moves in the corner, with the end pose measured by hand.</p>
-    <span class="output">Output: <b>static, odometry-check and corner logs with end poses</b></span>
+    <p class="lead">Log wheel speeds + both distances (+ gyro as heading check) while the robot drives the given trajectory in the arena, with the end pose measured by hand.</p>
+    <span class="output">Output: <b>static and trajectory logs with start/end poses</b></span>
   </div></div>
 
   <details class="ctx"><summary>Why &amp; where in Assignment 4 <span class="need">§3 goal 2</span></summary><div class="body">
@@ -533,10 +573,10 @@ display(sp.simplify(h), sp.simplify(H))</code></pre></div></details>
 
   <h3>Tasks <span class="tprog"></span></h3>
   <ul class="tasks" data-step="s4">
-    <li data-id="s4-1">Add SET 3 and profiles G1/G2 to our A2 sketch (4.2), upload</li>
+    <li data-id="s4-1">Make the logging copy of the template (4.2), upload</li>
     <li data-id="s4-2">G0: static side-sensor logs at 3 distances (front sensor: reuse A3)</li>
-    <li data-id="s4-3">G1: odometry check away from the walls, end pose measured, 3 runs</li>
-    <li data-id="s4-4">G2: corner runs, start + end pose measured, 5 runs</li>
+    <li data-id="s4-3">G1: the dry-run logs of Step 1 (open floor), end pose measured, 3 runs</li>
+    <li data-id="s4-4">G2: trajectory runs in the arena, start + end pose measured, 5 runs</li>
     <li data-id="s4-5">Write start/end poses of every run in the notes</li>
   </ul>
 
@@ -544,38 +584,22 @@ display(sp.simplify(h), sp.simplify(H))</code></pre></div></details>
   <div class="table-wrap"><table>
     <thead><tr><th>Log</th><th>What</th><th>Used for</th></tr></thead>
     <tbody>
-      <tr><td><b>G0</b> static</td><td>Side sensor at ~0.10, 0.15, 0.20 m from a wall, 30 s each</td><td>R of the side sensor</td></tr>
-      <tr><td><b>G1</b> odometry</td><td>Open floor: straight, turn ~90°, straight; measure end position + heading</td><td>Motion model + G check (dead reckoning only)</td></tr>
-      <tr><td><b>G2</b> corner</td><td>Start ~10 cm from both walls, back off, small turn right, forward again; both walls in view all the time</td><td>EKF simulation (Step 6)</td></tr>
-      <tr><td><b>G3</b> on robot</td><td>Later, same profile with our EKF running</td><td>Evaluation (Step 8)</td></tr>
+      <tr><td><b>G0</b> static</td><td>Side sensor at ~0.10, 0.15, 0.20 m from a wall, 30 s each (motors off)</td><td>R of the side sensor</td></tr>
+      <tr><td><b>G1</b> odometry</td><td>Given trajectory on open floor (= Step 1 dry run); measure end position + heading</td><td>Motion model + G check (dead reckoning only)</td></tr>
+      <tr><td><b>G2</b> arena</td><td>Given trajectory in our wall layout (1.3), from the taped start pose</td><td>EKF simulation (Step 6)</td></tr>
+      <tr><td><b>G3</b> on robot</td><td>Later, same trajectory with our EKF running</td><td>Evaluation (Step 8)</td></tr>
     </tbody>
   </table></div>
 
-  <h3>4.2 Additions to our A2 sketch</h3>
-  <details class="code"><summary>SET 3 + profiles G1, G2 <span class="tag">C++</span></summary><div class="body"><pre><code>// In sendChannels(), add:
-    case 3:
-      // SET 3 - A4 EKF data: wheel speeds + angles, both IR distances, gyro around the vertical axis.
-      // TWEAK: GyroZ only if Z is vertical (A2 Step 7).
-      out[0] = getVoltageMotorA();    // V
-      out[1] = getVoltageMotorB();    // V
-      out[2] = getSpeedMotorA();      // rad/s (wheel)  -&gt; input u
-      out[3] = getSpeedMotorB();      // rad/s (wheel)  -&gt; input u
-      out[4] = getPositionMotorA();   // rad
-      out[5] = getPositionMotorB();   // rad
-      out[6] = getFrontDistance();    // m  -&gt; measurement z1
-      out[7] = getSideDistance();     // m  -&gt; measurement z2
-      out[8] = getIMUGyroZ();         // rad/s, heading check only
-      break;
-// and at the top: const int N_SETS = 3;
-
-// G1 - A4 odometry check (open floor): straight, ~90 deg turn, straight.  (= E5 profile)
-// G2 - A4 corner: start ~10 cm from both walls; wait, back off 0.75 s, small turn right
-// (away from the side wall), wait, forward 0.6 s, wait.
-// TWEAK: durations so both IR distances stay within ~5-25 cm and the turn stays below ~20 deg.
-const Segment G2[] = { {100, 0.0, 0.0}, {75, -3.0, -3.0}, {50, 0.0, 0.0},
-                       {15, 3.0, -3.0}, {50, 0.0, 0.0}, {60, 3.0, 3.0}, {100, 0.0, 0.0} };
-// in EXPS[]:  {"G2 corner (A4)", G2, LEN(G2)},</code></pre></div></details>
-  <p>G1 can reuse our A2 E5 profile (straight, ~90°, straight) with SET 3. Tune the G2 turn duration with the A2 E4 rotation data before going to the corner. Simulated with the Step 2 model: at 3–6 rad/s wheel speed this profile keeps the front reading between 10 and 27 cm, the side reading between 10 and 19 cm, and turns 10–20°. <span class="own">own check</span></p>
+  <h3>4.2 Logging copy of the template</h3>
+  <p>The template itself drives the trajectory and already sends wheel angles, speeds and both distances (0.1). For G0–G2 use the dry-run copy of Step 1 (EKF calls commented out) and put the gyro on the unused estimate channels:</p>
+  <details class="code"><summary>Extra channels in the logging copy <span class="tag">C++</span></summary><div class="body"><pre><code>  // Logging copy only: EKF is off, so ch 4-7 are free. Gyro = heading check, voltages = applied input.
+  // TWEAK: GyroZ only if Z is vertical (A2 Step 7). Compile error on the IMU? Copy the Adafruit #includes from the A3 robot.cpp.
+  writeValue(4, getIMUGyroZ());        // rad/s
+  writeValue(5, getVoltageMotorA());   // V, after the +-8 V clamp
+  writeValue(6, getVoltageMotorB());   // V
+  writeValue(7, 0.0);</code></pre></div></details>
+  <p>Inputs = ch 2/3 (wheel speeds), measurements = ch 8/9 (front, side). Same columns as the final EKF runs (G3), so the Python code reads both. <span class="own">own suggestion</span></p>
 
   <h3>4.3 Measuring the pose by hand</h3>
   <ol>
@@ -586,8 +610,8 @@ const Segment G2[] = { {100, 0.0, 0.0}, {75, -3.0, -3.0}, {50, 0.0, 0.0},
 
   <details class="src"><summary>Sources</summary><div class="body"><ul>
     <li>Goal 2 → <code>A4 notebook</code> §3</li>
-    <li>Our sketch, Segment tables, <code>sendChannels()</code>, E4/E5 → <code>experiences/Identification_ours/robot.cpp</code></li>
-    <li>Sensors → §2 sensor list of <code>A4 notebook</code>; <code>getSideDistance()</code> → <code>mecotron.h:223</code></li>
+    <li>Template channels → <code>robot.cpp:71-80</code>; trajectory → <code>robot.cpp:46-68</code></li>
+    <li><code>getSideDistance()</code> → <code>mecotron.h:223</code>; IMU functions as in our A2 sketch <code>experiences/Identification_ours/robot.cpp</code></li>
     <li>Experiment design, hand pose measurement <span class="own">own suggestion</span></li>
   </ul></div></details>
 </div>
@@ -698,13 +722,15 @@ def correct(X, P, z, R, c1=0.0, c2=0.0):
     nu = z - h
     S = H @ P @ H.T + R
     K = P @ H.T @ np.linalg.inv(S)
-    return X + K @ nu, (np.eye(3) - K @ H) @ P, nu, S</code></pre></div></details>
+    IKH = np.eye(3) - K @ H                                 # Joseph form, as state_estimator.cpp
+    return X + K @ nu, IKH @ P @ IKH.T + K @ R @ K.T, nu, S</code></pre></div></details>
+  <p class="hint">This <code>correct()</code> is the "before the turn" case (front → x = c₁, side → y = c₂). For the full trajectory, build h and H per sensor from the wall choice and skip rules of 3.3 (e.g. set that sensor's R to 10³ when it's skipped).</p>
   <details class="code"><summary>Run on a log: EKF and dead reckoning <span class="tag">Python</span></summary><div class="body"><pre><code># Replay a G2 log: predict then correct every sample (order of A4 robot.cpp).
 # TWEAK: file; R; dead reckoning = run_ekf(df, np.eye(2)*1e3) (as Ch 6.2.3).
 import pandas as pd
 def run_ekf(df, R):
-    wA, wB = df['ValueIn2'].values, df['ValueIn3'].values       # SET 3
-    z = df[['ValueIn6', 'ValueIn7']].values                     # front, side (m)
+    wA, wB = df['ValueIn2'].values, df['ValueIn3'].values       # template ch 2/3
+    z = df[['ValueIn8', 'ValueIn9']].values                     # front, side (m), ch 8/9
     X = np.array([-(z[0, 0] + al), -(z[0, 1] + ga), 0.0])       # start pose, frame A
     P = np.diag([1e-2, 1e-2, 0.25])
     rows = []
@@ -723,14 +749,14 @@ dr  = run_ekf(df, np.eye(2)*1e3)                                # walls ignored<
   <ul>
     <li><b>Path</b>: walls as lines at x = 0 and y = 0, EKF and dead-reckoning paths, tape-measured start/end poses, ellipses every 0.5 s (<code>from filterpy.stats import plot_covariance_ellipse</code>, as Ch 6.2.3, using <code>P[0:2, 0:2]</code>; store P in the loop for this).</li>
     <li><b>States vs. time</b> with ±2σ bands. Expect σ<sub>x</sub>, σ<sub>y</sub> to stay small (walls) and σ<sub>φ</sub> to be the largest (3.1: heading only seen through β).</li>
-    <li><b>Heading check</b>: \(\varphi_{gyro}(t) = \sum \text{GyroZ}\cdot\Delta t\) (minus the A2 bias) next to \(\hat\varphi\).</li>
+    <li><b>Heading check</b>: \(\varphi_{gyro}(t) = \sum \text{GyroZ}\cdot\Delta t\) (ch 4 of the logging copy, minus the A2 bias) next to \(\hat\varphi\). Should end near −90°.</li>
     <li><b>Innovations</b> ν₁, ν₂ with ±2√S: centred on 0, ~95% inside.</li>
   </ul>
 
   <details class="src"><summary>Sources</summary><div class="body"><ul>
     <li>Goal 2, prior knowledge → <code>A4 notebook</code> §3, §1</li>
     <li>Own <code>predict()</code>, dead reckoning via R = 10³, covariance ellipses → <code>Ch 6</code> §6.2.3</li>
-    <li>Order predict → correct → <code>robot.cpp:35-41</code></li>
+    <li>Order predict → correct → <code>robot.cpp:34-43</code>; Joseph form → <code>state_estimator.cpp:76</code></li>
     <li>Gyro bias → <code>A2 plan</code> Step 7</li>
     <li>Functions and plots <span class="own">own code</span>, equations from Steps 2–3</li>
   </ul></div></details>
@@ -743,13 +769,13 @@ dr  = run_ekf(df, np.eye(2)*1e3)                                # walls ignored<
 <div class="card">
   <div class="head"><span class="big">Step 7</span><div>
     <h2>Implement on the robot</h2>
-    <p class="lead">Fill in <code>state_estimator.cpp</code>, give the robot a motion profile, fix the reset, and test with the motors off first.</p>
-    <span class="output">Output: <b>filled-in <code>state_estimator.cpp</code>, motion profile, reset</b></span>
+    <p class="lead">Fill in <code>state_estimator.cpp</code> and the reset in <code>robot.cpp</code>, keep the given trajectory, and test with the motors off first.</p>
+    <span class="output">Output: <b>filled-in <code>state_estimator.cpp</code> and reset; trajectory as given</b></span>
   </div></div>
 
   <details class="ctx"><summary>Why &amp; where in Assignment 4 <span class="need">§3 goal 3</span></summary><div class="body">
     <h4>In the assignment notebook</h4>
-    <blockquote class="nb"><span class="where">§3 goal 3</span>"Run the designed Extended Kalman filter on the provided control software of the mobile robot by editing the state_estimator.cpp file."</blockquote>
+    <blockquote class="nb"><span class="where">§3 goal 3</span>"Run the designed Extended Kalman filter on the provided control software of the mobile robot by editing "robot.cpp" and "state_estimator.cpp". The defined trajectory is a ~90 degree turn to the right."</blockquote>
     <h4>Role in the process</h4>
     <p>The code we upload and defend. It must give the same numbers as Step 6 on the same data.</p>
   </div></details>
@@ -758,11 +784,11 @@ dr  = run_ekf(df, np.eye(2)*1e3)                                # walls ignored<
   <ul class="tasks" data-step="s7">
     <li data-id="s7-1">Copy the template to <code>experiences/ours_assignment_4/EKF_ours/</code> (rename the .ino)</li>
     <li data-id="s7-2">Fill in <code>state_estimator.cpp</code> (7.1) with our geometry, G, R</li>
-    <li data-id="s7-3">Reset for frame A (7.2) and the motion profile (7.3)</li>
-    <li data-id="s7-4">Add channels 10, 11 (7.4); compile</li>
+    <li data-id="s7-3">Reset for our frame (7.2); wall choice + skip rules of 3.3 (7.3)</li>
+    <li data-id="s7-4">Optional: channels 10, 11 (7.4); compile</li>
     <li data-id="s7-5">Test 1, motors off (Button 1 only): robot still in the start pose → x̂ stays put, ν ≈ 0</li>
-    <li data-id="s7-6">Test 2, motors off: push the robot by hand in the corner → estimate follows</li>
-    <li data-id="s7-7">Test 3: log a run, replay in Python → same x̂, ŷ, φ̂ as channels 0–2</li>
+    <li data-id="s7-6">Test 2, motors off: push the robot by hand along the walls → estimate follows</li>
+    <li data-id="s7-7">Test 3: log a run, replay in Python → same x̂, ŷ, φ̂ as channels 4–6</li>
   </ul>
 
   <h3>7.1 state_estimator.cpp</h3>
@@ -820,56 +846,43 @@ void CorrectionUpdate(const BLA::Matrix&lt;2&gt; &amp;z, float weq1[3], float we
   S = H*Phat*~H + R;
   BLA::Matrix&lt;3,2&gt; K = Phat*~H*Inverse(S);         // Kalman gain
   xhat += K*nu;
-  Phat -= K*H*Phat;
-}</code></pre></div></details>
-  <p>The structure is the template's. Removed: the unused <code>b</code> and <code>V</code>. The walls stay as <code>weq</code> so the function keeps its signature; <code>a</code>, <code>b</code> are fixed by our corner (1, 0) and (0, 1).</p>
 
-  <h3>7.2 Reset for frame A</h3>
-  <details class="code"><summary>resetKalmanFilter(), walls and start pose <span class="tag">C++</span></summary><div class="body"><pre><code>  // World frame A: corner = origin, front wall x = 0, side wall y = 0, robot starts facing +x.
-  // TWEAK: offsets = alpha and gamma of state_estimator.cpp (keep them equal!).
+  // Joseph form, kept from the template (state_estimator.cpp:70-76)
+  BLA::Matrix&lt;3,3&gt; I;
+  I.Fill(0); I(0,0) = 1; I(1,1) = 1; I(2,2) = 1;
+  Phat = (I - K*H)*Phat*~(I - K*H) + K*R*~K;
+}</code></pre></div></details>
+  <p>The structure is the template's. Removed: the unused <code>V</code>. The walls stay as <code>weq</code> so the function keeps its signature; <code>a</code>, <code>b</code> are fixed by our walls (1, 0) and (0, 1). This version is the "before the turn" case; 7.3 adds the turn.</p>
+
+  <h3>7.2 Reset for our frame</h3>
+  <details class="code"><summary>resetKalmanFilter(), frame A example <span class="tag">C++</span></summary><div class="body"><pre><code>  // World frame A: corner = origin, front wall x = 0, side wall y = 0, robot starts facing +x.
+  // TWEAK: offsets = alpha and gamma of state_estimator.cpp (keep them equal!); frame B: c = tape/reading + offset, x0 = 0.
+  _Phat.Fill(0);
+  _Phat(0,0) = 1e-4; _Phat(1,1) = 1e-4;            // m^2 (1 cm): start pose is taped
+  _Phat(2,2) = 3e-3;                               // rad^2 (~3 deg)
   _weq1[0] = 1; _weq1[1] = 0; _weq1[2] = 0;       // front wall: 1*x + 0*y = 0
   _weq2[0] = 0; _weq2[1] = 1; _weq2[2] = 0;       // side wall:  0*x + 1*y = 0
-  _xhat(0) = -(getFrontDistance() + 0.085);        // start x from the first front reading
+  _xhat(0) = -(getFrontDistance() + 0.085);        // start x from the first front reading (or tape if &gt; 30 cm)
   _xhat(1) = -(getSideDistance() + 0.073);         // start y from the first side reading
   _xhat(2) = 0.0;                                  // start square to the walls</code></pre></div></details>
-  <p>Replaces <code>robot.cpp:83-93</code>. P₀ (lines 77-80) can stay; it's large, so the filter trusts the first readings.</p>
+  <p>Replaces the <code>??</code> at <code>robot.cpp:88-103</code> (frame A sets c = 0 instead of the template's c = reading + offset). If the front wall is out of range at the start (likely with L1/L2, 1.3), use the tape-measured start x instead of the reading.</p>
 
-  <h3>7.3 Motion profile</h3>
-  <p>Replace the constant 1.0 V (<code>robot.cpp:43-55</code>) with the G2 profile, the same Segment idea as our A2 sketch. Add <code>int i = 0;</code> to <code>robot.h</code> and <code>i = 0;</code> in <code>button0callback()</code> when move turns on.</p>
-  <details class="code"><summary>Segment profile in control() <span class="tag">C++</span></summary><div class="body"><pre><code>// Above Robot::control(): motion profile = list of (samples, vA, vB); 1 sample = 10 ms.
-// TWEAK: same table as G2 (Step 4) so robot runs and logs are comparable.
-struct Segment { int samples; float vA; float vB; };
-const Segment PROFILE[] = { {100, 0.0, 0.0}, {75, -3.0, -3.0}, {50, 0.0, 0.0},
-                            {15, 3.0, -3.0}, {50, 0.0, 0.0}, {60, 3.0, 3.0}, {100, 0.0, 0.0} };
-const int N_SEG = sizeof(PROFILE) / sizeof(PROFILE[0]);
+  <h3>7.3 The turn: wall choice and skipping</h3>
+  <p>The trajectory itself stays as given (<code>robot.cpp:46-68</code>, nothing to write). What the turn adds is in <code>CorrectionUpdate</code>: per sensor, choose the wall from \(\hat\varphi\) and skip out-of-range / steep readings (3.3). Simplest code that keeps the 2×2 structure: compute h and the H-row with the ray-to-wall formula for the chosen wall, and for a skipped sensor set its h to the measured value (ν = 0) and its R to a large number, so it has no effect. <span class="own">own suggestion</span> If we use layout L1, add <code>_weq3</code> to <code>robot.h</code> and pass it to <code>CorrectionUpdate</code>.</p>
 
-// Inside control(), instead of the template's move block:
-  if(moveEnabled()) {
-    float vA = 0.0, vB = 0.0;                    // after the last segment: stop
-    int t = i;
-    for (int k = 0; k &lt; N_SEG; k++) {            // find the segment we are in
-      if (t &lt; PROFILE[k].samples) { vA = PROFILE[k].vA; vB = PROFILE[k].vB; break; }
-      t -= PROFILE[k].samples;
-    }
-    i++;
-    setVoltageMotorA(vA);
-    setVoltageMotorB(vB);
-  } else {
-    setVoltageMotorA(0.0);
-    setVoltageMotorB(0.0);
-  }</code></pre></div></details>
-
-  <h3>7.4 Extra channels</h3>
-  <details class="code"><summary>Channels 10, 11 <span class="tag">C++</span></summary><div class="body"><pre><code>  writeValue(10, _nu(1));              // innovation of the side sensor, m
+  <h3>7.4 Extra channels (optional)</h3>
+  <details class="code"><summary>Channels 10, 11 <span class="tag">C++</span></summary><div class="body"><pre><code>  // Optional: overwrite the raw trajectory voltages (robot.cpp:55-56) with EKF diagnostics.
+  writeValue(10, _nu(1));              // innovation of the side sensor, m
   writeValue(11, sqrt(_Phat(2,2)));     // sigma of the heading, rad</code></pre></div></details>
-  <p class="note">Order on the robot: <b>Button 1 first</b> (EKF on, reset in the start pose), <b>then Button 0</b> (move). The motors only run while the EKF is on (<code>robot.cpp:33-57</code>). See <code>FAQ direction</code> if the robot keeps driving.</p>
+  <p class="note">Order on the robot: <b>Button 1 first</b> (EKF on, reset in the start pose), <b>then Button 0</b> (trajectory starts). The motors now run even with the EKF off (<code>robot.cpp:46</code>), so don't forget Button 1. Button 0 off stops the trajectory; on again restarts it from the beginning.</p>
 
   <details class="src"><summary>Sources</summary><div class="body"><ul>
     <li>Goal 3 → <code>A4 notebook</code> §3</li>
-    <li>Template → <code>state_estimator.cpp:1-74</code>, <code>robot.cpp:17-99</code>, <code>robot.h:29-35</code></li>
+    <li>Template → <code>state_estimator.cpp:1-77</code>, <code>robot.cpp:11-140</code>, <code>robot.h:26-35</code></li>
     <li>Use f, not Ax + Bu, for the state → <code>Ch 6</code> §6.1 ("We don't normally use Fx to propagate the state for the EKF")</li>
-    <li>Button order → <code>robot.cpp:33, 43</code>; <code>FAQ direction</code></li>
-    <li>Filled-in code, reset, profile <span class="own">own code</span>, from Steps 1–5</li>
+    <li>Buttons, trajectory start/stop → <code>robot.cpp:46, 119-140</code>; <code>FAQ direction</code></li>
+    <li>Large R = ignore a measurement → <code>Ch 6</code> §6.2.3</li>
+    <li>Filled-in code, reset, wall choice <span class="own">own code</span>, from Steps 1–5</li>
   </ul></div></details>
 </div>
 <div class="card notes" data-step="s7"><h3 style="margin-top:0">Notes</h3></div>
@@ -880,7 +893,7 @@ const int N_SEG = sizeof(PROFILE) / sizeof(PROFILE[0]);
 <div class="card">
   <div class="head"><span class="big">Step 8</span><div>
     <h2>Run and evaluate</h2>
-    <p class="lead">Run the EKF on the robot in the corner, and compare three things: robot estimate, Python replay, tape measure.</p>
+    <p class="lead">Run the EKF on the robot in the arena while it drives the trajectory, and compare three things: robot estimate, Python replay, tape measure.</p>
     <span class="output">Output: <b>robot vs. simulation vs. tape measure</b></span>
   </div></div>
 
@@ -894,7 +907,7 @@ const int N_SEG = sizeof(PROFILE) / sizeof(PROFILE[0]);
   <h3>Tasks <span class="tprog"></span></h3>
   <ul class="tasks" data-step="s8">
     <li data-id="s8-1">G3: 5 runs with the EKF on the robot, start and end pose measured</li>
-    <li data-id="s8-2">Replay each G3 log in Python: same estimate as channels 0–2</li>
+    <li data-id="s8-2">Replay each G3 log in Python: same estimate as channels 4–6</li>
     <li data-id="s8-3">Table: end pose EKF vs. dead reckoning vs. tape, per run + mean error</li>
     <li data-id="s8-4">One run with a "kidnap": shift the robot 3 cm by hand while still → does the EKF follow?</li>
     <li data-id="s8-5">Write 4–6 conclusion lines (8.1)</li>
@@ -905,7 +918,7 @@ const int N_SEG = sizeof(PROFILE) / sizeof(PROFILE[0]);
     <li>How much better is the EKF end pose than dead reckoning? In x, y and φ separately?</li>
     <li>Which state stays the most uncertain, and why (3.1 observability)?</li>
     <li>Do the innovations look like white noise? If not, what's wrong in the model (geometry, wall not square, slip)?</li>
-    <li>Limits: sensor range, steep angles, only two walls, linearization error in turns.</li>
+    <li>Limits: sensor range, steep angles and skipped readings in the turn, number of walls, linearization error in turns.</li>
   </ul>
 
   <details class="src"><summary>Sources</summary><div class="body"><ul>
@@ -941,7 +954,7 @@ const int N_SEG = sizeof(PROFILE) / sizeof(PROFILE[0]);
 
   <h3>9.1 Notebook structure</h3>
   <ol>
-    <li>Goal, set-up (corner, world frame, sensor geometry with a sketch).</li>
+    <li>Goal, set-up (trajectory, wall layout, world frame, sensor geometry with a sketch).</li>
     <li>Motion model: f, F<sub>k</sub>, B<sub>k</sub>, G (SymPy cell).</li>
     <li>Measurement model: h, H<sub>k</sub>, R (SymPy cell).</li>
     <li>Simulation on logs: EKF vs. dead reckoning, ellipses, innovations.</li>
@@ -957,6 +970,7 @@ const int N_SEG = sizeof(PROFILE) / sizeof(PROFILE[0]);
     <li>Derive h for the front sensor on the board. What happens at φ = 90°?</li>
     <li>Why is the heading the most uncertain state?</li>
     <li>What changes if the walls are not perpendicular? If there is only one wall?</li>
+    <li>What does the filter do during the turn, when readings are skipped? What happens to P?</li>
     <li>How did you choose R and G? What if G → 0?</li>
   </ul>
 

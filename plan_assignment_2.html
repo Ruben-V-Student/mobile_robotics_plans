@@ -230,7 +230,7 @@ details.src ul{font-size:13px;color:var(--ink2);margin:0}
       <thead><tr><th>Short name</th><th>Full path</th></tr></thead>
       <tbody>
         <tr><td><code>A2</code></td><td><code>assignments/Assignment2_prediction_model/</code></td></tr>
-        <tr><td><code>A2 notebook</code></td><td><code>assignments/Assignment2_prediction_model/Assignment2_prediction_model.ipynb</code> (cell 0 = assignment text, cell 1 = APPENDIX, cells 2–3 = linear regression example)</td></tr>
+        <tr><td><code>A2 notebook</code></td><td><code>assignments/Assignment2_prediction_model/Assignment2_prediction_model.ipynb</code> (cell 0 = assignment text, cell 1 = APPENDIX). Since 16 Oct the DC motor model and the linear-regression example are in the <b>A3 notebook appendix</b> (<code>Assignments_Toledo_git/Assignment3_linear_KF/Assignment_1D_LKF.ipynb</code>), same values</td></tr>
         <tr><td><code>A1 notebook</code></td><td><code>assignments/Assignment1_software_setup/Assignment_software-setup.ipynb</code></td></tr>
         <tr><td><code>mecotron.h</code></td><td><code>assignments/Assignment2_prediction_model/libraries/control-theory/mecotron.h</code></td></tr>
         <tr><td><code>robot.cpp</code></td><td><code>assignments/Assignment2_prediction_model/INTERNAL-Identification/robot.cpp</code></td></tr>
@@ -254,11 +254,11 @@ details.src ul{font-size:13px;color:var(--ink2);margin:0}
     <span class="output">Output: <b>table of channels, units, constants</b></span>
   </div></div>
 
-  <details class="ctx"><summary>Why &amp; where in Assignment 2 <span class="need">Appendix · DC motor model · §1</span></summary><div class="body">
+  <details class="ctx"><summary>Why &amp; where in Assignment 2 <span class="need">DC motor model (now A3 appendix) · §1</span></summary><div class="body">
     <h4>In the assignment notebook</h4>
-    <blockquote class="nb"><span class="where">Appendix · What is a good DC motor model</span>"where the following variables are measured: \(I_a\) the motor current; \(V_a\) the motor voltage; \(\omega\) the motor rotation speed; […] n is the gear ratio between motor to wheel \(= \frac{n_m}{n_w}\)"</blockquote><blockquote class="nb"><span class="where">§1 Required prior knowledge</span>"Arduino and QRoboticsCenter software setup"</blockquote>
+    <blockquote class="nb"><span class="where">A3 notebook APPENDIX · What is a good DC motor model (moved from A2 on 16 Oct)</span>"where the following variables are measured: \(I_a\) the motor current; \(V_a\) the motor voltage; \(\omega\) the motor rotation speed; […] n is the gear ratio between motor to wheel \(= \frac{n_m}{n_w}\)"</blockquote><blockquote class="nb"><span class="where">§1 Required prior knowledge</span>"Arduino and QRoboticsCenter software setup"</blockquote>
     <h4>Role in the process</h4>
-    <p>Foundation for everything after. Steps 1 and 3–9 use these function names, units and constants. Indirect link to the notebook: the motor model in the Appendix is written in measured variables (\(I_a, V_a, \omega\)) and a gear ratio \(n\), so we must know which signal the robot gives us and whether it is at the motor or at the wheel.</p>
+    <p>Foundation for everything after. Steps 1 and 3–9 use these function names, units and constants. Indirect link to the notebook: the motor model (A3 appendix since 16 Oct) is written in measured variables (\(I_a, V_a, \omega\)) and a gear ratio \(n\), so we must know which signal the robot gives us and whether it is at the motor or at the wheel.</p>
     <h4>Why this step</h4>
     <p>Every later formula uses these numbers. Mixing up motor-level vs. wheel-level units (factor 28) or the sign of one wheel is the most common source of nonsense results. Speed resolution matters for Q: one encoder count per sample is \(\frac{2\pi/1792}{0.01} \approx 0.35\) rad/s, so the speed signal has noticeable quantization noise.</p>
   </div></details>
@@ -304,7 +304,7 @@ details.src ul{font-size:13px;color:var(--ink2);margin:0}
     <li>IMU accel / gyro → <code>mecotron.h:227-232</code>; units → <code>A1 notebook</code> §7.1 state "6. IMU"</li>
     <li>IMU chip → <code>robot.cpp:6</code> (<code>#include &lt;Adafruit_MPU6050.h&gt;</code>); datasheet link → <code>A2 notebook</code>, cell 1, "IMU Datasheet"</li>
     <li><code>writeValue</code> → <code>robot.cpp</code> (end of <code>Robot::control()</code>); <code>ValueIn k</code> naming → <code>FAQ gear</code> table</li>
-    <li>Motor datasheet → <code>A2 notebook</code>, cell 1, "What is a good DC motor model"</li>
+    <li>Motor datasheet → <code>A3 notebook</code>, APPENDIX, "What is a good DC motor model" (was A2 cell 1 until 16 Oct)</li>
     <li>Encoder sign → <code>mecotron.h:141-144</code> (<code>setScale(-ENC_TO_RAD)</code> for A, <code>setScale(ENC_TO_RAD)</code> for B); "both positive forward" reason <span class="own">own interpretation</span></li>
     <li>Factor 28 warning → <code>FAQ gear</code>, note at the top + §"How do I verify my data is correct?"; 0.35 rad/s <span class="own">own derivation</span></li>
   </ul></div></details>
@@ -323,7 +323,7 @@ details.src ul{font-size:13px;color:var(--ink2);margin:0}
 
   <details class="ctx"><summary>Why &amp; where in Assignment 2 <span class="need">Appendix · adapt motor control + displayed values</span></summary><div class="body">
     <h4>In the assignment notebook</h4>
-    <blockquote class="nb"><span class="where">Appendix · How to collect mobile robot sensor data</span>"Read the Jupyter Notebook from the Software setup assignment folder."</blockquote><blockquote class="nb"><span class="where">Appendix · How to adapt motor control values</span>"Change the code in robot.cpp after the following line: <code>if (controlEnabled())</code>"</blockquote><blockquote class="nb"><span class="where">Appendix · How to change the values displayed in QRoboticsCenter</span>"Change the code in robot.cpp that writes values from <code>out[0]</code> to <code>out[11]</code>."</blockquote>
+    <blockquote class="nb"><span class="where">Appendix · How to collect mobile robot sensor data</span>"Read the Jupyter Notebook from the Software setup assignment folder."</blockquote><blockquote class="nb"><span class="where">Appendix · How to adapt motor control values</span>"Change the code in robot.cpp after the following line: <code>if (controlEnabled())</code>"</blockquote><blockquote class="nb"><span class="where">Appendix · How to change the values displayed in QRoboticsCenter</span>"Change the code in robot.cpp that assigns values from <code>out[0]</code> to <code>out[11]</code>."</blockquote>
     <h4>Role in the process</h4>
     <p>First practical step: without a modified sketch there is no data. Change A (voltage profile) produces the excitation that Step 4 needs to fit the motor model. Change B (channels) decides which signals exist in the CSV files of Step 2: motor signals for goal 1, IMU signals for goal 2.</p>
     <h4>Why this step</h4>
@@ -465,7 +465,7 @@ out[11] = getIMUGyroZ();        // rad/s</code></pre></div></details>
 
   <details class="ctx"><summary>Why &amp; where in Assignment 2 <span class="need">§3 Goals 1 + 2 (indirect: the data)</span></summary><div class="body">
     <h4>In the assignment notebook</h4>
-    <blockquote class="nb"><span class="where">§3 Assignment goals · goal 1</span>"The position based on the speed. Assume 1D motion of the robot platform."</blockquote><blockquote class="nb"><span class="where">§3 Assignment goals · goal 2</span>"The position (2D + orientation!) based on the IMU measurements. For this you will need to calibrate the IMU position and orientation."</blockquote><blockquote class="nb"><span class="where">§3 Assignment goals</span>"Which of these dead reckoning approaches is more accurate? Why?"</blockquote>
+    <blockquote class="nb"><span class="where">§3 Assignment goals · goal 1</span>"The robot position based on the wheel speed. Assume 1D motion of the robot platform."</blockquote><blockquote class="nb"><span class="where">§3 Assignment goals · goal 2</span>"The robot position (2D + orientation!) based on the IMU measurements. For this you will need to calibrate the IMU position and orientation."</blockquote><blockquote class="nb"><span class="where">§3 Assignment goals</span>"Compare both scenarios, which of these dead reckoning approaches is more accurate? Why?"</blockquote>
     <h4>Role in the process</h4>
     <p>Indirect: the notebook does not prescribe experiments, but every goal needs measured data. E2/E3 feed goal 1 (Steps 4–6), E1/E4 feed the IMU calibration of goal 2 (Step 7), E5 plus the hand-measured ground truth answers the key question (Step 10).</p>
     <h4>Why this step</h4>
@@ -572,9 +572,9 @@ yaw_enc = r * (df['wB'] - df['wA']) / L      # yaw rate [rad/s]</code></pre></di
     <span class="output">Output: <b>fitted parameters \(a, b\) (and friction)</b></span>
   </div></div>
 
-  <details class="ctx"><summary>Why &amp; where in Assignment 2 <span class="need">§3 Goal 1 · Appendix DC motor model + linear regression</span></summary><div class="body">
+  <details class="ctx"><summary>Why &amp; where in Assignment 2 <span class="need">§3 Goal 1 · DC motor model + linear regression (A3 appendix)</span></summary><div class="body">
     <h4>In the assignment notebook</h4>
-    <blockquote class="nb"><span class="where">§3 Assignment goals · goal 1</span>"The position based on the speed. Assume 1D motion of the robot platform."</blockquote><blockquote class="nb"><span class="where">Appendix · What is a good DC motor model</span>"1. The electrical part: \(V_a = L \frac{dI_a}{dt} + R_a I_a + K_e\omega\) &nbsp; 2. The mechanical part: \(K_T I_a = J\frac{d\omega}{dt} + c\omega\)"</blockquote><blockquote class="nb"><span class="where">Cells 2–3 · How to do linear regression</span>"Linear regression can be done in Python using for example the statsmodel toolbox or sci-kit Learn. Example code is provided below."</blockquote>
+    <blockquote class="nb"><span class="where">§3 Assignment goals · goal 1</span>"The robot position based on the wheel speed. Assume 1D motion of the robot platform."</blockquote><blockquote class="nb"><span class="where">A3 notebook APPENDIX · What is a good DC motor model</span>"1. The electrical part: \(V_a = L \frac{dI_a}{dt} + R_a I_a + K_e\omega\) &nbsp; 2. The mechanical part: \(K_T I_a = J\frac{d\omega}{dt} + c\omega\)"</blockquote><blockquote class="nb"><span class="where">A3 notebook APPENDIX · How to do linear regression</span>"Linear regression can be done in Python using for example the statsmodel toolbox or sci-kit Learn. Example code is provided below."</blockquote>
     <h4>Role in the process</h4>
     <p>Goal 1 asks for position <i>based on the speed</i>. This step gives the link voltage → speed. The fitted \(a, b\) go directly into F and B of Step 5 (Option A); the residuals of this fit are reused for Q in Step 6.</p>
     <h4>Why this step</h4>
@@ -592,7 +592,7 @@ yaw_enc = r * (df['wB'] - df['wA']) / L      # yaw rate [rad/s]</code></pre></di
   </ul>
 
   <h3>Model</h3>
-  <p>From the appendix DC motor model: the electrical time constant \(L/R_a \approx 23\,\mu\)s is far below \(\Delta t = 10\) ms, so neglect \(L\):</p>
+  <p>From the DC motor model (A3 appendix): the electrical time constant \(L/R_a \approx 23\,\mu\)s is far below \(\Delta t = 10\) ms, so neglect \(L\):</p>
   $$I_a = \frac{V_a - K_e\omega}{R_a}\;\Rightarrow\; J\dot\omega = \frac{K_t}{R_a}V_a - \left(c + \frac{K_tK_e}{R_a}\right)\omega$$
   <p>First order. Discretized:</p>
   $$\omega[k+1] = a\,\omega[k] + b\,V[k]$$
@@ -616,9 +616,9 @@ for k in range(len(V) - 1):
     w_sim[k+1] = a * w_sim[k] + b * V[k]</code></pre></div></details>
 
   <details class="src"><summary>Sources</summary><div class="body"><ul>
-    <li>Motor equations + parameters → <code>A2 notebook</code>, cell 1, "What is a good DC motor model"</li>
+    <li>Motor equations + parameters → <code>A3 notebook</code>, APPENDIX, "What is a good DC motor model" (moved from A2 on 16 Oct)</li>
     <li>Neglecting L, combining and discretizing <span class="own">own derivation</span></li>
-    <li>Regression code → adapted from <code>A2 notebook</code>, cells 2–3, "How to do linear regression"</li>
+    <li>Regression code → adapted from <code>A3 notebook</code>, APPENDIX, "How to do linear regression" (moved from A2 on 16 Oct)</li>
     <li>Coulomb friction / dead zone, simulation-based validation, τ = −Δt / ln a <span class="own">own derivation</span></li>
     <li>Voltage as input → <code>Ch 5</code> §5.3.1.1.4 "Design the Control Function"</li>
   </ul></div></details>
@@ -637,7 +637,7 @@ for k in range(len(V) - 1):
 
   <details class="ctx"><summary>Why &amp; where in Assignment 2 <span class="need">§3 Goal 1 · F, B (§2 table)</span></summary><div class="body">
     <h4>In the assignment notebook</h4>
-    <blockquote class="nb"><span class="where">§3 Assignment goals · goal 1</span>"The position based on the speed. Assume 1D motion of the robot platform."</blockquote><blockquote class="nb"><span class="where">§2 Assignment context · Linear Kalman filter prediction step</span>"Process model equation: \(\bar{\mathbf x} = \mathbf{Fx} + \mathbf{Bu}\)" &nbsp;… "\(\mathbf F\) is the <b>state transition function</b>. When multiplied by \(\mathbf x\) it computes the prior." … "\(\mathbf B\) and \(\mathbf u\) are the <b>input transition matrix</b> and the vector of input values."</blockquote><blockquote class="nb"><span class="where">§3 Assignment goals</span>"Both process models will consist of: the <b>process model</b> matrixes (\(\mathbf F, \mathbf B\)) and, corresponding uncertainty (\(\mathbf Q\))."</blockquote>
+    <blockquote class="nb"><span class="where">§3 Assignment goals · goal 1</span>"The robot position based on the wheel speed. Assume 1D motion of the robot platform."</blockquote><blockquote class="nb"><span class="where">§2 Assignment context · Linear Kalman filter prediction step</span>"Process model equation: \(\bar{\mathbf x} = \mathbf{Fx} + \mathbf{Bu}\)" &nbsp;… "\(\mathbf F\) is the <b>state transition function</b>. When multiplied by \(\mathbf x\) it computes the prior." … "\(\mathbf B\) and \(\mathbf u\) are the <b>input transition matrix</b> and the vector of input values."</blockquote><blockquote class="nb"><span class="where">§3 Assignment goals</span>"Both process models will consist of: the <b>process model</b> matrixes (\(\mathbf F, \mathbf B\)) and, corresponding uncertainty (\(\mathbf Q\))."</blockquote>
     <h4>Role in the process</h4>
     <p>First deliverable of goal 1: the matrices F and B. Uses \(a, b\) from Step 4. Q is added in Step 6; this model is also reused in Step 10 (encoder baseline) and in Assignment 3 (linear KF).</p>
     <h4>Why this step</h4>
@@ -674,7 +674,7 @@ for k in range(len(V)):
     x, P = predict(x, P, F, Q, B, np.array([[V[k]]]))
     xs.append(x.copy()); Ps.append(P.copy())</code></pre></div></details>
 
-  <p class="note"><b>Recommendation:</b> present Option A as the main model (uses the identification, is what the appendix points to) and Option B as the simple encoder-odometry baseline. Compare both on E3 against the tape-measured distance.</p>
+  <p class="note"><b>Recommendation:</b> present Option A as the main model (uses the identification; the same motor model is the A3 "to really impress" case) and Option B as the simple encoder-odometry baseline. Compare both on E3 against the tape-measured distance.</p>
 
   <details class="src"><summary>Sources</summary><div class="body"><ul>
     <li>Design recipe → <code>Ch 5</code> §5.3.1.2 "Prediction: Summary"</li>
@@ -752,7 +752,7 @@ Q = np.cov(e.T)</code></pre></div></details>
 
   <details class="ctx"><summary>Why &amp; where in Assignment 2 <span class="need">§3 Goal 2 · IMU calibration</span></summary><div class="body">
     <h4>In the assignment notebook</h4>
-    <blockquote class="nb"><span class="where">§3 Assignment goals · goal 2</span>"The position (2D + orientation!) based on the IMU measurements. For this you will need to calibrate the IMU position and orientation."</blockquote><blockquote class="nb"><span class="where">Appendix · IMU Datasheet</span>"Check the accelerometer datasheet for its specifications."</blockquote>
+    <blockquote class="nb"><span class="where">§3 Assignment goals · goal 2</span>"The robot position (2D + orientation!) based on the IMU measurements. For this you will need to calibrate the IMU position and orientation."</blockquote><blockquote class="nb"><span class="where">Appendix · IMU Datasheet</span>"Check the accelerometer datasheet for its specifications."</blockquote>
     <h4>Role in the process</h4>
     <p>Explicitly required by goal 2 ("calibrate the IMU position and orientation"). The bias, mounting angle ψ and lever arm \((r_x, r_y)\) correct the raw IMU signals that become the inputs \(\mathbf u\) of Step 8; the noise σ values become G for Q in Step 9.</p>
     <h4>Why this step</h4>
@@ -818,7 +818,7 @@ z = np.concatenate([ax_cal, ay_cal])       # bias- and rotation-corrected accel
 
   <details class="ctx"><summary>Why &amp; where in Assignment 2 <span class="need">§3 Goal 2 · F, B (§2 \(\bar{\mathbf x} = f(\mathbf x, \mathbf u)\))</span></summary><div class="body">
     <h4>In the assignment notebook</h4>
-    <blockquote class="nb"><span class="where">§3 Assignment goals · goal 2</span>"The position (2D + orientation!) based on the IMU measurements. For this you will need to calibrate the IMU position and orientation."</blockquote><blockquote class="nb"><span class="where">§2 Assignment context · General prediction step</span>"1. Use process model to predict state at the next time step: \(\bar{\mathbf x} = f(\mathbf{x},\mathbf{u})\)"</blockquote><blockquote class="nb"><span class="where">§3 Assignment goals</span>"Both process models will consist of: the <b>process model</b> matrixes (\(\mathbf F, \mathbf B\)) and, corresponding uncertainty (\(\mathbf Q\))."</blockquote>
+    <blockquote class="nb"><span class="where">§3 Assignment goals · goal 2</span>"The robot position (2D + orientation!) based on the IMU measurements. For this you will need to calibrate the IMU position and orientation."</blockquote><blockquote class="nb"><span class="where">§2 Assignment context · General prediction step</span>"1. Use process model to predict state at the next time step: \(\bar{\mathbf x} = f(\mathbf{x},\mathbf{u})\)"</blockquote><blockquote class="nb"><span class="where">§3 Assignment goals</span>"Both process models will consist of: the <b>process model</b> matrixes (\(\mathbf F, \mathbf B\)) and, corresponding uncertainty (\(\mathbf Q\))."</blockquote>
     <h4>Role in the process</h4>
     <p>First deliverable of goal 2: F and B for 2D position + orientation. The model is nonlinear, so we use the general form \(f(\mathbf x, \mathbf u)\) from §2 and linearise it (Jacobians) to get F and B. Uses calibrated signals from Step 7; its B is reused for Q in Step 9; the trajectories feed Step 10.</p>
     <h4>Why this step</h4>
@@ -938,13 +938,13 @@ Q = B @ G @ B.T</code></pre></div></details>
 <div class="card">
   <div class="head"><span class="big">Step 10</span><div>
     <h2>Compare both approaches · the key question</h2>
-    <p class="lead"><i>"Which of these dead reckoning approaches is more accurate? Why?"</i> Answer with measured numbers, explained via the model structure.</p>
+    <p class="lead"><i>"Compare both scenarios, which of these dead reckoning approaches is more accurate? Why?"</i> Answer with measured numbers, explained via the model structure.</p>
     <span class="output">Output: <b>error plots + answer to the key question</b></span>
   </div></div>
 
   <details class="ctx"><summary>Why &amp; where in Assignment 2 <span class="need">§3 · key question</span></summary><div class="body">
     <h4>In the assignment notebook</h4>
-    <blockquote class="nb"><span class="where">§3 Assignment goals</span>"Which of these dead reckoning approaches is more accurate? Why?"</blockquote>
+    <blockquote class="nb"><span class="where">§3 Assignment goals</span>"Compare both scenarios, which of these dead reckoning approaches is more accurate? Why?"</blockquote>
     <h4>Role in the process</h4>
     <p>Direct answer to the final question of §3. Combines everything: the 1D/encoder model (Steps 4–6) and the IMU model (Steps 7–9), measured against the ground truth from Step 2.</p>
     <h4>Why this step</h4>
@@ -956,6 +956,7 @@ Q = B @ G @ B.T</code></pre></div></details>
     <li data-id="s10-1">End-position error vs. tape (and heading error for E5), both approaches</li>
     <li data-id="s10-2">Error over time plot</li>
     <li data-id="s10-3">Predicted uncertainty \(\sqrt{\mathbf P}\) over time, both approaches</li>
+    <li data-id="s10-5">Side-by-side comparison table of both scenarios (same runs, same error measures), as the notebook now asks "compare both scenarios"</li>
     <li data-id="s10-4">Written answer to the key question, backed by our numbers</li>
   </ul>
 
@@ -974,7 +975,7 @@ Q = B @ G @ B.T</code></pre></div></details>
   </ul>
 
   <details class="src"><summary>Sources</summary><div class="body"><ul>
-    <li>Key question → <code>A2 notebook</code>, cell 0, §3</li>
+    <li>Key question → <code>A2 notebook</code>, cell 0, §3 (reworded 16 Oct: "Compare both scenarios, …")</li>
     <li>Error sources (wheel radius, slip, gyro bias) → <code>Ch 6</code> §6.2.1.2</li>
     <li>Linear vs. quadratic growth <span class="own">own derivation</span>, must be confirmed by our data</li>
     <li>Encoder speed as reliable input → <code>FAQ velocity</code> §"Why does the textbook show velocity as a state?"</li>

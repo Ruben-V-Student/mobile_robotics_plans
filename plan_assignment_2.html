@@ -718,11 +718,11 @@ for k in range(len(V)):
   <p>The course's method for a robot: the noise sits in the <i>input</i> (control space) and B maps it to state space. Ch 6.2: "If this was a linear problem we would convert from control space to state space using the by now familiar [\(\mathbf{BGB}^\mathsf T\)] form." Ch 5.3.1.1.3 only defines \(\mathbf Q = E[\mathbf w\mathbf w^\mathsf T]\) and hand-picks values, so this is the method to follow.</p>
   <p><b>Option B</b> (u = measured wheel speeds), encoder speed noise \(\sigma_\omega^2\) from steady-state parts of E2:</p>
   $$\mathbf Q = \mathbf B\,\mathbf G\,\mathbf B^\mathsf T,\qquad \mathbf G = \mathrm{diag}(\sigma_\omega^2, \sigma_\omega^2)$$
-  <p><b>Option A</b> (u = voltage, known exactly): the noise is on the wheel-speed equation, so map the motor-model error \(\sigma_m^2\) (Step 4 fit residual) with \(\boldsymbol\Gamma = [r\Delta t,\ 1]^\mathsf T\): \(\mathbf Q = \boldsymbol\Gamma\sigma_m^2\boldsymbol\Gamma^\mathsf T\).</p>
-  <p class="hint">The book's G grows with the input (<code>std_dist*u**2</code>) and is recomputed every prediction; do the same if \(\sigma_\omega\) depends on speed. Add a term for wheel slip / radius error if the final position deviates from the tape measure.</p>
+  <p><b>Option A</b> (u = voltage, known exactly): write the motor-model one-step error \(\sigma_m\) (Step 4 fit residual) as an equivalent voltage noise \(\sigma_V = \sigma_m / b\). Then \(\mathbf G = \sigma_V^2\) and \(\mathbf Q = \mathbf B\mathbf G\mathbf B^\mathsf T = \mathrm{diag}(0,\ \sigma_m^2)\) with the existing \(\mathbf B = [0,\ b]^\mathsf T\).</p>
+  <p><b>Slip and bias:</b> encoder noise alone gives \(\sqrt{P}\) ≈ 1 mm at the end, while the tape error is several cm. Split it: add slip \(k\,\omega\) to G (grows with speed, like the book's <code>std_dist*u**2</code>, recomputed every prediction), with k sized so \(\sqrt{P_\text{end}}\) matches the run-to-run spread of the tape error on E2. The <i>mean</i> error (bias) is not Q's job: Q assumes zero-mean noise (Ch 5.3.1.1.3). Report it separately as a systematic error.</p>
 
   <h3>Check (justifies Q)</h3>
-  <p>1. The one-step prediction error should have covariance ≈ Q (that is literally \(E[\mathbf w\mathbf w^\mathsf T]\)). 2. Propagate \(\bar{\mathbf P} = \mathbf F\mathbf P\mathbf F^\mathsf T + \mathbf Q\) over the whole run; the real end-position error (vs. tape) should fall roughly within \(\pm 2\sqrt{P_{11}}\).</p>
+  <p>1. The one-step prediction error should have covariance ≈ Q (that is literally \(E[\mathbf w\mathbf w^\mathsf T]\)); only meaningful for Option A, because in Option B the encoders are both input and "measurement". 2. Propagate \(\bar{\mathbf P} = \mathbf F\mathbf P\mathbf F^\mathsf T + \mathbf Q\) over the whole run; after removing the bias, the real end-position error (vs. tape) should fall roughly within \(\pm 2\sqrt{P_{11}}\).</p>
   <details class="code"><summary>Residual check <span class="tag">Python</span></summary><div class="body"><pre><code># One-step prediction error on measured states; compare its covariance with Q.
 # TWEAK: x_meas = column_stack of encoder position (and speed for Option A); u = input.
 e = x_meas[1:] - (x_meas[:-1] @ F.T + u[:-1] @ B.T)
@@ -733,7 +733,7 @@ print(np.cov(e.T), Q)</code></pre></div></details>
     <li>\(\mathbf Q = \mathbf B\mathbf G\mathbf B^\mathsf T\) → <code>Ch 6</code> §6.2 "Example: Robot localization" (table with \(\mathbf Q=\mathbf{BGB}^\mathsf T\), "noise is in our control input", linear-case sentence, <code>G</code> in the code "covariance of motion noise in control space")</li>
     <li>Ch 5 provides Q, doesn't derive it → <code>Ch 5</code> §5.3.1.1.3 "Deriving the process noise matrix can be quite demanding, and we will provide this to you."</li>
     <li>Covariance prediction → <code>Ch 5</code> §5.2.1</li>
-    <li>Residual check, Option A Γ mapping and ±2σ check <span class="own">own derivation</span> (±2σ ≈ 95 % of a Gaussian; Gaussians → <code>Ch 3</code>)</li>
+    <li>Residual check, Option A equivalent voltage noise, slip k / bias split and ±2σ check <span class="own">own derivation</span> (±2σ ≈ 95 % of a Gaussian; Gaussians → <code>Ch 3</code>)</li>
     <li>"Estimate Q from model" tip → <code>assignments/FAQ.md</code> (Assignment 3 table, "How do I tune Q, R, and K parameters?"), details in <code>assignments/faq-details/FAQ_kalman_tuning.md</code></li>
     <li>Prediction adds uncertainty → <code>Ch 2</code> §2.4 "Incorporating Movement", <code>Ch 4</code> §4.4</li>
   </ul></div></details>

@@ -761,15 +761,18 @@ print(np.cov(e.T), Q)</code></pre></div></details>
 
   <h3>Tasks <span class="tprog"></span></h3>
   <ul class="tasks" data-step="s7">
-    <li data-id="s7-1">Identify vertical axis (E1) and forward axis (E2)</li>
+    <li data-id="s7-1">Identify vertical axis (E1) and forward axis (E5)</li>
     <li data-id="s7-2">Bias and noise per channel from E1</li>
-    <li data-id="s7-3">Mounting angle ψ from E2</li>
+    <li data-id="s7-3">Mounting angle ψ from E5 (+ accel scale check vs. encoders)</li>
     <li data-id="s7-4">Lever arm \((r_x, r_y)\) from E4</li>
     <li data-id="s7-5">Gyro scale check vs. encoders and real turns (E4)</li>
   </ul>
 
+  <p class="note"><b>Data:</b> E2/E3 were logged with SET 1 (motor channels, <i>no IMU</i>). E5 replaces E2: its two straight 6 V segments give 4 start/stop pushes per run (20 in total), logged with SET 2. Implemented in <code>CSVE1E5/imu_calibration.py</code>.</p>
+
   <h3>1 · Which axis is which</h3>
-  <p>In E1 one accelerometer axis reads about ±9.81 m/s² → vertical axis; the gyro around that axis is the yaw rate. In E2 the axis that responds to acceleration is forward.</p>
+  <p>In E1 one accelerometer axis reads about ±9.81 m/s² → vertical axis; the gyro around that axis is the yaw rate. In E5 the axis that responds when the robot starts driving straight is forward. Ours: forward = −a<sub>x</sub>, left = −a<sub>y</sub> (right-hand rule), yaw = +g<sub>z</sub> (same sign as the encoder yaw rate).</p>
+  <p class="hint">At rest \(|\mathbf a|\) = 7.93 m/s², not 9.81, in every run, so it's not a tilt (a tilt keeps the length). The library sets ±2 g correctly → most likely a z offset of the MPU6050 itself. a<sub>z</sub> is not used in the 2D model. The tilt (0.2–1°) does differ per floor spot, so each run uses its own standstill before the start as accel bias.</p>
 
   <h3>2 · Bias and noise (E1)</h3>
   <details class="code"><summary>IMU bias = mean at rest, noise = std at rest <span class="tag">Python</span></summary><div class="body"><pre><code># IMU bias = mean at rest, noise = std at rest (one value per channel).
@@ -778,8 +781,9 @@ imu = ['ax', 'ay', 'az', 'gx', 'gy', 'gz']
 bias  = df_E1[imu].mean()
 sigma = df_E1[imu].std()</code></pre></div></details>
 
-  <h3>3 · Mounting orientation (E2)</h3>
-  <p>If the IMU is rotated by \(\psi\) around the vertical axis: during pure forward acceleration the lateral robot acceleration must be 0, so \(\psi = \mathrm{atan2}(\overline{a_y}, \overline{a_x})\) over the accelerating samples. Rotate all accel data by \(-\psi\). (A tilted IMU also shows as gravity leaking into \(a_x, a_y\) in E1.)</p>
+  <h3>3 · Mounting orientation (E5)</h3>
+  <p>If the IMU is rotated by \(\psi\) around the vertical axis: during pure forward acceleration the lateral robot acceleration must be 0, so \(\psi = \mathrm{atan2}(\overline{a_y}, \overline{a_x})\) over the accelerating samples (the first 0.15 s after every start; stops counted with sign −1). Rotate all accel data by \(-\psi\). (A tilted IMU also shows as gravity leaking into \(a_x, a_y\) in E1.)</p>
+  <p class="hint">Accel scale check: compare the <i>speed change</i> over 0.4 s (\(\int a\,dt\) vs. \(\Delta v_{enc}\)), not the accelerations. Differentiating the encoder speed gives far too sharp a peak at the start, so a direct accel comparison is meaningless.</p>
 
   <h3>4 · Mounting position (E4)</h3>
   <p>IMU at offset \((r_x, r_y)\) from the rotation center (middle of the wheel axle). Turning in place produces centripetal and tangential acceleration:</p>
@@ -794,13 +798,14 @@ z = np.concatenate([ax_cal, ay_cal])       # bias- and rotation-corrected accel
 (rx, ry), *_ = np.linalg.lstsq(A, z, rcond=None)</code></pre></div></details>
 
   <h3>5 · Gyro scale check (E4)</h3>
-  <p>Compare \(\int\dot\theta_{gyro}\,dt\) with the encoder heading and the real number of turns.</p>
+  <p>Compare \(\int\dot\theta_{gyro}\,dt\) with the encoder heading and the real number of turns (E4 rot1..rot4). Also check the E5 heading against the measured end heading.</p>
 
   <details class="src"><summary>Sources</summary><div class="body"><ul>
     <li>"Calibrate the IMU position and orientation" → <code>A2 notebook</code>, cell 0, §3 "Assignment goals"</li>
     <li>Sensor specs → <code>A2 notebook</code>, cell 1, "IMU Datasheet" (link)</li>
     <li>Gyro bias as odometry error → <code>Ch 6</code> §6.2.1.2 "Design the Input Variables"</li>
-    <li>Calibration methods (bias from rest, atan2 mounting angle, lever-arm formula from rigid-body kinematics, least squares) <span class="own">own derivation</span></li>
+    <li>Calibration methods (bias from rest, atan2 mounting angle, lever-arm formula from rigid-body kinematics, least squares, speed-change scale check) <span class="own">own derivation</span></li>
+    <li>±2 g range set by the library → <code>Assignment2_prediction_model/libraries/Adafruit_MPU6050/Adafruit_MPU6050.cpp</code> (<code>setAccelerometerRange(MPU6050_RANGE_2_G)</code>)</li>
     <li>0.01 rad/s × 60 s = 0.6 rad ≈ 34°, and \(t^2\) growth <span class="own">own derivation</span></li>
   </ul></div></details>
 </div>
